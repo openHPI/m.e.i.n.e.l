@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="plotly-import.html">
 
 <!--
 `testchart-1`
@@ -15,6 +16,7 @@ this is a first element to try the plotly lib in combination with polymer
       }
     </style>
     <h2>Hello [[prop1]]</h2>
+    <div id="myDiv"></div>
   </template>
 
   <script>
@@ -25,10 +27,24 @@ this is a first element to try the plotly lib in combination with polymer
       properties: {
         prop1: {
           type: String,
-          value: 'testchart-1',
+          value: 'it\'s a testchart for m.e.i.n.e.l.',
         },
       },
 
+    });
+    window.addEventListener('WebComponentsReady', function(e) {
+      var trace1 = {
+        x: [1, 2, 3, 4], 
+        y: [10, 15, 13, 17], 
+        type: 'scatter'
+      };
+      var trace2 = {
+        x: [1, 2, 3, 4], 
+        y: [16, 5, 11, 9], 
+        type: 'scatter'
+      };
+      var data = [trace1, trace2];
+      Plotly.newPlot('myDiv', data);
     });
   </script>
 </dom-module>
