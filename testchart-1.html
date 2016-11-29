@@ -1,0 +1,34 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`testchart-1`
+this is a first element to try the plotly lib in combination with polymer
+
+@demo demo/index.html 
+-->
+
+<dom-module id="testchart-1">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]</h2>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'testchart-1',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'testchart-1',
+        },
+      },
+
+    });
+  </script>
+</dom-module>
