@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
+
 
 <!--
 `testchart-1`
@@ -15,13 +17,21 @@ this is a first element to try the plotly lib in combination with polymer
         display: block;
       }
     </style>
+
+    <iron-ajax
+        id="ajaxCaller"
+        url="https://open.hpi.de/api/v2/stats/course/timebased.json?metric=CourseActivityTimebased&course_id=7793dd60-9a2f-4f01-828a-0dce340d8acd&start_date=2016-09-05T22:00:00.000Z&end_date=2016-10-31T22:00:00.000Z"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+
     <h2>Hello [[prop1]]</h2>
     <div id="myDiv"></div>
   </template>
 
   <script>
     Polymer({
-
       is: 'testchart-1',
 
       properties: {
@@ -30,21 +40,30 @@ this is a first element to try the plotly lib in combination with polymer
           value: 'it\'s a testchart for m.e.i.n.e.l.',
         },
       },
-
-    });
-    window.addEventListener('WebComponentsReady', function(e) {
-      var trace1 = {
-        x: [1, 2, 3, 4], 
-        y: [10, 15, 13, 17], 
-        type: 'scatter'
-      };
-      var trace2 = {
-        x: [1, 2, 3, 4], 
-        y: [16, 5, 11, 9], 
-        type: 'scatter'
-      };
-      var data = [trace1, trace2];
-      Plotly.newPlot('myDiv', data);
+      ready: function() {
+        /*var jsonData = {"data":[{"x":["1473105600","1473109200","1473112800","1473116400"],"y":[446,248,44,39],"type":"bar"}]};*/
+        this.$.ajaxCaller.generateRequest();
+      },
+      handleResponse: function (data) {
+        var goodData = this.normalizeJSON(data.detail.response);
+        var myDiv = this.$.myDiv;
+        Plotly.plot(myDiv, goodData);
+      },
+      normalizeJSON: function (data) {
+        var x = [];
+        var y = [];
+        for (entry in data) {
+          x.push(entry);
+          y.push(data[entry]);
+        }
+        var diagramData = {"x":x};
+        diagramData["y"] = y;
+        diagramData["type"] = "bar";
+        var plotlyData = [];
+        plotlyData.push(diagramData);
+        var data = {"data":plotlyData};
+        return data;
+      }
     });
   </script>
 </dom-module>
