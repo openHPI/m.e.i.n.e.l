@@ -20,13 +20,11 @@ this is a first element to try the plotly lib in combination with polymer
 
     <iron-ajax
         id="ajaxCaller"
-        url="https://open.hpi.de/api/v2/stats/course/timebased.json?metric=CourseActivityTimebased&course_id=7793dd60-9a2f-4f01-828a-0dce340d8acd&start_date=2016-09-05T22:00:00.000Z&end_date=2016-10-31T22:00:00.000Z"
+        url="[[dataurl]]"
         handle-as="json"
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
-
-    <h2>Hello [[prop1]]</h2>
     <div id="myDiv"></div>
   </template>
 
@@ -35,9 +33,8 @@ this is a first element to try the plotly lib in combination with polymer
       is: 'testchart-1',
 
       properties: {
-        prop1: {
+        dataurl: {
           type: String,
-          value: 'it\'s a testchart for m.e.i.n.e.l.',
         },
         color1: {
           type: String,
