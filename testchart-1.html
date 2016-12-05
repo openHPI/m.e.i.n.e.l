@@ -39,6 +39,14 @@ this is a first element to try the plotly lib in combination with polymer
           type: String,
           value: 'it\'s a testchart for m.e.i.n.e.l.',
         },
+        color1: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
+        color2: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
       },
       ready: function() {
         /*var jsonData = {"data":[{"x":["1473105600","1473109200","1473112800","1473116400"],"y":[446,248,44,39],"type":"bar"}]};*/
@@ -47,7 +55,24 @@ this is a first element to try the plotly lib in combination with polymer
       handleResponse: function (data) {
         var goodData = this.normalizeJSON(data.detail.response);
         var myDiv = this.$.myDiv;
-        Plotly.plot(myDiv, goodData);
+
+
+        var layout = {
+          xaxis: {
+            tickfont: {
+              size: 14,
+              color: this.color2,
+            },
+          },
+          yaxis: {
+            tickfont: {
+              size: 14,
+              color: this.color2,
+            },
+          },
+        };
+        console.debug(layout);
+        Plotly.newPlot(myDiv, goodData, layout);
       },
       normalizeJSON: function (data) {
         var x = [];
@@ -59,10 +84,10 @@ this is a first element to try the plotly lib in combination with polymer
         var diagramData = {"x":x};
         diagramData["y"] = y;
         diagramData["type"] = "bar";
+        diagramData["marker"] = {color:this.color1};
         var plotlyData = [];
         plotlyData.push(diagramData);
-        var data = {"data":plotlyData};
-        return data;
+        return plotlyData;
       }
     });
   </script>
