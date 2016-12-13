@@ -46,14 +46,11 @@ this is a first element to try the plotly lib in combination with polymer
         },
       },
       ready: function() {
-        /*var jsonData = {"data":[{"x":["1473105600","1473109200","1473112800","1473116400"],"y":[446,248,44,39],"type":"bar"}]};*/
         this.$.ajaxCaller.generateRequest();
       },
       handleResponse: function (data) {
         var goodData = this.normalizeJSON(data.detail.response);
         var myDiv = this.$.myDiv;
-
-
         var layout = {
           xaxis: {
             tickfont: {
@@ -68,7 +65,6 @@ this is a first element to try the plotly lib in combination with polymer
             },
           },
         };
-        console.debug(layout);
         Plotly.newPlot(myDiv, goodData, layout);
       },
       normalizeJSON: function (data) {
