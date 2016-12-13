@@ -1,7 +1,7 @@
 {
-  "name": "testchart-1",
-  "description": "this is a first element to try the plotly lib in combination with polymer",
-  "main": "testchart-1.html",
+  "name": "barchart-basic",
+  "description": "this is a basic element for plotly bar charts",
+  "main": "barchart-basic.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
     "plotly.js": "^1.20.5"
