@@ -4,13 +4,13 @@
 
 
 <!--
-`testchart-1`
-this is a first element to try the plotly lib in combination with polymer
+`barchart-basic`
+This is a basic component for plotly barcharts
 
 @demo demo/index.html 
 -->
 
-<dom-module id="testchart-1">
+<dom-module id="barchart-basic">
   <template>
     <style>
       :host {
@@ -30,7 +30,7 @@ this is a first element to try the plotly lib in combination with polymer
 
   <script>
     Polymer({
-      is: 'testchart-1',
+      is: 'barchart-basic',
 
       properties: {
         dataurl: {
@@ -53,6 +53,8 @@ this is a first element to try the plotly lib in combination with polymer
         var myDiv = this.$.myDiv;
         var layout = {
           xaxis: {
+            tickmode: "auto",
+            nticks: 4,
             tickfont: {
               size: 14,
               color: this.color2,
@@ -71,7 +73,9 @@ this is a first element to try the plotly lib in combination with polymer
         var x = [];
         var y = [];
         for (entry in data) {
-          x.push(entry);
+          //compute date string
+          //x.push(entry);
+          x.push((new Date(entry*1000)).toLocaleString());
           y.push(data[entry]);
         }
         var diagramData = {"x":x};
