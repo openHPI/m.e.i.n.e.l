@@ -3,5 +3,5 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 It focuses on abstracting the interfaces in a way that one only needs to supply the data and few (optional) parameters to embed visually appealing charts into existing environments.
 
 ## Technology stack
-Currently, there are a few technologies being discussed, see [#1](/../../issues/1) and [#2](/../../issues/2) for reference.<br>
-Active participation in the discussion is very much appreciated.
+[Plotly.js](https://plot.ly/javascript/) and [D3.js](https://d3js.org/) for visualization and [Polymer.js](https://www.polymer-project.org/1.0/) for leveraging the full power of Web Components build the base for the m.e.i.n.e.l. project.<br>
+[Plotly.js](https://plot.ly/javascript/) is used for basic visualizations whereas [D3.js](https://d3js.org/) is used for more complex and custom visualizations.
