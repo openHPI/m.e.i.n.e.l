@@ -4,12 +4,12 @@
 
 
 <!--
-`barchart-basic`
-This is a basic component for plotly barcharts
+`piechart-basic`
+This is a basic component for plotly piecharts
 
-@demo demo/barchart_basic_demo.html
+@demo demo/piechart_basic_demo.html
 -->
-<dom-module id="barchart-basic">
+<dom-module id="piechart-basic">
   <template>
     <style>
       :host {
@@ -29,10 +29,10 @@ This is a basic component for plotly barcharts
 
   <script>
     Polymer({
-      is: 'barchart-basic',
+      is: 'piechart-basic',
 
       properties: {
-        /** URL of data to be plotted */
+        /** URL of data to be plotted (currently ignored)*/
         dataurl: {
           type: String,
         },
@@ -56,34 +56,25 @@ This is a basic component for plotly barcharts
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        var goodData = this._normalizeJSON(data.detail.response);
+        //var goodData = this._normalizeJSON(data.detail.response);
         var myDiv = this.$.myDiv;
+        var data = [{
+          values: [19, 26, 55],
+          labels: ['Residential', 'Non-Residential', 'Utility'],
+          type: 'pie'
+        }];
         var layout = {
-          xaxis: {
-            tickmode: "auto",
-            nticks: 4,
-            tickfont: {
-              size: 14,
-              color: this.accentcolor,
-            },
-          },
-          yaxis: {
-            tickfont: {
-              size: 14,
-              color: this.accentcolor,
-            },
-          },
         };
-        Plotly.newPlot(myDiv, goodData, layout);
+        Plotly.newPlot(myDiv, data, layout);
       },
       /**
-      * Normalizes the data supplied by the API to work with Plotly
+      * Normalizes the data supplied by the API to work with Plotly (CURRENTLY NOT IN USE)
       *
       * @param {Object} data The data (as JSON) to be normalized
       * @return {Array} The normalized data
       */
       _normalizeJSON: function (data) {
-        var x = [];
+        /*var x = [];
         var y = [];
         for (entry in data) {
           //compute date string
@@ -97,7 +88,9 @@ This is a basic component for plotly barcharts
         diagramData["marker"] = {color:this.primarycolor};
         var plotlyData = [];
         plotlyData.push(diagramData);
-        return plotlyData;
+        return plotlyData;*/
+        var data = [];
+        return data;
       }
     });
   </script>
