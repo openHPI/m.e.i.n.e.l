@@ -1,0 +1,97 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+
+
+<!--
+`piechart-basic`
+This is a basic component for plotly piecharts
+
+@demo demo/piechart_basic_demo.html
+-->
+<dom-module id="piechart-basic">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax
+        id="ajaxCaller"
+        url="[[dataurl]]"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+    <div id="myDiv"></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'piechart-basic',
+
+      properties: {
+        /** URL of data to be plotted (currently ignored)*/
+        dataurl: {
+          type: String,
+        },
+        /** Primary color of chart */
+        primarycolor: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
+        /** Accent color of chart */
+        accentcolor: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
+      },
+      ready: function() {
+        this.$.ajaxCaller.generateRequest();
+      },
+      /**
+      * Transforms the transmitted data into a plot
+      *
+      * @param {Object} data The data to be plotted
+      */
+      handleResponse: function (data) {
+        //var goodData = this._normalizeJSON(data.detail.response);
+        var myDiv = this.$.myDiv;
+        var data = [{
+          values: [19, 26, 55],
+          labels: ['Residential', 'Non-Residential', 'Utility'],
+          type: 'pie'
+        }];
+        var layout = {
+        };
+        Plotly.newPlot(myDiv, data, layout);
+      },
+      /**
+      * Normalizes the data supplied by the API to work with Plotly (CURRENTLY NOT IN USE)
+      *
+      * @param {Object} data The data (as JSON) to be normalized
+      * @return {Array} The normalized data
+      */
+      _normalizeJSON: function (data) {
+        /*var x = [];
+        var y = [];
+        for (entry in data) {
+          //compute date string
+          //x.push(entry);
+          x.push((new Date(entry*1000)).toLocaleString());
+          y.push(data[entry]);
+        }
+        var diagramData = {"x":x};
+        diagramData["y"] = y;
+        diagramData["type"] = "bar";
+        diagramData["marker"] = {color:this.primarycolor};
+        var plotlyData = [];
+        plotlyData.push(diagramData);
+        return plotlyData;*/
+        var data = [];
+        return data;
+      }
+    });
+  </script>
+</dom-module>
