@@ -1,0 +1,163 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="d3-import.html">
+
+
+<!--
+`activitychart-basic`
+This component shows an activity history, similar to the colored github chart
+
+@demo demo/activitychart_basic_demo.html
+-->
+<dom-module id="activitychart-basic">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax
+        id="ajaxCaller"
+        url="[[dataurl]]"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+    <div id="diagram"></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'activitychart-basic',
+
+      properties: {
+        /** URL of data to be plotted */
+        dataurl: {
+          type: String,
+        },
+        /** Primary color of chart */
+        primarycolor: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
+        /** Accent color of chart */
+        accentcolor: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
+        /** Number of colored dots per row (opt, default 8) */
+        squaresPerRow: {
+          type: Number,
+          value: 8,
+        },
+        /** Width of square (opt, default: 15) */
+        squareWidth: {
+          type: Number,
+          value: 15,
+        },
+        /** Spacing of squares (opt, default: 20) */
+        squareSpacing: {
+          type: Number,
+          value: 20,
+        },
+      },
+      ready: function() {
+        this.$.ajaxCaller.generateRequest();
+      },
+      /**
+      * Transforms the transmitted data into a plot
+      *
+      * @param {Object} data The data to be plotted
+      */
+      handleResponse: function (data) {
+        //var goodData = this._normalizeJSON(data.detail.response);
+        var diagramDiv = this.$.diagram;
+        alert(this.squareSpacing);
+        var svgWidth = 500,
+  			svgHeight = 500;
+  			//values should range between 1, 100
+  			var dataset = [1, 10, 20, 35, 47, 65, 87, 100,
+  				1, 10, 65, 20, 35, 47, 87, 100,
+  				1, 10, 20, 47, 65, 87, 35, 100,
+  				1, 10, 20, 100, 35, 47, 65, 87,
+  				1, 20, 35, 10, 47, 65, 87, 100,
+  				47, 65, 87, 1, 10, 20, 35, 100];
+
+  			//so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
+  			var colorScale = d3.scaleLinear()
+  				.domain([1, 100])
+  				.range(['#F5E8BB', '#930517']);
+
+        var svg = d3.select('#diagram').append('svg')
+          .attr('width', svgWidth)
+          .attr('height', svgHeight);
+
+        var squares = svg.selectAll('rect')
+          .data(dataset)
+          .enter().append('rect')
+          .attr('width', this.squareWidth)
+          .attr('height', this.squareWidth)
+          .attr('x', this._spaceSquareHor)
+          .attr('y', this._spaceSquareVert)
+          .attr('fill', colorScale)
+          .on('mouseover', this._showLabel)
+          .on('mouseout', this._hideLabel);
+      },
+
+      _showLabel: function (d, i) {
+        d3.select('svg').append('rect')
+					.attr('x', this._spaceSquareHor(d, i) - 3)
+					.attr('y', this._spaceSquareVert(d, i) - 14)
+					.attr('id', 'label-bg-' + i)
+					.attr('fill', 'white')
+					.attr('width', 60)
+					.attr('height', 15);
+
+				d3.select('svg').append('text')
+					.text(d + ' at ' + i)
+					.attr('x', this._spaceSquareHor(d, i))
+					.attr('y', this._spaceSquareVert(d, i) - 3)
+					.attr('id', 'label-' + i)
+					.style('font-size', '0.8em')
+					.attr('fill', 'black');
+			},
+
+      _hideLabel: function (d, i) {
+        d3.select('#label-bg-' + i).remove();
+        d3.select('#label-' + i).remove();
+      },
+
+      _spaceSquareHor: function (d, i) {
+				return this.squareSpacing * (i % this.squaresPerRow);
+			},
+
+      _spaceSquareVert: function (d, i) {
+				return this.squareSpacing * (Math.floor(i / this.squaresPerRow));
+			},
+      /**
+      * Normalizes the data supplied by the API to work with Plotly
+      *
+      * @param {Object} data The data (as JSON) to be normalized
+      * @return {Array} The normalized data
+      */
+      _normalizeJSON: function (data) {
+        var x = [];
+        var y = [];
+        for (entry in data) {
+          //compute date string
+          //x.push(entry);
+          x.push((new Date(entry*1000)).toLocaleString());
+          y.push(data[entry]);
+        }
+        var diagramData = {"x":x};
+        diagramData["y"] = y;
+        diagramData["type"] = "bar";
+        diagramData["marker"] = {color:this.primarycolor};
+        var plotlyData = [];
+        plotlyData.push(diagramData);
+        return plotlyData;
+      }
+    });
+  </script>
+</dom-module>
