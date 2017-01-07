@@ -1,0 +1,13 @@
+approvals:
+  # PR needs at least 2 approvals
+  minimum: 2
+  # approval = comment that matches this regex
+  pattern: "^(:\\+1:|👍)$"
+  veto:
+    # veto/blocking a PR = comment that matches this regex
+    pattern: "^(:\\-1:|👎)$"
+  # note that `from` is by default empty,
+  # accepting any matching comment as approval
+  from:
+    # OR a collaborator of the repo
+    collaborators: true
