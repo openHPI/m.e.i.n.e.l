@@ -51,13 +51,30 @@ This is a basic component for plotly barcharts
         this.$.ajaxCaller.generateRequest();
       },
       /**
-      * Transforms the transmitted data into a plot
+      * Transforms the transmitted data into a plot.
+      * D3 handles responsiveness with an eventListener on top
       *
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
+        var d3 = Plotly.d3;
+
+        var WIDTH_IN_PERCENT_OF_PARENT = 100,
+            HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+        var gd3 = d3.select('#myDiv')
+            .append('div')
+            .style({
+                width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+                'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
+            });
+
+        var gd = gd3.node();
+
         var goodData = this._normalizeJSON(data.detail.response);
-        var myDiv = this.$.myDiv;
         var layout = {
           xaxis: {
             tickmode: "auto",
@@ -74,7 +91,8 @@ This is a basic component for plotly barcharts
             },
           },
         };
-        Plotly.newPlot(myDiv, goodData, layout);
+        Plotly.newPlot(gd, goodData, layout);
+        window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
       /**
       * Normalizes the data supplied by the API to work with Plotly
