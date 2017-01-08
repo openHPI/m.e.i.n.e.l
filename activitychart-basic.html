@@ -62,6 +62,7 @@ This component shows an activity history, similar to the colored github chart
           value: 20,
         },
       },
+
       ready: function() {
         this.$.ajaxCaller.generateRequest();
       },
@@ -73,7 +74,6 @@ This component shows an activity history, similar to the colored github chart
       handleResponse: function (data) {
         //var goodData = this._normalizeJSON(data.detail.response);
         var diagramDiv = this.$.diagram;
-        alert(this.squareSpacing);
         var svgWidth = 500,
   			svgHeight = 500;
   			//values should range between 1, 100
@@ -106,9 +106,10 @@ This component shows an activity history, similar to the colored github chart
       },
 
       _showLabel: function (d, i) {
+        var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
         d3.select('svg').append('rect')
-					.attr('x', this._spaceSquareHor(d, i) - 3)
-					.attr('y', this._spaceSquareVert(d, i) - 14)
+					.attr('x', polyElement._spaceSquareHor(d, i) - 3)
+					.attr('y', polyElement._spaceSquareVert(d, i) - 14)
 					.attr('id', 'label-bg-' + i)
 					.attr('fill', 'white')
 					.attr('width', 60)
@@ -116,8 +117,8 @@ This component shows an activity history, similar to the colored github chart
 
 				d3.select('svg').append('text')
 					.text(d + ' at ' + i)
-					.attr('x', this._spaceSquareHor(d, i))
-					.attr('y', this._spaceSquareVert(d, i) - 3)
+					.attr('x', polyElement._spaceSquareHor(d, i))
+					.attr('y', polyElement._spaceSquareVert(d, i) - 3)
 					.attr('id', 'label-' + i)
 					.style('font-size', '0.8em')
 					.attr('fill', 'black');
@@ -129,11 +130,19 @@ This component shows an activity history, similar to the colored github chart
       },
 
       _spaceSquareHor: function (d, i) {
-				return this.squareSpacing * (i % this.squaresPerRow);
+        var polyElement = this;
+        if (Polymer.dom(this).childNodes.length == 0) {
+          var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
+        }
+        return polyElement.squareSpacing * (i % polyElement.squaresPerRow);
 			},
 
       _spaceSquareVert: function (d, i) {
-				return this.squareSpacing * (Math.floor(i / this.squaresPerRow));
+        var polyElement = this;
+        if (Polymer.dom(this).childNodes.length == 0) {
+          var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
+        }
+				return polyElement.squareSpacing * (Math.floor(i / polyElement.squaresPerRow));
 			},
       /**
       * Normalizes the data supplied by the API to work with Plotly
