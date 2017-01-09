@@ -106,27 +106,55 @@ This component shows an activity history, similar to the colored github chart
       },
 
       _showLabel: function (d, i) {
-        var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
-        d3.select('svg').append('rect')
-					.attr('x', polyElement._spaceSquareHor(d, i) - 3)
-					.attr('y', polyElement._spaceSquareVert(d, i) - 14)
-					.attr('id', 'label-bg-' + i)
-					.attr('fill', 'white')
-					.attr('width', 60)
-					.attr('height', 15);
+        //using a group element 'label' with an appended text element and a rect element as background to display a label
 
-				d3.select('svg').append('text')
+        var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
+
+        var label = d3.select('svg').append('g')
+          .attr('id', 'label-' + i);
+
+        //append rect element first so that following text element is displayed above rect
+        label.append('rect');
+
+        var labelText = label.append('text')
 					.text(d + ' at ' + i)
-					.attr('x', polyElement._spaceSquareHor(d, i))
-					.attr('y', polyElement._spaceSquareVert(d, i) - 3)
-					.attr('id', 'label-' + i)
 					.style('font-size', '0.8em')
 					.attr('fill', 'black');
+        //this split is necessary because the position is set relative to the size of the text element
+        labelText
+          .attr('x', polyElement._spaceLabelHor(d, i, labelText.node().getBBox().width))
+          .attr('y', polyElement._spaceLabelVert(d, i));
+
+        //finish rect configuration that was appended previously
+        label.select('rect')
+          .attr('x', labelText.attr('x') - 3)
+  				.attr('y', labelText.attr('y') - 11)
+  				.attr('fill', 'white')
+  				.attr('width', labelText.node().getBBox().width + 3)
+      		.attr('height', labelText.node().getBBox().height);
 			},
 
       _hideLabel: function (d, i) {
-        d3.select('#label-bg-' + i).remove();
         d3.select('#label-' + i).remove();
+      },
+
+      _spaceLabelHor: function(d, i, labelWidth) {
+        var x = this._spaceSquareHor(d, i);
+        //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
+        var maxPosition = ((this.squareSpacing * (this.squaresPerRow - 1)) + this.squareWidth) - labelWidth;
+
+        if(x > maxPosition) { // label would normally be "shown" outside the SVG space
+          x = maxPosition + 1;
+        }
+        return x;
+      },
+
+      _spaceLabelVert: function(d, i) {
+        var y = this._spaceSquareVert(d, i) - 3;
+        if(y < 0) { // label would normally be "shown" outside the SVG space
+          y = this.squareSpacing * 1.5;
+        }
+        return y;
       },
 
       _spaceSquareHor: function (d, i) {
