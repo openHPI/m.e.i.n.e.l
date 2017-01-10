@@ -56,12 +56,7 @@ This is a basic component for plotly barcharts
         },
       },
       ready: function() {
-        if(this.dataurl != "") {
-          this.$.ajaxCaller.generateRequest();
-        }
-        else {
-          this._plotDiagram();
-        }
+        this.$.ajaxCaller.generateRequest();
       },
       /**
       * Transforms the transmitted data into a plot.
@@ -70,12 +65,13 @@ This is a basic component for plotly barcharts
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        this._readDataFromResponse(data.detail.response);
+        if(this.dataurl != "") {
+          this._readDataFromResponse(data.detail.response);
+        }
         this._plotDiagram();
       },
 
       _plotDiagram: function () {
-        console.log(this.xValues);
         var diagramData = {"x":this.xValues};
         diagramData["y"] = this.yValues;
         diagramData["type"] = "bar";
@@ -99,7 +95,6 @@ This is a basic component for plotly barcharts
             });
 
         var gd = gd3.node();
-
         var layout = {
           xaxis: {
             tickmode: "auto",
