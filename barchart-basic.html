@@ -24,6 +24,7 @@ This is a basic component for plotly barcharts
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
+    <div style="display:none;">{{xValues}}{{yValues}}</div>
     <div id="myDiv"></div>
   </template>
 
@@ -35,6 +36,13 @@ This is a basic component for plotly barcharts
         /** URL of data to be plotted */
         dataurl: {
           type: String,
+          value: "",
+        },
+        xValues: {
+          type: Array,
+        },
+        yValues: {
+          type: Array,
         },
         /** Primary color of chart */
         primarycolor: {
@@ -57,6 +65,20 @@ This is a basic component for plotly barcharts
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
+        if(this.dataurl != "") {
+          this._readDataFromResponse(data.detail.response);
+        }
+        this._plotDiagram();
+      },
+
+      _plotDiagram: function () {
+        var diagramData = {"x":this.xValues};
+        diagramData["y"] = this.yValues;
+        diagramData["type"] = "bar";
+        diagramData["marker"] = {color:this.primarycolor};
+        var plotData = [];
+        plotData.push(diagramData);
+
         var d3 = Plotly.d3;
 
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
@@ -73,8 +95,6 @@ This is a basic component for plotly barcharts
             });
 
         var gd = gd3.node();
-
-        var goodData = this._normalizeJSON(data.detail.response);
         var layout = {
           xaxis: {
             tickmode: "auto",
@@ -91,16 +111,12 @@ This is a basic component for plotly barcharts
             },
           },
         };
-        Plotly.newPlot(gd, goodData, layout);
+        Plotly.newPlot(gd, plotData, layout);
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
-      /**
-      * Normalizes the data supplied by the API to work with Plotly
-      *
-      * @param {Object} data The data (as JSON) to be normalized
-      * @return {Array} The normalized data
-      */
-      _normalizeJSON: function (data) {
+
+      _readDataFromResponse: function (data) {
+        console.log("y");
         var x = [];
         var y = [];
         for (entry in data) {
@@ -109,13 +125,8 @@ This is a basic component for plotly barcharts
           x.push((new Date(entry*1000)).toLocaleString());
           y.push(data[entry]);
         }
-        var diagramData = {"x":x};
-        diagramData["y"] = y;
-        diagramData["type"] = "bar";
-        diagramData["marker"] = {color:this.primarycolor};
-        var plotlyData = [];
-        plotlyData.push(diagramData);
-        return plotlyData;
+        this.xValues = x;
+        this.yValues = y;
       }
     });
   </script>
