@@ -24,6 +24,7 @@ This component shows an activity history, similar to the colored github chart
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
+    <div style="display:none;">{{dataset}}</div>
     <div id="diagram"></div>
   </template>
 
@@ -35,6 +36,15 @@ This component shows an activity history, similar to the colored github chart
         /** URL of data to be plotted */
         dataurl: {
           type: String,
+          value: '',
+        },
+        /** y values in JSON format (data to be displayed) */
+        dataset: {
+          type: Array,
+        },
+        /** x values in JSON format (labels for data) */
+        labels: {
+          type: Array,
         },
         /** Primary color of chart */
         primarycolor: {
@@ -64,7 +74,12 @@ This component shows an activity history, similar to the colored github chart
       },
 
       ready: function() {
-        this.$.ajaxCaller.generateRequest();
+        if(this.dataurl != "") {
+          this.$.ajaxCaller.generateRequest();
+        }
+        else {
+          this._plotDiagram();
+        }
       },
       /**
       * Transforms the transmitted data into a plot
@@ -72,26 +87,32 @@ This component shows an activity history, similar to the colored github chart
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        //var goodData = this._normalizeJSON(data.detail.response);
+        var goodData = this._normalizeJSON(data.detail.response);
+        this.dataset = goodData[0]["y"];
+        this.labels = goodData[0]["x"];
+        this._plotDiagram();
+      },
+
+      _plotDiagram: function () {
+        console.log("Plotting...");
+        console.log(this.dataset);
+        console.log(this.labels);
         var diagramDiv = this.$.diagram;
         var svgWidth = 500,
-  			svgHeight = 500;
-  			//values should range between 1, 100
-  			var dataset = [1, 10, 20, 35, 47, 65, 87, 100,
-  				1, 10, 65, 20, 35, 47, 87, 100,
-  				1, 10, 20, 47, 65, 87, 35, 100,
-  				1, 10, 20, 100, 35, 47, 65, 87,
-  				1, 20, 35, 10, 47, 65, 87, 100,
-  				47, 65, 87, 1, 10, 20, 35, 100];
+        svgHeight = 500;
+        var dataset = this.dataset;
+        var datasetMin = Math.min.apply(null, dataset);
+        var datasetMax = Math.max.apply(null, dataset);
 
-  			//so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
-  			var colorScale = d3.scaleLinear()
-  				.domain([1, 100])
-  				.range(['#F5E8BB', '#930517']);
+        //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
+        var colorScale = d3.scaleLinear()
+          .domain([datasetMin, datasetMax])
+          .range(['#F5E8BB', '#930517']);
 
         var svg = d3.select('#diagram').append('svg')
           .attr('width', svgWidth)
           .attr('height', svgHeight);
+
 
         var squares = svg.selectAll('rect')
           .data(dataset)
@@ -109,15 +130,13 @@ This component shows an activity history, similar to the colored github chart
         //using a group element 'label' with an appended text element and a rect element as background to display a label
 
         var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
-
         var label = d3.select('svg').append('g')
           .attr('id', 'label-' + i);
 
         //append rect element first so that following text element is displayed above rect
         label.append('rect');
-
         var labelText = label.append('text')
-					.text(d + ' at ' + i)
+					.text(d + ' at ' + polyElement.labels[i])
 					.style('font-size', '0.8em')
 					.attr('fill', 'black');
         //this split is necessary because the position is set relative to the size of the text element
@@ -159,7 +178,7 @@ This component shows an activity history, similar to the colored github chart
 
       _spaceSquareHor: function (d, i) {
         var polyElement = this;
-        if (Polymer.dom(this).childNodes.length == 0) {
+        if (Polymer.dom(this).node.nodeName != "ACTIVITYCHART-BASIC") {
           var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
         }
         return polyElement.squareSpacing * (i % polyElement.squaresPerRow);
@@ -167,7 +186,7 @@ This component shows an activity history, similar to the colored github chart
 
       _spaceSquareVert: function (d, i) {
         var polyElement = this;
-        if (Polymer.dom(this).childNodes.length == 0) {
+        if (Polymer.dom(this).node.nodeName != "ACTIVITYCHART-BASIC") {
           var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
         }
 				return polyElement.squareSpacing * (Math.floor(i / polyElement.squaresPerRow));
