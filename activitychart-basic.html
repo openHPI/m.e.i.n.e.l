@@ -73,8 +73,13 @@ This component shows an activity history, similar to the colored github chart
         },
       },
 
-      ready: function() {
-        this.$.ajaxCaller.generateRequest();
+      attached: function() {
+        if(this.dataurl != "") {
+          this.$.ajaxCaller.generateRequest();
+        }
+        else {
+          this._plotDiagram();
+        }
       },
       /**
       * Transforms the transmitted data into a plot
@@ -82,11 +87,9 @@ This component shows an activity history, similar to the colored github chart
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        if(this.dataurl != "") {
-          var goodData = this._normalizeJSON(data.detail.response);
-          this.dataset = goodData[0]["y"];
-          this.labels = goodData[0]["x"];
-        }
+        var goodData = this._normalizeJSON(data.detail.response);
+        this.dataset = goodData[0]["y"];
+        this.labels = goodData[0]["x"];
         this._plotDiagram();
       },
 
