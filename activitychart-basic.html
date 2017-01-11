@@ -56,8 +56,8 @@ This component shows an activity history, similar to the colored github chart
           type: String,
           value: '#F5E8BB',
         },
-        /** Number of colored dots per row (opt, default 8) */
-        squaresPerRow: {
+        /** Number of colored dots per column (opt, default 8) */
+        squaresPerColumn: {
           type: Number,
           value: 8,
         },
@@ -115,8 +115,8 @@ This component shows an activity history, similar to the colored github chart
         var datasetMin = Math.min(...dataset);
         var datasetMax = Math.max(...dataset);
 
-        var svgWidth = this.squaresPerRow * this.squareSpacing,
-        svgHeight = Math.ceil(dataset.length / this.squaresPerRow) * this.squareSpacing;
+        var svgWidth = Math.ceil(dataset.length / this.squaresPerColumn) * this.squareSpacing,
+        svgHeight = this.squaresPerColumn * this.squareSpacing;
 
         //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
         var colorScale = d3.scaleLinear()
@@ -152,18 +152,22 @@ This component shows an activity history, similar to the colored github chart
 					.text(d.y + ' at ' + d.x)
 					.style('font-size', '0.8em')
 					.attr('fill', 'black');
+
+        var labelWidth = labelText.node().getBBox().width;
+        var labelHeight = labelText.node().getBBox().height;
+
         //this split is necessary because the position is set relative to the size of the text element
         labelText
-          .attr('x', polyElement._spaceLabelHor(d, i, labelText.node().getBBox().width))
-          .attr('y', polyElement._spaceLabelVert(d, i));
+          .attr('x', polyElement._spaceLabelHor(d, i, labelWidth))
+          .attr('y', polyElement._spaceLabelVert(d, i, labelHeight));
 
         //finish rect configuration that was appended previously
         label.select('rect')
-          .attr('x', labelText.attr('x') - 3)
-  				.attr('y', labelText.attr('y') - 11)
+          .attr('x', labelText.attr('x') - 1)
+  				.attr('y', labelText.attr('y') - 0.7 * labelHeight) // 0.7 as factor because labelHeight is bigger than actual height of text
   				.attr('fill', 'white')
-  				.attr('width', labelText.node().getBBox().width + 3)
-      		.attr('height', labelText.node().getBBox().height);
+  				.attr('width', labelWidth + 1) //ok, so that it doesn't become too short for the text because of the visual offset above
+      		.attr('height', 0.8 * labelHeight);
 			},
 
       _hideLabel: function (d, i) {
@@ -173,18 +177,18 @@ This component shows an activity history, similar to the colored github chart
       _spaceLabelHor: function(d, i, labelWidth) {
         var x = this._spaceSquareHor(d, i);
         //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
-        var maxPosition = ((this.squareSpacing * (this.squaresPerRow - 1)) + this.squareWidth) - labelWidth;
+        var maxPosition = d3.select('svg').attr('width') - (this.squareSpacing - this.squareWidth) - labelWidth;
 
         if(x > maxPosition) { // label would normally be "shown" outside the SVG space
-          x = maxPosition + 1;
+          x = maxPosition;
         }
         return x;
       },
 
-      _spaceLabelVert: function(d, i) {
-        var y = this._spaceSquareVert(d, i) - 3;
-        if(y < 0) { // label would normally be "shown" outside the SVG space
-          y = this.squareSpacing * 1.5;
+      _spaceLabelVert: function(d, i, labelHeight) {
+        var y = this._spaceSquareVert(d, i) - 2;
+        if(y < 0) { // label would normally be "shown" just exactly outside the SVG space
+          y = this.squareWidth + 0.7 * labelHeight;
         }
         return y;
       },
@@ -194,7 +198,7 @@ This component shows an activity history, similar to the colored github chart
         if (Polymer.dom(this).node.nodeName != "ACTIVITYCHART-BASIC") {
           var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
         }
-        return polyElement.squareSpacing * (i % polyElement.squaresPerRow);
+				return polyElement.squareSpacing * (Math.floor(i / polyElement.squaresPerColumn));
 			},
 
       _spaceSquareVert: function (d, i) {
@@ -202,7 +206,7 @@ This component shows an activity history, similar to the colored github chart
         if (Polymer.dom(this).node.nodeName != "ACTIVITYCHART-BASIC") {
           var polyElement = Polymer.dom(this).parentNode.parentNode.parentNode;
         }
-				return polyElement.squareSpacing * (Math.floor(i / polyElement.squaresPerRow));
+        return polyElement.squareSpacing * (i % polyElement.squaresPerColumn);
 			},
       /**
       * Normalizes the data supplied by the API to work with Plotly
