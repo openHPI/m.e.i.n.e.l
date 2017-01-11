@@ -93,11 +93,23 @@ This component shows an activity history, similar to the colored github chart
         this._plotDiagram();
       },
 
+      _buildDataset: function(labels, dataset) {
+        // create data like this:
+        // [ {'x': timeStamp0, 'y': value0}, ... ,{'x': timeStampN, 'y': valueN}]
+        var data = [];
+        for(var j = 0; j < labels.length; j++) {
+          data[j] = {'x': labels[j], 'y': dataset[j]};
+        }
+        return data;
+      },
+
       _plotDiagram: function () {
         console.log("Plotting...");
         console.log(this.dataset);
         console.log(this.labels);
         var diagramDiv = this.$.diagram;
+
+        var data = this._buildDataset(this.labels, this.dataset);
 
         var dataset = this.dataset;
         var datasetMin = Math.min(...dataset);
@@ -115,15 +127,14 @@ This component shows an activity history, similar to the colored github chart
           .attr('width', svgWidth)
           .attr('height', svgHeight);
 
-
         var squares = svg.selectAll('rect')
-          .data(dataset)
+          .data(data)
           .enter().append('rect')
           .attr('width', this.squareWidth)
           .attr('height', this.squareWidth)
           .attr('x', this._spaceSquareHor)
           .attr('y', this._spaceSquareVert)
-          .attr('fill', colorScale)
+          .attr('fill', function(d) { return colorScale(d.y); })
           .on('mouseover', this._showLabel)
           .on('mouseout', this._hideLabel);
       },
@@ -138,7 +149,7 @@ This component shows an activity history, similar to the colored github chart
         //append rect element first so that following text element is displayed above rect
         label.append('rect');
         var labelText = label.append('text')
-					.text(d + ' at ' + polyElement.labels[i])
+					.text(d.y + ' at ' + d.x)
 					.style('font-size', '0.8em')
 					.attr('fill', 'black');
         //this split is necessary because the position is set relative to the size of the text element
