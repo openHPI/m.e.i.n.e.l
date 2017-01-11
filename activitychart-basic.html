@@ -46,15 +46,15 @@ This component shows an activity history, similar to the colored github chart
         labels: {
           type: Array,
         },
-        /** Primary color of chart */
+        /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
         primarycolor: {
           type: String,
-          value: 'rgba(0,0,0,1)',
+          value: '#930517',
         },
-        /** Accent color of chart */
+        /** Accent color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA  */
         accentcolor: {
           type: String,
-          value: 'rgba(0,0,0,1)',
+          value: '#F5E8BB',
         },
         /** Number of colored dots per row (opt, default 8) */
         squaresPerRow: {
@@ -121,7 +121,7 @@ This component shows an activity history, similar to the colored github chart
         //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
         var colorScale = d3.scaleLinear()
           .domain([datasetMin, datasetMax])
-          .range(['#F5E8BB', '#930517']);
+          .range([this.accentcolor, this.primarycolor]);
 
         var svg = d3.select('#diagram').append('svg')
           .attr('width', svgWidth)
