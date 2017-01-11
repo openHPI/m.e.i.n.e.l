@@ -55,8 +55,13 @@ This is a basic component for plotly barcharts
           value: 'rgba(0,0,0,1)',
         },
       },
-      ready: function() {
-        this.$.ajaxCaller.generateRequest();
+      attached: function() {
+        if(this.dataurl != "") {
+          this.$.ajaxCaller.generateRequest();
+        }
+        else {
+          this._plotDiagram();
+        }
       },
       /**
       * Transforms the transmitted data into a plot.
@@ -65,9 +70,7 @@ This is a basic component for plotly barcharts
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        if(this.dataurl != "") {
-          this._readDataFromResponse(data.detail.response);
-        }
+        this._readDataFromResponse(data.detail.response);
         this._plotDiagram();
       },
 
