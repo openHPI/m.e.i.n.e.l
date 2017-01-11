@@ -98,11 +98,13 @@ This component shows an activity history, similar to the colored github chart
         console.log(this.dataset);
         console.log(this.labels);
         var diagramDiv = this.$.diagram;
-        var svgWidth = 500,
-        svgHeight = 500;
+
         var dataset = this.dataset;
-        var datasetMin = Math.min.apply(null, dataset);
-        var datasetMax = Math.max.apply(null, dataset);
+        var datasetMin = Math.min(...dataset);
+        var datasetMax = Math.max(...dataset);
+
+        var svgWidth = this.squaresPerRow * this.squareSpacing,
+        svgHeight = Math.ceil(dataset.length / this.squaresPerRow) * this.squareSpacing;
 
         //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
         var colorScale = d3.scaleLinear()
