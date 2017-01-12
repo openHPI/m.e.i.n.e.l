@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -17,14 +16,8 @@ This is a basic component for plotly piecharts
       }
     </style>
 
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
-    <div id="myDiv"></div>
+    <div style="display:none;">{{dataset}}</div>
+    <div id="diagram"></div>
   </template>
 
   <script>
@@ -32,90 +25,49 @@ This is a basic component for plotly piecharts
       is: 'piechart-basic',
 
       properties: {
-        /** (optional) URL of data to be plotted (currently ignored)*/
-        dataurl: {
-          type: String,
-        },
-        /** (optional) Data to be plotted */
+        /** Datavalues to be plotted */
         dataset: {
           type: Array,
         },
-        /** (optional) Labels for the dataset */
+        /** Labels for the dataset (must be same size as dataset)*/
         labels: {
           type: Array,
         },
-        /** Primary color of chart */
-        primarycolor: {
-          type: String,
-          value: 'rgba(0,0,0,1)',
+        /** Colors for the dataset (must be same size as dataset)*/
+        colors: {
+          type: Array,
         },
-        /** Accent color of chart */
-        accentcolor: {
-          type: String,
-          value: 'rgba(0,0,0,1)',
-        },
-      },
-      ready: function() {
-        if(!this.dataurl) {
-          console.log(this.dataset);
-          console.log(this.labels);
-        }
-        //this.$.ajaxCaller.generateRequest();
-      },
-      _buildDataset: function(labels, dataset) {
-        // create data like this:
-        // [ {'x': timeStamp0, 'y': value0}, ... ,{'x': timeStampN, 'y': valueN}]
-        var data = [];
-        for(var j = 0; j < labels.length; j++) {
-          data[j] = {'x': labels[j], 'y': dataset[j]};
-        }
-        return data;
       },
       /**
       * Transforms the transmitted data into a plot
       *
-      * @param {Object} data The data to be plotted
+      * @param {Array<number>} dataset The data to be plotted
+      * @param {Array<string>} labels The labels corresponding to the dataset
+      * @param {Array<string>} colors The colors the data shall be displayed in
       */
-      handleResponse: function (data) {
-        var myDiv = this.$.myDiv;
+      _plotDiagram: function (dataset, labels, colors) {
+        var diagram = this.$.diagram;
         var data = [{
-          values: [19, 26, 55], //TODO change
-          labels: ['Residential', 'Non-Residential', 'Utility'], //TODO change
+          values: dataset,
+          labels: labels,
           type: 'pie',
-          markers: {
-            colors: [] //TODO fill
-          }
+          marker: {
+            colors: colors
+          },
         }];
         var layout = {
           height: 400,
           width: 500 //TODO check how to do better
         };
-        Plotly.newPlot(myDiv, data, layout);
+        Plotly.newPlot(diagram, data, layout);
       },
-      /**
-      * Normalizes the data supplied by the API to work with Plotly (CURRENTLY NOT IN USE)
-      *
-      * @param {Object} data The data (as JSON) to be normalized
-      * @return {Array} The normalized data
-      */
-      _normalizeJSON: function (data) {
-        /*var x = [];
-        var y = [];
-        for (entry in data) {
-          //compute date string
-          //x.push(entry);
-          x.push((new Date(entry*1000)).toLocaleString());
-          y.push(data[entry]);
+      ready: function() {
+        if(this.dataset && this.labels) {
+          this._plotDiagram(this.dataset, this.labels, this.colors);
         }
-        var diagramData = {"x":x};
-        diagramData["y"] = y;
-        diagramData["type"] = "bar";
-        diagramData["marker"] = {color:this.primarycolor};
-        var plotlyData = [];
-        plotlyData.push(diagramData);
-        return plotlyData;*/
-        var data = [];
-        return data;
+        else {
+          console.log("[ERROR] You did not supply any data.");
+        }
       }
     });
   </script>
