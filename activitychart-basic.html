@@ -71,6 +71,17 @@ This component shows an activity history, similar to the colored github chart
           type: Number,
           value: 20,
         },
+        //this could also be solved by setting value to a function calculating the default min/max value from the dataset (but only if we receive the dataset as a JSON object isntead of just receiving a URL)
+        /** Minimum value from the dataset that is used for the color scale can be overwritten. */
+        minValue: {
+          type: Number,
+          value: null
+        },
+        /** Maximum value from the dataset that is used for the color scale can be overwritten. */
+        maxValue: {
+          type: Number,
+          value: null
+        }
       },
 
       attached: function() {
@@ -112,8 +123,20 @@ This component shows an activity history, similar to the colored github chart
         var data = this._buildDataset(this.labels, this.dataset);
 
         var dataset = this.dataset;
-        var datasetMin = Math.min(...dataset);
-        var datasetMax = Math.max(...dataset);
+
+        var datasetMin;
+        if(this.minValue == null) {
+          datasetMin = Math.min(...dataset);
+        } else {
+          datasetMin = this.minValue;
+        }
+
+        var datasetMax;
+        if(this.maxValue == null) {
+          datasetMax = Math.max(...dataset);
+        } else {
+          datasetMax = this.maxValue;
+        }
 
         var svgWidth = Math.ceil(dataset.length / this.squaresPerColumn) * this.squareSpacing,
         svgHeight = this.squaresPerColumn * this.squareSpacing;
