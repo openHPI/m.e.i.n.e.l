@@ -32,9 +32,17 @@ This is a basic component for plotly piecharts
       is: 'piechart-basic',
 
       properties: {
-        /** URL of data to be plotted (currently ignored)*/
+        /** (optional) URL of data to be plotted (currently ignored)*/
         dataurl: {
           type: String,
+        },
+        /** (optional) Data to be plotted */
+        dataset: {
+          type: Array,
+        },
+        /** (optional) Labels for the dataset */
+        labels: {
+          type: Array,
         },
         /** Primary color of chart */
         primarycolor: {
@@ -48,7 +56,20 @@ This is a basic component for plotly piecharts
         },
       },
       ready: function() {
-        this.$.ajaxCaller.generateRequest();
+        if(!this.dataurl) {
+          console.log(this.dataset);
+          console.log(this.labels);
+        }
+        //this.$.ajaxCaller.generateRequest();
+      },
+      _buildDataset: function(labels, dataset) {
+        // create data like this:
+        // [ {'x': timeStamp0, 'y': value0}, ... ,{'x': timeStampN, 'y': valueN}]
+        var data = [];
+        for(var j = 0; j < labels.length; j++) {
+          data[j] = {'x': labels[j], 'y': dataset[j]};
+        }
+        return data;
       },
       /**
       * Transforms the transmitted data into a plot
@@ -56,14 +77,18 @@ This is a basic component for plotly piecharts
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        //var goodData = this._normalizeJSON(data.detail.response);
         var myDiv = this.$.myDiv;
         var data = [{
-          values: [19, 26, 55],
-          labels: ['Residential', 'Non-Residential', 'Utility'],
-          type: 'pie'
+          values: [19, 26, 55], //TODO change
+          labels: ['Residential', 'Non-Residential', 'Utility'], //TODO change
+          type: 'pie',
+          markers: {
+            colors: [] //TODO fill
+          }
         }];
         var layout = {
+          height: 400,
+          width: 500 //TODO check how to do better
         };
         Plotly.newPlot(myDiv, data, layout);
       },
