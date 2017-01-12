@@ -11,7 +11,7 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
 
 ## Creating custom components
 
-1. copy an existing diagrams main file (i.e. `barchart-basic.html` for the barchart)
+1. copy an existing diagram's main file (i.e. `barchart-basic.html` for the barchart)
 2. copy the corresponding demo file in `demo/` (i.e. `demo/barchart_basic_demo.html`)
 3. rename both to a name of choice
 4. make the following changes to the main file you just copied:
