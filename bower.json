@@ -1,7 +1,14 @@
 {
-  "name": "barchart-basic",
-  "description": "this is a basic element for plotly bar charts",
+  "name": "m.e.i.n.e.l.-viz",
+  "description": "Visualization library for data gathered trough Massive Open Online Courses (MOOCs)",
   "main": "barchart-basic.html",
+  "authors": [
+    "Jakob Edding",
+    "Lars Lange",
+    "Maximilian Voelkers",
+    "Florian Wirtz"
+  ],
+  "homepage": "https://openhpi.github.io/m.e.i.n.e.l./",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.7.0",
     "plotly.js": "^1.20.5"
