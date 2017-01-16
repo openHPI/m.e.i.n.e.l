@@ -13,7 +13,7 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
 
 1. copy an existing diagram's main file (i.e. `barchart-basic.html` for the barchart)
 2. copy the corresponding demo file in `demo/` (i.e. `demo/barchart_basic_demo.html`)
-3. rename both to a name of choice
+3. rename both to a name of choice (keep in mind that Polymer components need to have a dash in the name)
 4. make the following changes to the main file you just copied:
   - [ ] change the title in the first comment and also its description
   - [ ] change the `@demo` reference to the new file you copied in `demo/`
