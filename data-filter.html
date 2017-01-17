@@ -1,0 +1,65 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+<link rel="import" href="linechart-basic.html">
+
+
+<!--
+`data-filter`
+This is a component for filtering data based on user input.
+
+@demo demo/data_filter_demo.html
+-->
+<dom-module id="data-filter">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax
+        id="ajaxCaller"
+        url="[[dataurl]]"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+    <div style="display:none;">{{data}}</div>
+    <div id="myDiv"><linechart-basic></linechart-basic></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'data-filter',
+
+      properties: {
+        /** URL of data to be plotted */
+        dataurl: {
+          type: String,
+          value: "",
+        },
+        /** Data provided as an array of x,y objects */
+        data: {
+          type: String,
+        },
+        /** Width of the outer div */
+        width: {
+          type: Number,
+        },
+        /** Height of the out div */
+        height: {
+          type: Number,
+        },
+      },
+      attached: function() {
+        if(this.dataurl != "") {
+          this.$.ajaxCaller.generateRequest();
+        }
+        else {
+          this._plotDiagram();
+        }
+      },
+    });
+  </script>
+</dom-module>
