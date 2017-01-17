@@ -16,6 +16,10 @@ This is a component for filtering data based on user input.
       :host {
         display: block;
       }
+      #filterBar {
+        height: 25px;
+        background-color: blue;
+      }
     </style>
 
     <iron-ajax
@@ -26,7 +30,8 @@ This is a component for filtering data based on user input.
         debounce-duration="300">
     </iron-ajax>
     <div style="display:none;">{{data}}</div>
-    <div id="myDiv"><linechart-basic></linechart-basic></div>
+    <div id="filterBar"></div>
+    <linechart-basic data={{data}} width={{width}} height={{height}}></linechart-basic>
   </template>
 
   <script>
@@ -41,7 +46,7 @@ This is a component for filtering data based on user input.
         },
         /** Data provided as an array of x,y objects */
         data: {
-          type: String,
+          type: Array,
         },
         /** Width of the outer div */
         width: {
@@ -53,13 +58,12 @@ This is a component for filtering data based on user input.
         },
       },
       attached: function() {
-        if(this.dataurl != "") {
-          this.$.ajaxCaller.generateRequest();
-        }
-        else {
-          this._plotDiagram();
-        }
+        //TODO: Analyze array and display button for each x:y pair
+        // this.test();
       },
+      test: function() {
+        // console.log(this.data);
+      }
     });
   </script>
 </dom-module>
