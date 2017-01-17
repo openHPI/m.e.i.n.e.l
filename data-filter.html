@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="plotly-import.html">
 <link rel="import" href="linechart-basic.html">
 
@@ -17,8 +18,8 @@ This is a component for filtering data based on user input.
         display: block;
       }
       #filterBar {
-        height: 25px;
-        background-color: blue;
+        height: 50px;
+        /*background-color: gray;*/
       }
     </style>
 
@@ -31,7 +32,7 @@ This is a component for filtering data based on user input.
     </iron-ajax>
     <div style="display:none;">{{data}}</div>
     <div id="filterBar"></div>
-    <linechart-basic data={{data}} width={{width}} height={{height}}></linechart-basic>
+    <linechart-basic id="linechart" data={{data}} width={{width}} height={{height}}></linechart-basic>
   </template>
 
   <script>
@@ -58,12 +59,29 @@ This is a component for filtering data based on user input.
         },
       },
       attached: function() {
-        //TODO: Analyze array and display button for each x:y pair
-        // this.test();
+        for(var ii = 0; ii < this.data.length; ii++) {
+          var newButton = document.createElement("paper-button");
+          var buttonText = document.createTextNode("Data " + ii);
+          newButton.appendChild(buttonText);
+          newButton.setAttribute("toggles", "");
+          newButton.setAttribute("raised", "");
+          newButton.setAttribute("on-click", "test");
+          newButton.active = true;
+          newButton.setAttribute("data-array", JSON.stringify(this.data[ii]));
+          this.$.filterBar.appendChild(newButton);
+          this.listen(newButton, 'tap', '_passData');
+        }
       },
-      test: function() {
-        // console.log(this.data);
-      }
+      _passData: function(button) {
+        var newDataset = [];
+        var buttons = this.$.filterBar.children;
+        for(var ii = 0; ii < buttons.length; ii++) {
+          if(buttons[ii].active) {
+            newDataset.push(JSON.parse(buttons[ii].getAttribute("data-array")));
+          }
+        }
+        this.$.linechart.data=newDataset;
+      },
     });
   </script>
 </dom-module>
