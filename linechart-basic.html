@@ -40,7 +40,7 @@ This is a basic component for plotly linecharts
         },
         /** Data provided as an array of x,y objects */
         data: {
-          type: String,
+          type: Array,
         },
         /** Width of the outer div */
         width: {
@@ -61,7 +61,7 @@ This is a basic component for plotly linecharts
       },
 
       _plotDiagram: function () {
-        var rawData = JSON.parse(this.data);
+        var rawData = this.data;
 
         var d3 = Plotly.d3;
 
