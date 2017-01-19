@@ -184,38 +184,41 @@ This component shows an activity history, similar to the colored github chart
         var label = d3.select('svg').append('g')
           .attr('id', 'label-' + i);
 
+        var textHeight = 12;
+
         //append rect element first so that following text element is displayed above rect
         label.append('rect');
         var labelText = label.append('text')
 					.text(d.y + ' at ' + d.x)
-					.style('font-size', '0.8em')
+					.style('font-size', textHeight + 'px')
 					.attr('fill', 'black');
 
-        var labelWidth = labelText.node().getBBox().width;
-        var labelHeight = labelText.node().getBBox().height;
+        var labelPadding = 2;
+
+        var textWidth = labelText.node().getBBox().width;
 
         //this split is necessary because the position is set relative to the size of the text element
         labelText
-          .attr('x', polyElement._spaceLabelHor(d, i, labelWidth))
-          .attr('y', polyElement._spaceLabelVert(d, i, labelHeight));
+          .attr('x', polyElement._spaceLabelHor(d, i, textWidth, labelPadding))
+          .attr('y', polyElement._spaceLabelVert(d, i, textHeight, labelPadding));
 
         //finish rect configuration that was appended previously
         label.select('rect')
-          .attr('x', labelText.attr('x') - 1)
-  				.attr('y', labelText.attr('y') - 0.7 * labelHeight) // 0.7 as factor because labelHeight is bigger than actual height of text
+          .attr('x', labelText.attr('x') - labelPadding)
+  				.attr('y', labelText.attr('y') - (0.8 * textHeight) - labelPadding) // 0.8 as factor because textHeight is bigger than actual height of text
   				.attr('fill', 'white')
-  				.attr('width', labelWidth + 1) //ok, so that it doesn't become too short for the text because of the visual offset above
-      		.attr('height', 0.8 * labelHeight);
+  				.attr('width', textWidth + (2 * labelPadding))
+      		.attr('height', (0.8 * textHeight) + (2 * labelPadding));
 			},
 
       _hideLabel: function (d, i) {
         d3.select('#label-' + i).remove();
       },
 
-      _spaceLabelHor: function(d, i, labelWidth) {
+      _spaceLabelHor: function(d, i, textWidth, labelPadding) {
         var x = this._spaceSquareHor(d, i);
         //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
-        var maxPosition = d3.select('svg').attr('width') - (this.squareSpacing - this.squareWidth) - labelWidth;
+        var maxPosition = d3.select('svg').attr('width') - textWidth - labelPadding;
 
         if(x > maxPosition) { // label would normally be "shown" outside the SVG space
           x = maxPosition;
@@ -223,12 +226,12 @@ This component shows an activity history, similar to the colored github chart
         return x;
       },
 
-      _spaceLabelVert: function(d, i, labelHeight) {
-        var y = this._spaceSquareVert(d, i) - 2;
-        if(y < 0) { // label would normally be "shown" just exactly outside the SVG space
-          y = this.squareWidth + 0.7 * labelHeight;
+      _spaceLabelVert: function(d, i, textHeight, labelPadding) {
+        var y = this._spaceSquareVert(d, i);
+        if(y <= 0) { // label would normally be "shown" just exactly outside the SVG space
+          y = this.squareWidth + textHeight + labelPadding;
         }
-        return y;
+        return y - labelPadding;
       },
 
       _spaceSquareHor: function (d, i) {
