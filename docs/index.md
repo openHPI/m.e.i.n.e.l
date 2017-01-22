@@ -7,14 +7,14 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
 3. [install Bower & Polymer](https://www.polymer-project.org/1.0/docs/tools/polymer-cli)
 4. perform `bower install` to install the dependencies
 5. do `polymer serve`
-6. head to `localhost:8080/components/barchart-basic/` in your browser & you are done! :blush:
+6. head to `localhost:8080/components/m.e.i.n.e.l.-viz/` in your browser & you are done! :blush:
 
 ## Creating custom components
 
 1. copy an existing diagram's main file (i.e. `barchart-basic.html` for the barchart)
 2. copy the corresponding demo file in `demo/` (i.e. `demo/barchart_basic_demo.html`)
 3. rename both to a name of choice (keep in mind that Polymer components need to have a dash in the name)
-4. make the following changes to the main file you just copied:
+4. make the following changes to the main file you just copied from `src/`:
   - [ ] change the title in the first comment and also its description
   - [ ] change the `@demo` reference to the new file you copied in `demo/`
   - [ ] change the `<dom-module id=""`
@@ -27,3 +27,11 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
   - [ ] change the headline (`<h3>`)
   - [ ] embed your component accordingly inside the `<demo-snippet><template>HERE</template></demo-snippet>` part
 6. append your diagram to the `to all-imports.html` file
+
+## Vulcanize
+1. install [npm install -g polymer-bundler](https://github.com/Polymer/polymer-bundler)
+2. figure out which chart you want from `src/`
+3. do `polymer-bundler --inline-scripts --inline-css src/YOUR-CHART.html > CHART.html`
+4. include the `CHART.html` as `<link rel="import" href="../path/CHART.html">`
+5. include `<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.23/webcomponents-lite.min.js"></script>` in your header to make polyfills work with firefox etc.
+6. use the `<CHART></CHART>` tag you just created
