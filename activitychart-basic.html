@@ -100,7 +100,7 @@ This component shows an activity history, similar to the colored github chart
       },
 
       attached: function() {
-        if(this.dataurl != "") {
+        if(this.dataurl) {
           this.$.ajaxCaller.generateRequest();
         }
         else {
@@ -135,9 +135,8 @@ This component shows an activity history, similar to the colored github chart
         console.log(this.labels);
         var diagramDiv = this.$.diagram;
 
-        var data = this._buildDataset(this.labels, this.dataset);
-
         var dataset = this.dataset;
+        var data = this._buildDataset(this.labels, dataset);
 
         var datasetMin;
         if(this.minValue == null) {
