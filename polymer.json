@@ -1,0 +1,30 @@
+{
+  "entrypoint": "index.html",
+  "fragments": [
+    "demo/barchart_basic_demo.html",
+    "piechart_basic_demo.html",
+    "src/all-imports.html",
+    "src/barchart-basic.html",
+    "src/piechart-basic.html",
+    "src/plotly-import.html"
+  ],
+  "sourceGlobs": [
+    "demo/*",
+    "src/*",
+    "bower.json"
+  ],
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/iron-component-page/iron-component-page.html",
+    "bower_components/polymer/polymer.html",
+    "bower_components/iron-ajax/iron-ajax.html",
+    "bower_components/iron-selector/iron-selector.html",
+    "bower_components/paper-header-panel/paper-header-panel.html",
+    "bower_components/paper-toolbar/paper-toolbar.html",
+    "bower_components/polymer/polymer-mini.html",
+    "bower_components/iron-ajax/iron-request.html",
+    "bower_components/font-roboto/roboto.html",
+    "bower_components/hydrolysis/hydrolysis-analyzer.html",
+    "bower_components/iron-doc-viewer/iron-doc-viewer.html"
+  ]
+}

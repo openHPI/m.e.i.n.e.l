@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -21,6 +21,7 @@ This is a basic component for plotly piecharts
   </template>
 
   <script>
+  window.addEventListener("WebComponentsReady", function(){
     Polymer({
       is: 'piechart-basic',
 
@@ -70,5 +71,6 @@ This is a basic component for plotly piecharts
         }
       }
     });
+  });
   </script>
 </dom-module>

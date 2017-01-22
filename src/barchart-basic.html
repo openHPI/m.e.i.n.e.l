@@ -1,5 +1,5 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -28,6 +28,7 @@ This is a basic component for plotly barcharts
   </template>
 
   <script>
+  window.addEventListener("WebComponentsReady", function(){
     Polymer({
       is: 'barchart-basic',
 
@@ -99,6 +100,7 @@ This is a basic component for plotly barcharts
         plotlyData.push(diagramData);
         return plotlyData;
       }
+    });
     });
   </script>
 </dom-module>
