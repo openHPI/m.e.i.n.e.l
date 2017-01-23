@@ -41,14 +41,6 @@ This is a basic component for plotly piecharts
         height: {
           type: Number,
         },
-        /** Width of the outer div */
-        width: {
-          type: Number,
-        },
-        /** Height of the outer div */
-        height: {
-          type: Number,
-        },
         /** Colors for the dataset (must be same size as dataset)*/
         colors: {
           type: Array,
@@ -70,11 +62,11 @@ This is a basic component for plotly piecharts
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
         /** Defines the width and height of the outer div */
-        if (this.width !== undefined && this.height !== undefined) {
-          var myDiv = d3.select(this.$.diagram);
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
 
-          myDiv.style('width', this.width + "px");
-          myDiv.style('height', this.height + "px");
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
         }
 
         /** Create new div with specific attributes under outer div */

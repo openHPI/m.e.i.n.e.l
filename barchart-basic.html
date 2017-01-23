@@ -25,7 +25,7 @@ This is a basic component for plotly barcharts
         debounce-duration="300">
     </iron-ajax>
     <div style="display:none;">{{xValues}}{{yValues}}</div>
-    <div id="myDiv"></div>
+    <div id="diagram"></div>
   </template>
 
   <script>
@@ -36,7 +36,7 @@ This is a basic component for plotly barcharts
         /** URL of data to be plotted */
         dataurl: {
           type: String,
-          value: "",
+          value: null,
         },
         xValues: {
           type: Array,
@@ -64,7 +64,7 @@ This is a basic component for plotly barcharts
         },
       },
       attached: function() {
-        if(this.dataurl != "") {
+        if(this.dataurl) {
           this.$.ajaxCaller.generateRequest();
         }
         else {
@@ -96,15 +96,15 @@ This is a basic component for plotly barcharts
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
         /** Defines the width and height of the outer div */
-        if (this.width !== undefined && this.height !== undefined) {
-          var myDiv = d3.select(this.$.myDiv);
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
 
-          myDiv.style('width', this.width + "px");
-          myDiv.style('height', this.height + "px");
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
         }
 
         /** Create new div with specific attributes under outer div */
-        var gd3 = d3.select(this.$.myDiv)
+        var gd3 = d3.select(this.$.diagram)
             .append('div')
             .style({
                 width: WIDTH_IN_PERCENT_OF_PARENT + '%',
@@ -135,13 +135,15 @@ This is a basic component for plotly barcharts
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
 
+      /**
+      * Transforms the transmitted data into readable x,y values for plot.ly
+      *
+      * @param {Object} data The data read from the url
+      */
       _readDataFromResponse: function (data) {
-        console.log("y");
         var x = [];
         var y = [];
         for (entry in data) {
-          //compute date string
-          //x.push(entry);
           x.push((new Date(entry*1000)).toLocaleString());
           y.push(data[entry]);
         }
