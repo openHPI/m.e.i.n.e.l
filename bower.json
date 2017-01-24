@@ -10,13 +10,13 @@
   ],
   "homepage": "https://openhpi.github.io/m.e.i.n.e.l./",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.7.0",
-    "plotly.js": "^1.20.5"
+    "polymer": "^1.7.1",
+    "plotly.js": "^1.22.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.1.7",
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5",
+    "iron-component-page": "^1.1.8",
+    "iron-demo-helpers": "^1.2.5",
     "web-component-tester": "^5.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.23"
+    "webcomponentsjs": "^0.7.23"
   }
 }

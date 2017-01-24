@@ -1,14 +1,15 @@
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
 <!--
-`piechart-basic`
-This is a basic component for plotly piecharts
+`barchart-basic`
+This is a basic component for plotly barcharts
 
-@demo demo/piechart_basic_demo.html
+@demo demo/barchart_basic_demo.html
 -->
-<dom-module id="piechart-basic">
+<dom-module id="barchart-basic">
   <template>
     <style>
       :host {
@@ -20,16 +21,11 @@ This is a basic component for plotly piecharts
   </template>
 
   <script>
+  window.addEventListener("WebComponentsReady", function(){
     Polymer({
-      is: 'piechart-basic',
-
+      is: 'barchart-basic',
       properties: {
-        /** Datavalues to be plotted */
         data: {
-          type: Array,
-        },
-        /** Labels for the dataset (must be same size as dataset)*/
-        labels: {
           type: Array,
         },
         /** Width of the outer div */
@@ -40,25 +36,26 @@ This is a basic component for plotly piecharts
         height: {
           type: Number,
         },
-        /** Colors for the dataset (must be same size as dataset)*/
-        colors: {
-          type: Array,
+        /** Primary color of chart */
+        primarycolor: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
+        },
+        /** Accent color of chart */
+        accentcolor: {
+          type: String,
+          value: 'rgba(0,0,0,1)',
         },
       },
       attached: function() {
         this._plotDiagram();
       },
-      /**
-      * Displays the data in a pie chart
-      *
-      * @param {Array<number>} dataset The data to be plotted
-      * @param {Array<string>} labels The labels corresponding to the dataset
-      * @param {Array<string>} colors The colors the data shall be displayed in
-      */
 
       _plotDiagram: function () {
-        var d3 = Plotly.d3;
+        this.data[0]["type"] = "bar";
+        this.data[0]["marker"] = {color:this.primarycolor};
 
+        var d3 = Plotly.d3;
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
@@ -82,26 +79,26 @@ This is a basic component for plotly piecharts
             });
 
         var gd = gd3.node();
-
-        var dataSet = [{
-          values: this.data,
-          labels: this.labels,
-          type: 'pie',
-          marker: {
-            colors: this.colors
+        var layout = {
+          xaxis: {
+            tickmode: "auto",
+            nticks: 4,
+            tickfont: {
+              size: 14,
+              color: this.accentcolor,
+            },
           },
-        }];
-        Plotly.newPlot(gd, dataSet);
+          yaxis: {
+            tickfont: {
+              size: 14,
+              color: this.accentcolor,
+            },
+          },
+        };
+        Plotly.newPlot(gd, this.data, layout);
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
-      ready: function() {
-        if(this.dataset && this.labels) {
-          this._plotDiagram(this.dataset, this.labels, this.colors);
-        }
-        else {
-          console.error("[ERROR] You did not supply any data.");
-        }
-      }
+    });
     });
   </script>
 </dom-module>
