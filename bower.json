@@ -1,22 +1,22 @@
 {
-  "name": "m.e.i.n.e.l.-viz",
-  "description": "Visualization library for data gathered trough Massive Open Online Courses (MOOCs)",
-  "main": "barchart-basic.html",
-  "authors": [
-    "Jakob Edding",
-    "Lars Lange",
-    "Maximilian Voelkers",
-    "Florian Wirtz"
-  ],
-  "homepage": "https://openhpi.github.io/m.e.i.n.e.l./",
-  "dependencies": {
-    "polymer": "^1.7.1",
-    "plotly.js": "^1.22.0"
-  },
-  "devDependencies": {
-    "iron-component-page": "^1.1.8",
-    "iron-demo-helpers": "^1.2.5",
-    "web-component-tester": "^5.0.0",
-    "webcomponentsjs": "^0.7.23"
-  }
+    "name": "m.e.i.n.e.l.-viz",
+    "description": "Visualization library for data gathered trough Massive Open Online Courses (MOOCs)",
+    "main": "barchart-basic.html",
+    "authors": [
+        "Jakob Edding",
+        "Lars Lange",
+        "Maximilian Voelkers",
+        "Florian Wirtz"
+    ],
+    "homepage": "https://openhpi.github.io/m.e.i.n.e.l./",
+    "dependencies": {
+        "polymer": "^1.7.1",
+        "plotly.js": "^1.22.0"
+    },
+    "devDependencies": {
+        "iron-component-page": "^1.1.8",
+        "iron-demo-helpers": "^1.2.5",
+        "web-component-tester": "^5.0.0",
+        "webcomponentsjs": "^0.7.23"
+    }
 }

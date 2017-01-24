@@ -10,7 +10,7 @@ creating and passing the data to a charting component, specified in a parameter.
 @demo demo/ajax_wrapper_demo.html
 -->
 <dom-module id="ajax-wrapper">
-  <template>
+    <template>
     <style>
       :host {
         display: block;
@@ -27,76 +27,78 @@ creating and passing the data to a charting component, specified in a parameter.
     <div id="diagramComponent"></div>
   </template>
 
-  <script>
-    Polymer({
-      is: 'ajax-wrapper',
+    <script>
+        Polymer({
+            is: 'ajax-wrapper',
 
-      properties: {
-        /** URL of data to be fetched */
-        dataurl: {
-          type: String,
-        },
-        /** Name of charting component to be used */
-        diagramType: {
-          type: String,
-        },
-        /** Width of the outer div */
-        width: {
-          type: Number,
-        },
-        /** Height of the out div */
-        height: {
-          type: Number,
-        },
-        /** Primary color of the included chart */
-        primarycolor: {
-          type: String,
-          value: 'rgba(0,0,0,1)',
-        },
-        /** Accent color of the included chart */
-        accentcolor: {
-          type: String,
-          value: 'rgba(0,0,0,1)',
-        },
-      },
-      attached: function() {
-        this.$.ajaxCaller.generateRequest();
-      },
-      /**
-      * Handle the ajax response, create and add the desired charting element.
-      *
-      * @param {Object} data The data returned from the dataurl
-      */
-      handleResponse: function (data) {
-        var dataArray = this._readDataFromResponse(data.detail.response);
-        var diagramElement = document.createElement(this.diagramType);
-        // console.log(dataArray);
-        diagramElement.data = dataArray;
-        diagramElement.primarycolor = this.primarycolor;
-        diagramElement.accentcolor = this.accentcolor;
-        diagramElement.width = this.width;
-        diagramElement.height = this.height;
-        this.$.diagramComponent.appendChild(diagramElement);
-      },
+            properties: {
+                /** URL of data to be fetched */
+                dataurl: {
+                    type: String,
+                },
+                /** Name of charting component to be used */
+                diagramType: {
+                    type: String,
+                },
+                /** Width of the outer div */
+                width: {
+                    type: Number,
+                },
+                /** Height of the out div */
+                height: {
+                    type: Number,
+                },
+                /** Primary color of the included chart */
+                primarycolor: {
+                    type: String,
+                    value: 'rgba(0,0,0,1)',
+                },
+                /** Accent color of the included chart */
+                accentcolor: {
+                    type: String,
+                    value: 'rgba(0,0,0,1)',
+                },
+            },
+            attached: function() {
+                this.$.ajaxCaller.generateRequest();
+            },
+            /**
+             * Handle the ajax response, create and add the desired charting element.
+             *
+             * @param {Object} data The data returned from the dataurl
+             */
+            handleResponse: function(data) {
+                var dataArray = this._readDataFromResponse(data.detail.response);
+                var diagramElement = document.createElement(this.diagramType);
+                // console.log(dataArray);
+                diagramElement.data = dataArray;
+                diagramElement.primarycolor = this.primarycolor;
+                diagramElement.accentcolor = this.accentcolor;
+                diagramElement.width = this.width;
+                diagramElement.height = this.height;
+                this.$.diagramComponent.appendChild(diagramElement);
+            },
 
-      /**
-      * Parse the received data to a plotly readable Object
-      *
-      * @param {Object} data data to be parsed
-      */
-      _readDataFromResponse: function (data) {
-        var x = [];
-        var y = [];
-        for (entry in data) {
-          x.push(entry);
-          y.push(data[entry]);
-        }
-        var diagramData = {"x":x};
-        diagramData["y"] = y;
-        var plotlyData = [];
-        plotlyData.push(diagramData);
-        return plotlyData;
-      }
-    });
-  </script>
+            /**
+             * Parse the received data to a plotly readable Object
+             *
+             * @param {Object} data data to be parsed
+             */
+            _readDataFromResponse: function(data) {
+                var x = [];
+                var y = [];
+                for (entry in data) {
+                    x.push(entry);
+                    y.push(data[entry]);
+                }
+                var diagramData = {
+                    "x": x
+                };
+                diagramData["y"] = y;
+                var plotlyData = [];
+                plotlyData.push(diagramData);
+                return plotlyData;
+            }
+        });
+    </script>
 </dom-module>
