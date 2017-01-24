@@ -48,7 +48,6 @@ This is a basic component for plotly linecharts
 
       _plotDiagram: function () {
         var rawData = this.data;
-        console.log(this.data);
         var d3 = Plotly.d3;
         /** Reset plot area in case we're redrawing*/
         var gd3 = d3.select(this.$.myDiv).selectAll("*").remove();
