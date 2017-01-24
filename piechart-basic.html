@@ -15,8 +15,7 @@ This is a basic component for plotly piecharts
         display: block;
       }
     </style>
-
-    <div style="display:none;">{{dataset}}</div>
+    <div style="display:none;">{{data}}</div>
     <div id="diagram"></div>
   </template>
 
@@ -26,7 +25,7 @@ This is a basic component for plotly piecharts
 
       properties: {
         /** Datavalues to be plotted */
-        dataset: {
+        data: {
           type: Array,
         },
         /** Labels for the dataset (must be same size as dataset)*/
@@ -46,16 +45,18 @@ This is a basic component for plotly piecharts
           type: Array,
         },
       },
+      attached: function() {
+        this._plotDiagram();
+      },
       /**
-      * Transforms the transmitted data into a plot
+      * Displays the data in a pie chart
       *
       * @param {Array<number>} dataset The data to be plotted
       * @param {Array<string>} labels The labels corresponding to the dataset
       * @param {Array<string>} colors The colors the data shall be displayed in
       */
 
-      _plotDiagram: function (dataset, labels, colors) {
-
+      _plotDiagram: function () {
         var d3 = Plotly.d3;
 
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
@@ -82,15 +83,15 @@ This is a basic component for plotly piecharts
 
         var gd = gd3.node();
 
-        var data = [{
-          values: dataset,
-          labels: labels,
+        var dataSet = [{
+          values: this.data,
+          labels: this.labels,
           type: 'pie',
           marker: {
-            colors: colors
+            colors: this.colors
           },
         }];
-        Plotly.newPlot(gd, data);
+        Plotly.newPlot(gd, dataSet);
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
       ready: function() {
