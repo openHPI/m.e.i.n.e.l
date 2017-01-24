@@ -15,8 +15,7 @@ This is a basic component for plotly piecharts
         display: block;
       }
     </style>
-
-    <div style="display:none;">{{dataset}}</div>
+    <div style="display:none;">{{data}}</div>
     <div id="diagram"></div>
   </template>
 
@@ -27,40 +26,74 @@ This is a basic component for plotly piecharts
 
       properties: {
         /** Datavalues to be plotted */
-        dataset: {
+        data: {
           type: Array,
         },
         /** Labels for the dataset (must be same size as dataset)*/
         labels: {
           type: Array,
         },
+        /** Width of the outer div */
+        width: {
+          type: Number,
+        },
+        /** Height of the outer div */
+        height: {
+          type: Number,
+        },
         /** Colors for the dataset (must be same size as dataset)*/
         colors: {
           type: Array,
         },
       },
+      attached: function() {
+        this._plotDiagram();
+      },
       /**
-      * Transforms the transmitted data into a plot
+      * Displays the data in a pie chart
       *
       * @param {Array<number>} dataset The data to be plotted
       * @param {Array<string>} labels The labels corresponding to the dataset
       * @param {Array<string>} colors The colors the data shall be displayed in
       */
-      _plotDiagram: function (dataset, labels, colors) {
-        var diagram = this.$.diagram;
-        var data = [{
-          values: dataset,
-          labels: labels,
+
+      _plotDiagram: function () {
+        var d3 = Plotly.d3;
+
+        var WIDTH_IN_PERCENT_OF_PARENT = 100,
+            HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+        /** Defines the width and height of the outer div */
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
+
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
+        }
+
+        /** Create new div with specific attributes under outer div */
+        var gd3 = d3.select(this.$.diagram)
+            .append('div')
+            .style({
+                width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+            });
+
+        var gd = gd3.node();
+
+        var dataSet = [{
+          values: this.data,
+          labels: this.labels,
           type: 'pie',
           marker: {
-            colors: colors
+            colors: this.colors
           },
         }];
-        var layout = {
-          height: 400,
-          width: 500 //TODO check how to do better
-        };
-        Plotly.newPlot(diagram, data, layout);
+        Plotly.newPlot(gd, dataSet);
+        window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
       ready: function() {
         if(this.dataset && this.labels) {
