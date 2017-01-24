@@ -10,7 +10,6 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
 6. head to `localhost:8080/components/m.e.i.n.e.l.-viz/` in your browser & you are done! :blush:
 
 ## Creating custom components
-
 1. copy an existing diagram's main file (i.e. `barchart-basic.html` for the barchart)
 2. copy the corresponding demo file in `demo/` (i.e. `demo/barchart_basic_demo.html`)
 3. rename both to a name of choice (keep in mind that Polymer components need to have a dash in the name)
@@ -28,7 +27,9 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
   - [ ] embed your component accordingly inside the `<demo-snippet><template>HERE</template></demo-snippet>` part
 6. append your diagram to the `to all-imports.html` file
 
-## Vulcanize
+## Optimize for production
+To optimize the polymer components for production, you can use Vulcanize.
+More information can be found [in the Polymer docs.](https://www.polymer-project.org/1.0/docs/tools/optimize-for-production)
 1. install [npm install -g polymer-bundler](https://github.com/Polymer/polymer-bundler)
 2. figure out which chart you want from `src/`
 3. do `polymer-bundler --inline-scripts --inline-css src/YOUR-CHART.html > CHART.html`
