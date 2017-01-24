@@ -27,6 +27,7 @@ This is a basic component for plotly linecharts
         /** Data provided as an array of x,y objects */
         data: {
           type: Array,
+          notify: true,
         },
         /** Width of the outer div */
         width: {
@@ -38,13 +39,18 @@ This is a basic component for plotly linecharts
         },
       },
       attached: function() {
+        this.listen(this, 'data-changed', '_dataChanged')
+        this._plotDiagram();
+      },
+      _dataChanged: function() {
         this._plotDiagram();
       },
 
       _plotDiagram: function () {
         var rawData = this.data;
-
         var d3 = Plotly.d3;
+        /** Reset plot area in case we're redrawing*/
+        var gd3 = d3.select(this.$.myDiv).selectAll("*").remove();
 
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
