@@ -1,5 +1,5 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -17,7 +17,7 @@ This is a basic component for plotly linecharts
       }
     </style>
     <div style="display:none;">{{data}}</div>
-    <div id="myDiv"></div>
+    <div id="diagram"></div>
   </template>
 
   <script>
@@ -50,21 +50,21 @@ This is a basic component for plotly linecharts
         var rawData = this.data;
         var d3 = Plotly.d3;
         /** Reset plot area in case we're redrawing*/
-        var gd3 = d3.select(this.$.myDiv).selectAll("*").remove();
+        var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
 
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
         /** Defines the width and height of the outer div */
         if (this.width !== undefined && this.height !== undefined) {
-          var myDiv = d3.select(this.$.myDiv);
+          var diagram = d3.select(this.$.diagram);
 
-          myDiv.style('width', this.width + "px");
-          myDiv.style('height', this.height + "px");
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
         }
 
         /** Create new div with specific attributes under outer div */
-        var gd3 = d3.select(this.$.myDiv)
+        var gd3 = d3.select(this.$.diagram)
             .append('div')
             .style({
                 width: WIDTH_IN_PERCENT_OF_PARENT + '%',
