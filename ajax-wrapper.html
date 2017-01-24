@@ -3,12 +3,10 @@
 <link rel="import" href="plotly-import.html">
 <link rel="import" href="all-imports.html">
 
-
-
 <!--
 `ajax-wrapper`
-This is a component handling ajax calls to fetch data and passing it on to another component to display it.
-
+This component handles a given url by asynchronously fetching data from it and
+creating and passing the data to a charting component, specified in a parameter.
 @demo demo/ajax_wrapper_demo.html
 -->
 <dom-module id="ajax-wrapper">
@@ -34,7 +32,7 @@ This is a component handling ajax calls to fetch data and passing it on to anoth
       is: 'ajax-wrapper',
 
       properties: {
-        /** URL of data to be plotted */
+        /** URL of data to be fetched */
         dataurl: {
           type: String,
         },
@@ -65,7 +63,7 @@ This is a component handling ajax calls to fetch data and passing it on to anoth
         this.$.ajaxCaller.generateRequest();
       },
       /**
-      * Parse the data and pass it on to the included charting component.
+      * Handle the ajax response, create and add the desired charting element.
       *
       * @param {Object} data The data returned from the dataurl
       */
@@ -81,6 +79,11 @@ This is a component handling ajax calls to fetch data and passing it on to anoth
         this.$.diagramComponent.appendChild(diagramElement);
       },
 
+      /**
+      * Parse the received data to a plotly readable Object
+      *
+      * @param {Object} data data to be parsed
+      */
       _readDataFromResponse: function (data) {
         var x = [];
         var y = [];
