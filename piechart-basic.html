@@ -33,6 +33,14 @@ This is a basic component for plotly piecharts
         labels: {
           type: Array,
         },
+        /** Width of the outer div */
+        width: {
+          type: Number,
+        },
+        /** Height of the outer div */
+        height: {
+          type: Number,
+        },
         /** Colors for the dataset (must be same size as dataset)*/
         colors: {
           type: Array,
@@ -45,8 +53,35 @@ This is a basic component for plotly piecharts
       * @param {Array<string>} labels The labels corresponding to the dataset
       * @param {Array<string>} colors The colors the data shall be displayed in
       */
+
       _plotDiagram: function (dataset, labels, colors) {
-        var diagram = this.$.diagram;
+
+        var d3 = Plotly.d3;
+
+        var WIDTH_IN_PERCENT_OF_PARENT = 100,
+            HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+        /** Defines the width and height of the outer div */
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
+
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
+        }
+
+        /** Create new div with specific attributes under outer div */
+        var gd3 = d3.select(this.$.diagram)
+            .append('div')
+            .style({
+                width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+            });
+
+        var gd = gd3.node();
+
         var data = [{
           values: dataset,
           labels: labels,
@@ -55,11 +90,8 @@ This is a basic component for plotly piecharts
             colors: colors
           },
         }];
-        var layout = {
-          height: 400,
-          width: 500 //TODO check how to do better
-        };
-        Plotly.newPlot(diagram, data, layout);
+        Plotly.newPlot(gd, data);
+        window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
       ready: function() {
         if(this.dataset && this.labels) {

@@ -24,7 +24,8 @@ This is a basic component for plotly barcharts
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
-    <div id="myDiv"></div>
+    <div style="display:none;">{{xValues}}{{yValues}}</div>
+    <div id="diagram"></div>
   </template>
 
   <script>
@@ -35,6 +36,21 @@ This is a basic component for plotly barcharts
         /** URL of data to be plotted */
         dataurl: {
           type: String,
+          value: null,
+        },
+        xValues: {
+          type: Array,
+        },
+        yValues: {
+          type: Array,
+        },
+        /** Width of the outer div */
+        width: {
+          type: Number,
+        },
+        /** Height of the outer div */
+        height: {
+          type: Number,
         },
         /** Primary color of chart */
         primarycolor: {
@@ -47,17 +63,58 @@ This is a basic component for plotly barcharts
           value: 'rgba(0,0,0,1)',
         },
       },
-      ready: function() {
-        this.$.ajaxCaller.generateRequest();
+      attached: function() {
+        if(this.dataurl) {
+          this.$.ajaxCaller.generateRequest();
+        }
+        else {
+          this._plotDiagram();
+        }
       },
       /**
-      * Transforms the transmitted data into a plot
+      * Transforms the transmitted data into a plot.
+      * D3 handles responsiveness with an eventListener on top
       *
       * @param {Object} data The data to be plotted
       */
       handleResponse: function (data) {
-        var goodData = this._normalizeJSON(data.detail.response);
-        var myDiv = this.$.myDiv;
+        this._readDataFromResponse(data.detail.response);
+        this._plotDiagram();
+      },
+
+      _plotDiagram: function () {
+        var diagramData = {"x":this.xValues};
+        diagramData["y"] = this.yValues;
+        diagramData["type"] = "bar";
+        diagramData["marker"] = {color:this.primarycolor};
+        var plotData = [];
+        plotData.push(diagramData);
+
+        var d3 = Plotly.d3;
+
+        var WIDTH_IN_PERCENT_OF_PARENT = 100,
+            HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+        /** Defines the width and height of the outer div */
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
+
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
+        }
+
+        /** Create new div with specific attributes under outer div */
+        var gd3 = d3.select(this.$.diagram)
+            .append('div')
+            .style({
+                width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+            });
+
+        var gd = gd3.node();
         var layout = {
           xaxis: {
             tickmode: "auto",
@@ -74,30 +131,24 @@ This is a basic component for plotly barcharts
             },
           },
         };
-        Plotly.newPlot(myDiv, goodData, layout);
+        Plotly.newPlot(gd, plotData, layout);
+        window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
+
       /**
-      * Normalizes the data supplied by the API to work with Plotly
+      * Transforms the transmitted data into readable x,y values for plot.ly
       *
-      * @param {Object} data The data (as JSON) to be normalized
-      * @return {Array} The normalized data
+      * @param {Object} data The data read from the url
       */
-      _normalizeJSON: function (data) {
+      _readDataFromResponse: function (data) {
         var x = [];
         var y = [];
         for (entry in data) {
-          //compute date string
-          //x.push(entry);
           x.push((new Date(entry*1000)).toLocaleString());
           y.push(data[entry]);
         }
-        var diagramData = {"x":x};
-        diagramData["y"] = y;
-        diagramData["type"] = "bar";
-        diagramData["marker"] = {color:this.primarycolor};
-        var plotlyData = [];
-        plotlyData.push(diagramData);
-        return plotlyData;
+        this.xValues = x;
+        this.yValues = y;
       }
     });
   </script>
