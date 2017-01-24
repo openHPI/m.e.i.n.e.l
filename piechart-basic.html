@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -16,15 +15,8 @@ This is a basic component for plotly piecharts
         display: block;
       }
     </style>
-
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
-    <div id="myDiv"></div>
+    <div style="display:none;">{{data}}</div>
+    <div id="diagram"></div>
   </template>
 
   <script>
@@ -32,55 +24,54 @@ This is a basic component for plotly piecharts
       is: 'piechart-basic',
 
       properties: {
-        /** URL of data to be plotted (currently ignored)*/
-        dataurl: {
-          type: String,
+        /** Datavalues to be plotted */
+        data: {
+          type: Array,
+        },
+        /** Labels for the dataset (must be same size as dataset)*/
+        labels: {
+          type: Array,
         },
         /** Width of the outer div */
         width: {
           type: Number,
         },
-        /** Height of the out div */
+        /** Height of the outer div */
         height: {
           type: Number,
         },
-        /** Primary color of chart */
-        primarycolor: {
-          type: String,
-          value: 'rgba(0,0,0,1)',
-        },
-        /** Accent color of chart */
-        accentcolor: {
-          type: String,
-          value: 'rgba(0,0,0,1)',
+        /** Colors for the dataset (must be same size as dataset)*/
+        colors: {
+          type: Array,
         },
       },
-      ready: function() {
-        this.$.ajaxCaller.generateRequest();
+      attached: function() {
+        this._plotDiagram();
       },
       /**
-      * Transforms the transmitted data into a plot
+      * Displays the data in a pie chart
       *
-      * @param {Object} data The data to be plotted
+      * @param {Array<number>} dataset The data to be plotted
+      * @param {Array<string>} labels The labels corresponding to the dataset
+      * @param {Array<string>} colors The colors the data shall be displayed in
       */
-      handleResponse: function (data) {
-        //var goodData = this._normalizeJSON(data.detail.response);
 
+      _plotDiagram: function () {
         var d3 = Plotly.d3;
 
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
         /** Defines the width and height of the outer div */
-        if (this.width !== undefined && this.height !== undefined) {
-          var myDiv = d3.select(this.$.myDiv);
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
 
-          myDiv.style('width', this.width + "px");
-          myDiv.style('height', this.height + "px");
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
         }
 
         /** Create new div with specific attributes under outer div */
-        var gd3 = d3.select(this.$.myDiv)
+        var gd3 = d3.select(this.$.diagram)
             .append('div')
             .style({
                 width: WIDTH_IN_PERCENT_OF_PARENT + '%',
@@ -92,40 +83,24 @@ This is a basic component for plotly piecharts
 
         var gd = gd3.node();
 
-        var data = [{
-          values: [19, 26, 55],
-          labels: ['Residential', 'Non-Residential', 'Utility'],
-          type: 'pie'
+        var dataSet = [{
+          values: this.data,
+          labels: this.labels,
+          type: 'pie',
+          marker: {
+            colors: this.colors
+          },
         }];
-        var layout = {
-        };
-        Plotly.newPlot(gd, data, layout);
+        Plotly.newPlot(gd, dataSet);
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
-      /**
-      * Normalizes the data supplied by the API to work with Plotly (CURRENTLY NOT IN USE)
-      *
-      * @param {Object} data The data (as JSON) to be normalized
-      * @return {Array} The normalized data
-      */
-      _normalizeJSON: function (data) {
-        /*var x = [];
-        var y = [];
-        for (entry in data) {
-          //compute date string
-          //x.push(entry);
-          x.push((new Date(entry*1000)).toLocaleString());
-          y.push(data[entry]);
+      ready: function() {
+        if(this.dataset && this.labels) {
+          this._plotDiagram(this.dataset, this.labels, this.colors);
         }
-        var diagramData = {"x":x};
-        diagramData["y"] = y;
-        diagramData["type"] = "bar";
-        diagramData["marker"] = {color:this.primarycolor};
-        var plotlyData = [];
-        plotlyData.push(diagramData);
-        return plotlyData;*/
-        var data = [];
-        return data;
+        else {
+          console.error("[ERROR] You did not supply any data.");
+        }
       }
     });
   </script>

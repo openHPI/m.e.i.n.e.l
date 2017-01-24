@@ -16,39 +16,22 @@ This is a basic component for plotly barcharts
         display: block;
       }
     </style>
-
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
-    <div style="display:none;">{{xValues}}{{yValues}}</div>
-    <div id="myDiv"></div>
+    <div style="display:none;">{{data}}</div>
+    <div id="diagram"></div>
   </template>
 
   <script>
     Polymer({
       is: 'barchart-basic',
-
       properties: {
-        /** URL of data to be plotted */
-        dataurl: {
-          type: String,
-          value: "",
-        },
-        xValues: {
-          type: Array,
-        },
-        yValues: {
+        data: {
           type: Array,
         },
         /** Width of the outer div */
         width: {
           type: Number,
         },
-        /** Height of the out div */
+        /** Height of the outer div */
         height: {
           type: Number,
         },
@@ -64,47 +47,27 @@ This is a basic component for plotly barcharts
         },
       },
       attached: function() {
-        if(this.dataurl != "") {
-          this.$.ajaxCaller.generateRequest();
-        }
-        else {
-          this._plotDiagram();
-        }
-      },
-      /**
-      * Transforms the transmitted data into a plot.
-      * D3 handles responsiveness with an eventListener on top
-      *
-      * @param {Object} data The data to be plotted
-      */
-      handleResponse: function (data) {
-        this._readDataFromResponse(data.detail.response);
         this._plotDiagram();
       },
 
       _plotDiagram: function () {
-        var diagramData = {"x":this.xValues};
-        diagramData["y"] = this.yValues;
-        diagramData["type"] = "bar";
-        diagramData["marker"] = {color:this.primarycolor};
-        var plotData = [];
-        plotData.push(diagramData);
+        this.data[0]["type"] = "bar";
+        this.data[0]["marker"] = {color:this.primarycolor};
 
         var d3 = Plotly.d3;
-
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
             HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
         /** Defines the width and height of the outer div */
-        if (this.width !== undefined && this.height !== undefined) {
-          var myDiv = d3.select(this.$.myDiv);
+        if (this.width && this.height) {
+          var diagram = d3.select(this.$.diagram);
 
-          myDiv.style('width', this.width + "px");
-          myDiv.style('height', this.height + "px");
+          diagram.style('width', this.width + "px");
+          diagram.style('height', this.height + "px");
         }
 
         /** Create new div with specific attributes under outer div */
-        var gd3 = d3.select(this.$.myDiv)
+        var gd3 = d3.select(this.$.diagram)
             .append('div')
             .style({
                 width: WIDTH_IN_PERCENT_OF_PARENT + '%',
@@ -131,23 +94,9 @@ This is a basic component for plotly barcharts
             },
           },
         };
-        Plotly.newPlot(gd, plotData, layout);
+        Plotly.newPlot(gd, this.data, layout);
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
-
-      _readDataFromResponse: function (data) {
-        console.log("y");
-        var x = [];
-        var y = [];
-        for (entry in data) {
-          //compute date string
-          //x.push(entry);
-          x.push((new Date(entry*1000)).toLocaleString());
-          y.push(data[entry]);
-        }
-        this.xValues = x;
-        this.yValues = y;
-      }
     });
   </script>
 </dom-module>

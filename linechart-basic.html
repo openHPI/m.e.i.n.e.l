@@ -16,14 +16,6 @@ This is a basic component for plotly linecharts
         display: block;
       }
     </style>
-
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
     <div style="display:none;">{{data}}</div>
     <div id="myDiv"></div>
   </template>
@@ -31,13 +23,7 @@ This is a basic component for plotly linecharts
   <script>
     Polymer({
       is: 'linechart-basic',
-
       properties: {
-        /** URL of data to be plotted */
-        dataurl: {
-          type: String,
-          value: "",
-        },
         /** Data provided as an array of x,y objects */
         data: {
           type: Array,
@@ -54,12 +40,7 @@ This is a basic component for plotly linecharts
       },
       attached: function() {
         this.listen(this, 'data-changed', '_dataChanged')
-        if(this.dataurl != "") {
-          this.$.ajaxCaller.generateRequest();
-        }
-        else {
-          this._plotDiagram();
-        }
+        this._plotDiagram();
       },
       _dataChanged: function() {
         this._plotDiagram();
