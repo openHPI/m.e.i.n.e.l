@@ -16,14 +16,6 @@ This is a basic component for plotly barcharts
         display: block;
       }
     </style>
-
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
     <div style="display:none;">{{data}}</div>
     <div id="myDiv"></div>
   </template>
