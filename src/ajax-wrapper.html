@@ -26,8 +26,8 @@ creating and passing the data to a charting component, specified in a parameter.
     </iron-ajax>
     <div id="diagramComponent"></div>
   </template>
-
     <script>
+        window.addEventListener("WebComponentsReady", function(){
         Polymer({
             is: 'ajax-wrapper',
 
@@ -78,7 +78,7 @@ creating and passing the data to a charting component, specified in a parameter.
                 diagramElement.height = this.height;
                 this.$.diagramComponent.appendChild(diagramElement);
             },
-
+              
             /**
              * Parse the received data to a plotly readable Object
              *
@@ -100,5 +100,6 @@ creating and passing the data to a charting component, specified in a parameter.
                 return plotlyData;
             }
         });
+     });
     </script>
 </dom-module>
