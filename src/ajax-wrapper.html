@@ -28,6 +28,7 @@ creating and passing the data to a charting component, specified in a parameter.
   </template>
 
   <script>
+    window.addEventListener("WebComponentsReady", function(){
     Polymer({
       is: 'ajax-wrapper',
 
@@ -98,5 +99,6 @@ creating and passing the data to a charting component, specified in a parameter.
         return plotlyData;
       }
     });
+  });
   </script>
 </dom-module>

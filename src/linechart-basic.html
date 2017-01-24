@@ -21,6 +21,7 @@ This is a basic component for plotly linecharts
   </template>
 
   <script>
+    window.addEventListener("WebComponentsReady", function(){
     Polymer({
       is: 'linechart-basic',
       properties: {
@@ -94,7 +95,7 @@ This is a basic component for plotly linecharts
         Plotly.newPlot(gd, rawData, layout);
         window.addEventListener('resize', function() { Plotly.Plots.resize(gd); });
       },
-
     });
+  });
   </script>
 </dom-module>

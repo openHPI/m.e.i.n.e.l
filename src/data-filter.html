@@ -36,6 +36,7 @@ This is a component for filtering data based on user input.
   </template>
 
   <script>
+    window.addEventListener("WebComponentsReady", function(){
     Polymer({
       is: 'data-filter',
 
@@ -83,5 +84,6 @@ This is a component for filtering data based on user input.
         this.$.linechart.data=newDataset;
       },
     });
+  });
   </script>
 </dom-module>
