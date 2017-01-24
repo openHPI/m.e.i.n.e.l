@@ -12,7 +12,7 @@ This is a component for filtering data based on user input.
 @demo demo/data_filter_demo.html
 -->
 <dom-module id="data-filter">
-  <template>
+    <template>
     <style>
       :host {
         display: block;
@@ -34,56 +34,55 @@ This is a component for filtering data based on user input.
     <div id="filterBar"></div>
     <linechart-basic id="linechart" data={{data}} width={{width}} height={{height}}></linechart-basic>
   </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+        Polymer({
+            is: 'data-filter',
 
-  <script>
-    window.addEventListener("WebComponentsReady", function(){
-    Polymer({
-      is: 'data-filter',
-
-      properties: {
-        /** URL of data to be plotted */
-        dataurl: {
-          type: String,
-          value: "",
-        },
-        /** Data provided as an array of x,y objects */
-        data: {
-          type: Array,
-        },
-        /** Width of the outer div */
-        width: {
-          type: Number,
-        },
-        /** Height of the out div */
-        height: {
-          type: Number,
-        },
-      },
-      attached: function() {
-        for(var ii = 0; ii < this.data.length; ii++) {
-          var newButton = document.createElement("paper-button");
-          var buttonText = document.createTextNode("Data " + ii);
-          newButton.appendChild(buttonText);
-          newButton.setAttribute("toggles", "");
-          newButton.setAttribute("raised", "");
-          newButton.setAttribute("on-click", "test");
-          newButton.active = true;
-          newButton.setAttribute("data-array", JSON.stringify(this.data[ii]));
-          this.$.filterBar.appendChild(newButton);
-          this.listen(newButton, 'tap', '_passData');
-        }
-      },
-      _passData: function(button) {
-        var newDataset = [];
-        var buttons = this.$.filterBar.children;
-        for(var ii = 0; ii < buttons.length; ii++) {
-          if(buttons[ii].active) {
-            newDataset.push(JSON.parse(buttons[ii].getAttribute("data-array")));
-          }
-        }
-        this.$.linechart.data=newDataset;
-      },
+            properties: {
+                /** URL of data to be plotted */
+                dataurl: {
+                    type: String,
+                    value: "",
+                },
+                /** Data provided as an array of x,y objects */
+                data: {
+                    type: Array,
+                },
+                /** Width of the outer div */
+                width: {
+                    type: Number,
+                },
+                /** Height of the out div */
+                height: {
+                    type: Number,
+                },
+            },
+            attached: function() {
+                for (var ii = 0; ii < this.data.length; ii++) {
+                    var newButton = document.createElement("paper-button");
+                    var buttonText = document.createTextNode("Data " + ii);
+                    newButton.appendChild(buttonText);
+                    newButton.setAttribute("toggles", "");
+                    newButton.setAttribute("raised", "");
+                    newButton.setAttribute("on-click", "test");
+                    newButton.active = true;
+                    newButton.setAttribute("data-array", JSON.stringify(this.data[ii]));
+                    this.$.filterBar.appendChild(newButton);
+                    this.listen(newButton, 'tap', '_passData');
+                }
+            },
+            _passData: function(button) {
+                var newDataset = [];
+                var buttons = this.$.filterBar.children;
+                for (var ii = 0; ii < buttons.length; ii++) {
+                    if (buttons[ii].active) {
+                        newDataset.push(JSON.parse(buttons[ii].getAttribute("data-array")));
+                    }
+                }
+                this.$.linechart.data = newDataset;
+            },
+        });
     });
-  });
-  </script>
+    </script>
 </dom-module>
