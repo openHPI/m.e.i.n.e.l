@@ -30,7 +30,8 @@ This is the landing page of the m.e.i.n.e.l. project and will include the docume
 ## Optimize for production
 To optimize the polymer components for production, you can use Vulcanize.
 More information can be found [in the Polymer docs.](https://www.polymer-project.org/1.0/docs/tools/optimize-for-production)
-1. install [npm install -g polymer-bundler](https://github.com/Polymer/polymer-bundler)
+
+1. install [Polymer Bundler](https://github.com/Polymer/polymer-bundler): `npm install -g polymer-bundler`
 2. figure out which chart you want from `src/`
 3. do `polymer-bundler --inline-scripts --inline-css src/YOUR-CHART.html > CHART.html`
 4. include the `CHART.html` as `<link rel="import" href="../path/CHART.html">`
