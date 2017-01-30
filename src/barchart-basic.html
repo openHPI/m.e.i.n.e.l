@@ -46,6 +46,16 @@ This is a basic component for plotly barcharts
                         type: String,
                         value: 'rgba(0,0,0,1)',
                     },
+                    /** Scroll and zoom activation */
+                    scrollzoom: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    /** Scroll range provided in % 0 to 100 */
+                    scrollrange: {
+                      type: Number,
+                      value: 100,
+                    },
                 },
                 attached: function() {
                     this._plotDiagram();
@@ -81,28 +91,50 @@ This is a basic component for plotly barcharts
                         });
 
                     var gd = gd3.node();
-                    var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
-                    var midX = this.data[0]["x"][this.data[0]["x"].length/2];
-                    var layout = {
-                        xaxis: {
-                            tickmode: "auto",
-                            nticks: 4,
-                            range: [midX, maxX],
-                            rangeslider: {},
-                            tickfont: {
-                                size: 14,
-                                color: this.accentcolor,
-                            },
-                        },
-                        yaxis: {
-                            fixedrange: true,
-                            tickfont: {
-                                size: 14,
-                                color: this.accentcolor,
-                            },
-                        },
-                    };
-                    Plotly.newPlot(gd, this.data, layout, {scrollZoom: true});
+
+                    /** Create different layouts depending on scrollzoom being active or not */
+                    if (this.scrollzoom) {
+                      var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
+                      var minX = this.data[0]["x"][Math.round(this.data[0]["x"].length*(1-this.scrollrange/100))];
+                      var layout = {
+                          xaxis: {
+                              tickmode: "auto",
+                              nticks: 4,
+                              range: [minX, maxX],
+                              rangeslider: {},
+                              tickfont: {
+                                  size: 14,
+                                  color: this.accentcolor,
+                              },
+                          },
+                          yaxis: {
+                              fixedrange: true,
+                              tickfont: {
+                                  size: 14,
+                                  color: this.accentcolor,
+                              },
+                          },
+                      };
+                      Plotly.newPlot(gd, this.data, layout, {scrollZoom: true});
+                    } else {
+                      var layout = {
+                          xaxis: {
+                              tickmode: "auto",
+                              nticks: 4,
+                              tickfont: {
+                                  size: 14,
+                                  color: this.accentcolor,
+                              },
+                          },
+                          yaxis: {
+                              tickfont: {
+                                  size: 14,
+                                  color: this.accentcolor,
+                              },
+                          },
+                      };
+                      Plotly.newPlot(gd, this.data, layout);
+                    }
                     window.addEventListener('resize', function() {
                         Plotly.Plots.resize(gd);
                     });

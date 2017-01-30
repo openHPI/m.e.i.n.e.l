@@ -58,6 +58,16 @@ creating and passing the data to a charting component, specified in a parameter.
                     type: String,
                     value: 'rgba(0,0,0,1)',
                 },
+                /** Scroll and zoom activation */
+                scrollzoom: {
+                    type: Boolean,
+                    value: false,
+                },
+                /** Scroll range provided in % 0 to 100 */
+                scrollrange: {
+                  type: Number,
+                  value: 100,
+                },
             },
             attached: function() {
                 this.$.ajaxCaller.generateRequest();
@@ -76,9 +86,11 @@ creating and passing the data to a charting component, specified in a parameter.
                 diagramElement.accentcolor = this.accentcolor;
                 diagramElement.width = this.width;
                 diagramElement.height = this.height;
+                diagramElement.scrollzoom = this.scrollzoom;
+                diagramElement.scrollrange = this.scrollrange;
                 this.$.diagramComponent.appendChild(diagramElement);
             },
-              
+
             /**
              * Parse the received data to a plotly readable Object
              *
