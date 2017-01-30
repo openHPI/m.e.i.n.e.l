@@ -148,7 +148,7 @@ This component shows an activity history, similar to the colored github chart.
       },
 
       attached: function() {
-        if(this.dataurl != "") {
+        if(this.dataurl) {
           this.$.ajaxCaller.generateRequest();
         }
         else {
