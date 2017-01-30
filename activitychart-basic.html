@@ -107,6 +107,11 @@ This component shows an activity history, similar to the colored github chart.
           type: String,
           value: "course"
         },
+        /** String that is displayed between datum and date when label is shown. */
+        labelSeparator: {
+          type: String,
+          value: ' bei '
+        },
         /** Set padding (in px) of the label shown when hovering over a datum (opt, default: 2) */
         labelPadding: {
           type: Number,
@@ -295,7 +300,7 @@ This component shows an activity history, similar to the colored github chart.
         //append rect element first so that following text element is displayed above rect
         label.append('rect');
         var labelText = label.append('text')
-					.text(d.y + ' at ' + d.x)
+					.text(d.y + this.labelSeparator + d.x)
 					.style('font-size', this.labelTextSize)
 					.attr('fill', 'black')
           .attr('alignment-baseline', 'after-edge');
