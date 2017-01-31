@@ -72,7 +72,7 @@ creating and passing the data to a charting component, specified in a parameter.
              */
             handleResponse: function(data) {
                 var dataArray = this._readDataFromResponse(data.detail.response);
-                if (this.diagramType != "") {
+                if (this.diagramType) {
                     var newChartingElement = document.createElement(this.diagramType);
                     Polymer.dom(this).appendChild(newChartingElement);
                 }
