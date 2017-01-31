@@ -36,7 +36,7 @@ creating and passing the data to a charting component, specified in a parameter.
                 dataurl: {
                     type: String,
                 },
-                /** Name of charting component to be used (optional)*/
+                /** Name of charting component to be created (optional).*/
                 diagramType: {
                     type: String,
                     value: '',
@@ -65,7 +65,8 @@ creating and passing the data to a charting component, specified in a parameter.
             },
             /**
              * Handle the ajax response and pass data and parameters down to
-             * contained elements
+             * contained elements. Or create a new charting element if a
+             * diagramType was defined.
              *
              * @param {Object} data The data returned from the dataurl
              */
@@ -80,7 +81,7 @@ creating and passing the data to a charting component, specified in a parameter.
                     chartingElement.accentcolor = this.accentcolor;
                     chartingElement.width = this.width;
                     chartingElement.height = this.height;
-                    chartingElement.data = dataArray;
+                    chartingElement.data = JSON.parse(JSON.stringify(dataArray));   //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
                 }
             },
 
