@@ -32,14 +32,16 @@ This is a basic component for plotly linecharts
                 /** Width of the outer div */
                 width: {
                     type: Number,
+                    reflectToAttribute: true,
                 },
                 /** Height of the out div */
                 height: {
                     type: Number,
+                    reflectToAttribute: true,
                 },
             },
             attached: function() {
-                this.listen(this, 'data-changed', '_dataChanged')
+                this.listen(this, 'data-changed', '_dataChanged');
                 this._plotDiagram();
             },
             _dataChanged: function() {

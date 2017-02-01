@@ -27,37 +27,52 @@ This is a basic component for plotly barcharts
                 properties: {
                     data: {
                         type: Array,
+                        notify: true,
                     },
                     /** Width of the outer div */
                     width: {
                         type: Number,
+                        reflectToAttribute: true,
                     },
                     /** Height of the outer div */
                     height: {
                         type: Number,
+                        reflectToAttribute: true,
                     },
                     /** Primary color of chart */
                     primarycolor: {
                         type: String,
                         value: 'rgba(0,0,0,1)',
+                        reflectToAttribute: true,
                     },
                     /** Accent color of chart */
                     accentcolor: {
                         type: String,
                         value: 'rgba(0,0,0,1)',
+                        reflectToAttribute: true,
                     },
                 },
                 attached: function() {
+                    this.listen(this, 'data-changed', '_dataChanged');
                     this._plotDiagram();
                 },
-
+                _dataChanged: function() {
+                    this._plotDiagram();
+                },
                 _plotDiagram: function() {
+                    if(this.data == null) {
+                        return;
+                    }
                     this.data[0]["type"] = "bar";
                     this.data[0]["marker"] = {
                         color: this.primarycolor
                     };
 
                     var d3 = Plotly.d3;
+
+                    /** Reset plot area in case we're redrawing*/
+                    var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
+
                     var WIDTH_IN_PERCENT_OF_PARENT = 100,
                         HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
