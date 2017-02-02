@@ -30,350 +30,352 @@ This component shows an activity history, similar to the colored github chart.
   </template>
 
   <script>
-    Polymer({
-      is: 'activitychart-basic',
+    window.addEventListener("WebComponentsReady", function() {
+      Polymer({
+        is: 'activitychart-basic',
 
-      properties: {
-        /** URL of data to be plotted */
-        dataurl: {
-          type: String,
-          value: '',
+        properties: {
+          /** URL of data to be plotted */
+          dataurl: {
+            type: String,
+            value: '',
+          },
+          /** y values in JSON format (data to be displayed) */
+          dataset: {
+            type: Array,
+          },
+          /** x values in JSON format (labels for data) */
+          labels: {
+            type: Array,
+          },
+          /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
+          primarycolor: {
+            type: String,
+            value: '#930517',
+          },
+          /** Accent color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA  */
+          accentcolor: {
+            type: String,
+            value: '#F5E8BB',
+          },
+          /** Size of square (opt, default: 15) */
+          squareSize: {
+            type: Number,
+            value: 15,
+          },
+          /** Spacing of squares, should be greater than square-size (opt, default: 20) */
+          squareSpacing: {
+            type: Number,
+            value: 20,
+          },
+          /** This property is computed automatically based on square-size and square-spacing and cannot be overwritten. */
+          spaceBetweenSquares: {
+            type: Number,
+            computed: '_computeSpaceBetweenSquares(squareSpacing, squareSize)'
+          },
+          /** Number of colored dots per column. Is always derived from the size of axisLabels.y.values provided and cannot be overwritten! */
+          squaresPerColumn: {
+            type: Number,
+            computed: '_computeSquaresPerColumn(axisLabels)'
+          },
+          //this could also be solved by setting value to a function calculating the default min/max value from the dataset (but only if we receive the dataset as a JSON object isntead of just receiving a URL)
+          /** Minimum value from the dataset that is used for the color scale can be overwritten. */
+          minValue: {
+            type: Number,
+            value: null
+          },
+          /** Maximum value from the dataset that is used for the color scale can be overwritten. */
+          maxValue: {
+            type: Number,
+            value: null
+          },
+          /** Labels for x and y axis.
+          Please provide as {'x': {'label': String}, 'y': {'label': String, 'values': String[]}}
+          The correct labels for the x axis are chosen programmatically based on the data.*/
+          axisLabels: {
+            type: Object,
+            value: {
+              "x": {
+                "label": "Tag"
+              },
+              "y": {
+            		"label": "Stunde",
+                "values": ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
+              }
+            }
+          },
+          /** Chose from displaying activity of a "course" or a "user" */
+          activityType: {
+            type: String,
+            value: "course"
+          },
+          /** String that is displayed between datum and date when label is shown. */
+          labelSeparator: {
+            type: String,
+            value: ' bei '
+          },
+          /** Set padding (in px) of the label shown when hovering over a datum (opt, default: 2) */
+          labelPadding: {
+            type: Number,
+            value: 2
+          },
+          /** Set text size (in px) of label shown when hovering over a datum (opt, default: 13) */
+          labelTextSize: {
+            type: Number,
+            value: 14
+          },
+          /** Customize the label background color (opt, default: white) */
+          labelBackgroundColor: {
+            type: String,
+            value: 'white'
+          },
+          /** Set text size (in px) of the axes' title labels (opt, default: 14) */
+          axisTitleTextSize: {
+            type: Number,
+            value: 14
+          },
+          /** Set text size (in px) of the axes' labels (opt, default: 12) */
+          axisLabelsTextSize: {
+            type: Number,
+            value: 12
+          },
+          /** Decide with what column-frequency the lables on the x axis should be shown (opt, default: 5)*/
+          xAxisLabelFrequency: {
+            type: Number,
+            value: 5
+          }
         },
-        /** y values in JSON format (data to be displayed) */
-        dataset: {
-          type: Array,
+
+        _computeSquaresPerColumn: function(axisLabels) {
+          return axisLabels.y.values.length;
         },
-        /** x values in JSON format (labels for data) */
-        labels: {
-          type: Array,
+
+        _computeSpaceBetweenSquares: function(squareSpacing, squareSize) {
+          return squareSpacing - squareSize;
         },
-        /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
-        primarycolor: {
-          type: String,
-          value: '#930517',
+
+        attached: function() {
+          if(this.dataurl) {
+            this.$.ajaxCaller.generateRequest();
+          }
+          else {
+            this._plotDiagram();
+          }
         },
-        /** Accent color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA  */
-        accentcolor: {
-          type: String,
-          value: '#F5E8BB',
+        /**
+        * Transforms the transmitted data into a plot
+        *
+        * @param {Object} data The data to be plotted
+        */
+        handleResponse: function (data) {
+          var goodData = this._normalizeJSON(data.detail.response);
+          this.dataset = goodData[0]["y"];
+          this.labels = goodData[0]["x"];
+          this._plotDiagram();
         },
-        /** Size of square (opt, default: 15) */
-        squareSize: {
-          type: Number,
-          value: 15,
+
+        _buildDataset: function(labels, dataset) {
+          // create data like this:
+          // [ {'x': timeStamp0, 'y': value0}, ... ,{'x': timeStampN, 'y': valueN}]
+          var data = [];
+          for(var j = 0; j < labels.length; j++) {
+            data[j] = {'x': labels[j], 'y': dataset[j]};
+          }
+          return data;
         },
-        /** Spacing of squares, should be greater than square-size (opt, default: 20) */
-        squareSpacing: {
-          type: Number,
-          value: 20,
-        },
-        /** This property is computed automatically based on square-size and square-spacing and cannot be overwritten. */
-        spaceBetweenSquares: {
-          type: Number,
-          computed: '_computeSpaceBetweenSquares(squareSpacing, squareSize)'
-        },
-        /** Number of colored dots per column. Is always derived from the size of axisLabels.y.values provided and cannot be overwritten! */
-        squaresPerColumn: {
-          type: Number,
-          computed: '_computeSquaresPerColumn(axisLabels)'
-        },
-        //this could also be solved by setting value to a function calculating the default min/max value from the dataset (but only if we receive the dataset as a JSON object isntead of just receiving a URL)
-        /** Minimum value from the dataset that is used for the color scale can be overwritten. */
-        minValue: {
-          type: Number,
-          value: null
-        },
-        /** Maximum value from the dataset that is used for the color scale can be overwritten. */
-        maxValue: {
-          type: Number,
-          value: null
-        },
-        /** Labels for x and y axis.
-        Please provide as {'x': {'label': String}, 'y': {'label': String, 'values': String[]}}
-        The correct labels for the x axis are chosen programmatically based on the data.*/
-        axisLabels: {
-          type: Object,
-          value: {
-            "x": {
-              "label": "Tag"
-            },
-            "y": {
-          		"label": "Stunde",
-              "values": ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
+
+        _plotDiagram: function () {
+          this.diagramDiv = this.$.diagram; //hand this diagram wrapper to D3 later on to limit D3's selection process to the local DOM
+
+          var data = this._buildDataset(this.labels, this.dataset);
+
+          if(this.minValue == null) {
+            this.minValue = Math.min(...this.dataset);
+          }
+          if(this.maxValue == null) {
+            this.maxValue = Math.max(...this.dataset);
+          }
+
+          //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
+          var colorScale = Plotly.d3.scale.linear()
+            .domain([this.minValue, this.maxValue])
+            .range([this.accentcolor, this.primarycolor]);
+
+          var svg = Plotly.d3.select(this.diagramDiv).append('svg');
+
+          //create y axis
+          var yAxis = svg.append('g');
+
+          var yAxisTitle = yAxis.append('text')
+            .text(this.axisLabels.y.label)
+            .style('font-size', this.axisTitleTextSize)
+            .attr('x', 0) //make this customizable as some kind of margin maybe?
+            .attr('y', this.axisTitleTextSize);
+
+          var yLabelValues = this.axisLabels.y.values;
+
+          var yAxisLabels = yAxis.append('g');
+          var yAxisLabelsTexts = yAxisLabels.selectAll('text')
+            .data(yLabelValues)
+            .enter().append('text')
+            .text(function(d) { return d; })
+            .style('font-size', this.axisLabelsTextSize)
+            .attr('x', 0)
+            .attr('y', this._spaceSquareVert.bind(this));
+
+          yAxisLabels.attr('transform', 'translate(0, ' + (3 * this.axisTitleTextSize) + ')');
+
+          //calculate dimensions of the actual visualization (without the axes)
+          var visualizationHeight = (this.squaresPerColumn * this.squareSpacing) + this.spaceBetweenSquares;
+          var visualizationWidth = (Math.ceil(this.dataset.length / this.squaresPerColumn) * this.squareSpacing) + this.spaceBetweenSquares;
+
+          //create x axis
+          var xAxis = svg.append('g');
+
+          var xLabelValues = [];
+
+          for(var i = 0; i < data.length; i++) {
+            if((i % this.squaresPerColumn == 0) && ((i / this.squaresPerColumn) % this.xAxisLabelFrequency == 0)) {
+                xLabelValues.push(data[i]);
             }
           }
+
+          var xAxisLabels = xAxis.append('g');
+          var xAxisLabelsTexts = xAxisLabels.selectAll('text')
+            .data(xLabelValues)
+            .enter().append('text')
+            .text(function(d) {
+                    if(this.activityType == 'user') {
+                      return this._calculateCalendarWeek(d.x);
+                    } else {
+                      return d.x;
+                    }
+                  }.bind(this))
+            .style('font-size', this.axisLabelsTextSize)
+            .attr('transform', function(d, i) { return 'translate(' + this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this.squaresPerColumn)) + ', 0)rotate(' + 90 + ')'; }.bind(this))
+            .attr('alignment-baseline', 'after-edge');
+
+          var xAxisTitle = xAxis.append('text')
+            .text(this.axisLabels.x.label)
+            .style('font-size', this.axisTitleTextSize)
+            .attr('x', visualizationWidth - this.spaceBetweenSquares)
+            .attr('y', this.axisTitleTextSize)
+            .attr('alignment-baseline', 'after-edge');
+
+          var yAxisBounds = yAxis.node().getBBox();
+          var xAxisBounds = xAxis.node().getBBox();
+
+          xAxis.attr('transform', 'translate(' + (yAxisBounds.width + this.spaceBetweenSquares) + ', ' + (yAxisBounds.height + this.spaceBetweenSquares) + ')');
+
+          //create actual activity visualization
+          var visualization = svg.append('g')
+            .attr('transform', 'translate(' + (yAxisBounds.width + this.spaceBetweenSquares) + ', ' + (yAxisBounds.height - visualizationHeight + 2 * this.spaceBetweenSquares) + ')')
+            .attr('id', 'visualization');
+
+          var squares = visualization.selectAll('rect')
+            .data(data)
+            .enter().append('rect')
+            .attr('width', this.squareSize)
+            .attr('height', this.squareSize)
+            .attr('x', this._spaceSquareHor.bind(this))
+            .attr('y', this._spaceSquareVert.bind(this))
+            .attr('fill', function(d) { return colorScale(d.y); })
+            .on('mouseover', this._showLabel.bind(this))
+            .on('mouseout', this._hideLabel.bind(this));
+
+          // set svg dimensions
+          svg
+            .attr('height', yAxisBounds.height + xAxisBounds.height)
+            .attr('width', yAxisBounds.width + this.spaceBetweenSquares + xAxisBounds.width);
         },
-        /** Chose from displaying activity of a "course" or a "user" */
-        activityType: {
-          type: String,
-          value: "course"
+
+        _calculateCalendarWeek: function(timeStamp) {
+          //calculate and return calendar week from the given time stamp
         },
-        /** String that is displayed between datum and date when label is shown. */
-        labelSeparator: {
-          type: String,
-          value: ' bei '
+
+        _showLabel: function (d, i) {
+          //using a group element 'label' with an appended text element and a rect element as background to display a label
+
+          var label = Plotly.d3.select(this.diagramDiv).select('#visualization').append('g')
+            .attr('id', 'label-' + i);
+
+          //append rect element first so that following text element is displayed above rect
+          label.append('rect');
+          var labelText = label.append('text')
+  					.text(d.y + this.labelSeparator + d.x)
+  					.style('font-size', this.labelTextSize)
+  					.attr('fill', 'black')
+            .attr('alignment-baseline', 'after-edge');
+
+          var textWidth = labelText.node().getBBox().width;
+
+          //this split is necessary because the position is set relative to the size of the text element
+          labelText
+            .attr('x', this._spaceLabelHor(d, i, textWidth))
+            .attr('y', this._spaceLabelVert(d, i));
+
+          //finish rect configuration that was appended previously
+          label.select('rect')
+            .attr('x', labelText.attr('x') - this.labelPadding)
+    				.attr('y', labelText.attr('y') - this.labelTextSize - this.labelPadding)
+    				.attr('fill', this.labelBackgroundColor)
+    				.attr('width', textWidth + (2 * this.labelPadding))
+        		.attr('height', this.labelTextSize + (2 * this.labelPadding));
+  			},
+
+        _hideLabel: function (d, i) {
+          Plotly.d3.select(this.diagramDiv).select('#label-' + i).remove();
         },
-        /** Set padding (in px) of the label shown when hovering over a datum (opt, default: 2) */
-        labelPadding: {
-          type: Number,
-          value: 2
-        },
-        /** Set text size (in px) of label shown when hovering over a datum (opt, default: 13) */
-        labelTextSize: {
-          type: Number,
-          value: 14
-        },
-        /** Customize the label background color (opt, default: white) */
-        labelBackgroundColor: {
-          type: String,
-          value: 'white'
-        },
-        /** Set text size (in px) of the axes' title labels (opt, default: 14) */
-        axisTitleTextSize: {
-          type: Number,
-          value: 14
-        },
-        /** Set text size (in px) of the axes' labels (opt, default: 12) */
-        axisLabelsTextSize: {
-          type: Number,
-          value: 12
-        },
-        /** Decide with what column-frequency the lables on the x axis should be shown (opt, default: 5)*/
-        xAxisLabelFrequency: {
-          type: Number,
-          value: 5
-        }
-      },
 
-      _computeSquaresPerColumn: function(axisLabels) {
-        return axisLabels.y.values.length;
-      },
+        _spaceLabelHor: function(d, i, textWidth) {
+          var x = this._spaceSquareHor(d, i);
+          //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
+          var maxPosition = Plotly.d3.select(this.diagramDiv).select('#visualization').node().getBBox().width - textWidth - this.labelPadding;
 
-      _computeSpaceBetweenSquares: function(squareSpacing, squareSize) {
-        return squareSpacing - squareSize;
-      },
-
-      attached: function() {
-        if(this.dataurl) {
-          this.$.ajaxCaller.generateRequest();
-        }
-        else {
-          this._plotDiagram();
-        }
-      },
-      /**
-      * Transforms the transmitted data into a plot
-      *
-      * @param {Object} data The data to be plotted
-      */
-      handleResponse: function (data) {
-        var goodData = this._normalizeJSON(data.detail.response);
-        this.dataset = goodData[0]["y"];
-        this.labels = goodData[0]["x"];
-        this._plotDiagram();
-      },
-
-      _buildDataset: function(labels, dataset) {
-        // create data like this:
-        // [ {'x': timeStamp0, 'y': value0}, ... ,{'x': timeStampN, 'y': valueN}]
-        var data = [];
-        for(var j = 0; j < labels.length; j++) {
-          data[j] = {'x': labels[j], 'y': dataset[j]};
-        }
-        return data;
-      },
-
-      _plotDiagram: function () {
-        this.diagramDiv = this.$.diagram; //hand this diagram wrapper to D3 later on to limit D3's selection process to the local DOM
-
-        var data = this._buildDataset(this.labels, this.dataset);
-
-        if(this.minValue == null) {
-          this.minValue = Math.min(...this.dataset);
-        }
-        if(this.maxValue == null) {
-          this.maxValue = Math.max(...this.dataset);
-        }
-
-        //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
-        var colorScale = Plotly.d3.scale.linear()
-          .domain([this.minValue, this.maxValue])
-          .range([this.accentcolor, this.primarycolor]);
-
-        var svg = Plotly.d3.select(this.diagramDiv).append('svg');
-
-        //create y axis
-        var yAxis = svg.append('g');
-
-        var yAxisTitle = yAxis.append('text')
-          .text(this.axisLabels.y.label)
-          .style('font-size', this.axisTitleTextSize)
-          .attr('x', 0) //make this customizable as some kind of margin maybe?
-          .attr('y', this.axisTitleTextSize);
-
-        var yLabelValues = this.axisLabels.y.values;
-
-        var yAxisLabels = yAxis.append('g');
-        var yAxisLabelsTexts = yAxisLabels.selectAll('text')
-          .data(yLabelValues)
-          .enter().append('text')
-          .text(function(d) { return d; })
-          .style('font-size', this.axisLabelsTextSize)
-          .attr('x', 0)
-          .attr('y', this._spaceSquareVert.bind(this));
-
-        yAxisLabels.attr('transform', 'translate(0, ' + (3 * this.axisTitleTextSize) + ')');
-
-        //calculate dimensions of the actual visualization (without the axes)
-        var visualizationHeight = (this.squaresPerColumn * this.squareSpacing) + this.spaceBetweenSquares;
-        var visualizationWidth = (Math.ceil(this.dataset.length / this.squaresPerColumn) * this.squareSpacing) + this.spaceBetweenSquares;
-
-        //create x axis
-        var xAxis = svg.append('g');
-
-        var xLabelValues = [];
-
-        for(var i = 0; i < data.length; i++) {
-          if((i % this.squaresPerColumn == 0) && ((i / this.squaresPerColumn) % this.xAxisLabelFrequency == 0)) {
-              xLabelValues.push(data[i]);
+          if(x > maxPosition) { // label would normally be "shown" outside the SVG space
+            x = maxPosition;
           }
+          return x;
+        },
+
+        _spaceLabelVert: function(d, i) {
+          var y = this._spaceSquareVert(d, i) - this.labelPadding;
+          if(y <= this.labelTextSize + this.labelPadding) { // there wouldn't enough space above the square to show its label
+            y = this.squareSize + this.labelTextSize + this.labelPadding;
+          }
+          return y;
+        },
+
+        _spaceSquareHor: function (d, i) {
+  				return this.squareSpacing * (Math.floor(i / this.squaresPerColumn));
+  			},
+
+        _spaceSquareVert: function (d, i) {
+          return this.squareSpacing * (i % this.squaresPerColumn);
+  			},
+        /**
+        * Normalizes the data supplied by the API to work with Plotly
+        *
+        * @param {Object} data The data (as JSON) to be normalized
+        * @return {Array} The normalized data
+        */
+        _normalizeJSON: function (data) {
+          var x = [];
+          var y = [];
+          for (entry in data) {
+            //compute date string
+            x.push((new Date(entry*1000)).toLocaleString());
+            y.push(data[entry]);
+          }
+          var diagramData = {"x":x};
+          diagramData["y"] = y;
+          diagramData["type"] = "bar";
+          diagramData["marker"] = {color:this.primarycolor};
+          var plotlyData = [];
+          plotlyData.push(diagramData);
+          return plotlyData;
         }
-
-        var xAxisLabels = xAxis.append('g');
-        var xAxisLabelsTexts = xAxisLabels.selectAll('text')
-          .data(xLabelValues)
-          .enter().append('text')
-          .text(function(d) {
-                  if(this.activityType == 'user') {
-                    return this._calculateCalendarWeek(d.x);
-                  } else {
-                    return d.x;
-                  }
-                }.bind(this))
-          .style('font-size', this.axisLabelsTextSize)
-          .attr('transform', function(d, i) { return 'translate(' + this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this.squaresPerColumn)) + ', 0)rotate(' + 90 + ')'; }.bind(this))
-          .attr('alignment-baseline', 'after-edge');
-
-        var xAxisTitle = xAxis.append('text')
-          .text(this.axisLabels.x.label)
-          .style('font-size', this.axisTitleTextSize)
-          .attr('x', visualizationWidth - this.spaceBetweenSquares)
-          .attr('y', this.axisTitleTextSize)
-          .attr('alignment-baseline', 'after-edge');
-
-        var yAxisBounds = yAxis.node().getBBox();
-        var xAxisBounds = xAxis.node().getBBox();
-
-        xAxis.attr('transform', 'translate(' + (yAxisBounds.width + this.spaceBetweenSquares) + ', ' + (yAxisBounds.height + this.spaceBetweenSquares) + ')');
-
-        //create actual activity visualization
-        var visualization = svg.append('g')
-          .attr('transform', 'translate(' + (yAxisBounds.width + this.spaceBetweenSquares) + ', ' + (yAxisBounds.height - visualizationHeight + 2 * this.spaceBetweenSquares) + ')')
-          .attr('id', 'visualization');
-
-        var squares = visualization.selectAll('rect')
-          .data(data)
-          .enter().append('rect')
-          .attr('width', this.squareSize)
-          .attr('height', this.squareSize)
-          .attr('x', this._spaceSquareHor.bind(this))
-          .attr('y', this._spaceSquareVert.bind(this))
-          .attr('fill', function(d) { return colorScale(d.y); })
-          .on('mouseover', this._showLabel.bind(this))
-          .on('mouseout', this._hideLabel.bind(this));
-
-        // set svg dimensions
-        svg
-          .attr('height', yAxisBounds.height + xAxisBounds.height)
-          .attr('width', yAxisBounds.width + this.spaceBetweenSquares + xAxisBounds.width);
-      },
-
-      _calculateCalendarWeek: function(timeStamp) {
-        //calculate and return calendar week from the given time stamp
-      },
-
-      _showLabel: function (d, i) {
-        //using a group element 'label' with an appended text element and a rect element as background to display a label
-
-        var label = Plotly.d3.select(this.diagramDiv).select('#visualization').append('g')
-          .attr('id', 'label-' + i);
-
-        //append rect element first so that following text element is displayed above rect
-        label.append('rect');
-        var labelText = label.append('text')
-					.text(d.y + this.labelSeparator + d.x)
-					.style('font-size', this.labelTextSize)
-					.attr('fill', 'black')
-          .attr('alignment-baseline', 'after-edge');
-
-        var textWidth = labelText.node().getBBox().width;
-
-        //this split is necessary because the position is set relative to the size of the text element
-        labelText
-          .attr('x', this._spaceLabelHor(d, i, textWidth))
-          .attr('y', this._spaceLabelVert(d, i));
-
-        //finish rect configuration that was appended previously
-        label.select('rect')
-          .attr('x', labelText.attr('x') - this.labelPadding)
-  				.attr('y', labelText.attr('y') - this.labelTextSize - this.labelPadding)
-  				.attr('fill', this.labelBackgroundColor)
-  				.attr('width', textWidth + (2 * this.labelPadding))
-      		.attr('height', this.labelTextSize + (2 * this.labelPadding));
-			},
-
-      _hideLabel: function (d, i) {
-        Plotly.d3.select(this.diagramDiv).select('#label-' + i).remove();
-      },
-
-      _spaceLabelHor: function(d, i, textWidth) {
-        var x = this._spaceSquareHor(d, i);
-        //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
-        var maxPosition = Plotly.d3.select(this.diagramDiv).select('#visualization').node().getBBox().width - textWidth - this.labelPadding;
-
-        if(x > maxPosition) { // label would normally be "shown" outside the SVG space
-          x = maxPosition;
-        }
-        return x;
-      },
-
-      _spaceLabelVert: function(d, i) {
-        var y = this._spaceSquareVert(d, i) - this.labelPadding;
-        if(y <= this.labelTextSize + this.labelPadding) { // there wouldn't enough space above the square to show its label
-          y = this.squareSize + this.labelTextSize + this.labelPadding;
-        }
-        return y;
-      },
-
-      _spaceSquareHor: function (d, i) {
-				return this.squareSpacing * (Math.floor(i / this.squaresPerColumn));
-			},
-
-      _spaceSquareVert: function (d, i) {
-        return this.squareSpacing * (i % this.squaresPerColumn);
-			},
-      /**
-      * Normalizes the data supplied by the API to work with Plotly
-      *
-      * @param {Object} data The data (as JSON) to be normalized
-      * @return {Array} The normalized data
-      */
-      _normalizeJSON: function (data) {
-        var x = [];
-        var y = [];
-        for (entry in data) {
-          //compute date string
-          x.push((new Date(entry*1000)).toLocaleString());
-          y.push(data[entry]);
-        }
-        var diagramData = {"x":x};
-        diagramData["y"] = y;
-        diagramData["type"] = "bar";
-        diagramData["marker"] = {color:this.primarycolor};
-        var plotlyData = [];
-        plotlyData.push(diagramData);
-        return plotlyData;
-      }
+      });
     });
   </script>
 </dom-module>
