@@ -334,8 +334,6 @@ This component shows an activity history, similar to the colored github chart.
           var label = Plotly.d3.select(this.diagramDiv).select('#visualization').append('g')
             .attr('id', 'label-' + i);
 
-          //append rect element first so that following text element is displayed above rect
-          label.append('rect');
           var labelText = label.append('text')
   					.text(d.y + this.labelSeparator + this._convertToLocaleString(d.x))
   					.style('font-size', this.labelTextSize)
@@ -344,13 +342,13 @@ This component shows an activity history, similar to the colored github chart.
 
           var textWidth = labelText.node().getBBox().width;
 
-          //this split is necessary because the position is set relative to the size of the text element
+          //position is set relative to the size of the text element
           labelText
             .attr('x', this._spaceLabelHor(d, i, textWidth))
             .attr('y', this._spaceLabelVert(d, i));
 
-          //finish rect configuration that was appended previously
-          label.select('rect')
+          //insert rect as background
+          label.insert('rect', 'text')
             .attr('x', labelText.attr('x') - this.labelPadding)
     				.attr('y', labelText.attr('y') - this.labelTextSize - this.labelPadding)
     				.attr('fill', this.labelBackgroundColor)
