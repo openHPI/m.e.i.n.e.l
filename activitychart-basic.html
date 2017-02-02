@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
-<link rel="import" href="d3-import.html">
+<!-- <link rel="import" href="d3-import.html"> -->
+<link rel="import" href="plotly-import.html">
 
 
 <!--
@@ -195,11 +196,11 @@ This component shows an activity history, similar to the colored github chart.
         }
 
         //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
-        var colorScale = d3.scaleLinear()
+        var colorScale = Plotly.d3.scale.linear()
           .domain([this.minValue, this.maxValue])
           .range([this.accentcolor, this.primarycolor]);
 
-        var svg = d3.select(this.diagramDiv).append('svg');
+        var svg = Plotly.d3.select(this.diagramDiv).append('svg');
 
         //create y axis
         var yAxis = svg.append('g');
@@ -294,7 +295,7 @@ This component shows an activity history, similar to the colored github chart.
       _showLabel: function (d, i) {
         //using a group element 'label' with an appended text element and a rect element as background to display a label
 
-        var label = d3.select(this.diagramDiv).select('#visualization').append('g')
+        var label = Plotly.d3.select(this.diagramDiv).select('#visualization').append('g')
           .attr('id', 'label-' + i);
 
         //append rect element first so that following text element is displayed above rect
@@ -322,13 +323,13 @@ This component shows an activity history, similar to the colored github chart.
 			},
 
       _hideLabel: function (d, i) {
-        d3.select(this.diagramDiv).select('#label-' + i).remove();
+        Plotly.d3.select(this.diagramDiv).select('#label-' + i).remove();
       },
 
       _spaceLabelHor: function(d, i, textWidth) {
         var x = this._spaceSquareHor(d, i);
         //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
-        var maxPosition = d3.select(this.diagramDiv).select('#visualization').node().getBBox().width - textWidth - this.labelPadding;
+        var maxPosition = Plotly.d3.select(this.diagramDiv).select('#visualization').node().getBBox().width - textWidth - this.labelPadding;
 
         if(x > maxPosition) { // label would normally be "shown" outside the SVG space
           x = maxPosition;
