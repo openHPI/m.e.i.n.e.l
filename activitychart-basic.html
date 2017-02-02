@@ -90,24 +90,20 @@ This component shows an activity history, similar to the colored github chart.
             value: null
           },
           /** Labels for x and y axis.
-          Please provide as {'x': {'label': String}, 'y': {'label': String, 'values': String[]}}
-          The correct labels for the x axis are chosen programmatically based on the data.*/
+          Please provide as {'x': {'title': String[, 'type': String]}, 'y': {'title': String, 'values': String[]}}
+          'Type' can be 'week' to show the corresponding calendar week. If this key value pair is left out, the date is shown.
+          The correct labels for the x axis are chosen programmatically based on the data and type.*/
           axisLabels: {
             type: Object,
             value: {
               "x": {
-                "label": "Tag"
+                "title": "Tag"
               },
               "y": {
-            		"label": "Stunde",
+            		"title": "Stunde",
                 "values": ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
               }
             }
-          },
-          /** Chose from displaying activity of a "course" or a "user" */
-          activityType: {
-            type: String,
-            value: "course"
           },
           /** String that is displayed between datum and date when label is shown. */
           labelSeparator: {
@@ -207,7 +203,7 @@ This component shows an activity history, similar to the colored github chart.
           var yAxis = svg.append('g');
 
           var yAxisTitle = yAxis.append('text')
-            .text(this.axisLabels.y.label)
+            .text(this.axisLabels.y.title)
             .style('font-size', this.axisTitleTextSize)
             .attr('x', 0) //make this customizable as some kind of margin maybe?
             .attr('y', this.axisTitleTextSize);
@@ -245,7 +241,7 @@ This component shows an activity history, similar to the colored github chart.
             .data(xLabelValues)
             .enter().append('text')
             .text(function(d) {
-                    if(this.activityType == 'user') {
+                    if(this.axisLabels.x.type == 'week') {
                       return this._calculateCalendarWeek(d.x);
                     } else {
                       return this._convertToLocaleString(d.x);
@@ -256,7 +252,7 @@ This component shows an activity history, similar to the colored github chart.
             .attr('alignment-baseline', 'after-edge');
 
           var xAxisTitle = xAxis.append('text')
-            .text(this.axisLabels.x.label)
+            .text(this.axisLabels.x.title)
             .style('font-size', this.axisTitleTextSize)
             .attr('x', visualizationWidth - this.spaceBetweenSquares)
             .attr('y', this.axisTitleTextSize)
@@ -294,7 +290,7 @@ This component shows an activity history, similar to the colored github chart.
           var yTranslation;
           var rotation;
 
-          if(this.activityType == 'user') {
+          if(this.axisLabels.x.type == 'week') {
             yTranslation = this.axisLabelsTextSize;
             rotation = 0;
           } else {
