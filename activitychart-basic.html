@@ -248,11 +248,11 @@ This component shows an activity history, similar to the colored github chart.
                     if(this.activityType == 'user') {
                       return this._calculateCalendarWeek(d.x);
                     } else {
-                      return d.x;
+                      return this._convertToLocaleString(d.x);
                     }
                   }.bind(this))
             .style('font-size', this.axisLabelsTextSize)
-            .attr('transform', function(d, i) { return 'translate(' + this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this.squaresPerColumn)) + ', 0)rotate(' + 90 + ')'; }.bind(this))
+            .attr('transform', this._transformXAxisLabels.bind(this))
             .attr('alignment-baseline', 'after-edge');
 
           var xAxisTitle = xAxis.append('text')
@@ -285,12 +285,47 @@ This component shows an activity history, similar to the colored github chart.
 
           // set svg dimensions
           svg
-            .attr('height', yAxisBounds.height + xAxisBounds.height)
+            .attr('height', yAxisBounds.height + this.spaceBetweenSquares + xAxisBounds.height)
             .attr('width', yAxisBounds.width + this.spaceBetweenSquares + xAxisBounds.width);
         },
 
+        _transformXAxisLabels: function(d, i) {
+          var xTranslation = this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this.squaresPerColumn));
+          var yTranslation;
+          var rotation;
+
+          if(this.activityType == 'user') {
+            yTranslation = this.axisLabelsTextSize;
+            rotation = 0;
+          } else {
+            yTranslation = 0;
+            rotation = 90;
+          }
+
+          return 'translate(' + xTranslation + ', ' + yTranslation + ')rotate(' + rotation + ')';
+        },
+
+        //calculate and return calendar week from the given time stamp
+        //after ISO 8601: week starts on Monday, 1st week of the year = week with 1st Thursday of the year
         _calculateCalendarWeek: function(timeStamp) {
-          //calculate and return calendar week from the given time stamp
+          var millisecondsInASecond = 1000;
+          var millisecondsInAWeek = 604800000;
+
+          var thisDay = new Date(timeStamp * millisecondsInASecond);
+
+          //start on monday
+          var weekDay = (thisDay.getDay() + 6) % 7;
+
+          //ISO 8601: 1st week is week with 1st Thursday of the year
+          thisDay.setDate(thisDay.getDate() - weekDay + 3);
+          var firstThursday = thisDay.valueOf();
+          thisDay.setMonth(0, 1);
+
+          if(thisDay.getDay() != 4) { //no Thursday
+          		thisDay.setMonth(0, 1 + ((4 - thisDay.getDay()) + 7) % 7);
+          }
+
+          return Math.ceil((firstThursday - thisDay) / millisecondsInAWeek) + 1;
         },
 
         _showLabel: function (d, i) {
@@ -302,7 +337,7 @@ This component shows an activity history, similar to the colored github chart.
           //append rect element first so that following text element is displayed above rect
           label.append('rect');
           var labelText = label.append('text')
-  					.text(d.y + this.labelSeparator + d.x)
+  					.text(d.y + this.labelSeparator + this._convertToLocaleString(d.x))
   					.style('font-size', this.labelTextSize)
   					.attr('fill', 'black')
             .attr('alignment-baseline', 'after-edge');
@@ -364,7 +399,7 @@ This component shows an activity history, similar to the colored github chart.
           var y = [];
           for (entry in data) {
             //compute date string
-            x.push((new Date(entry*1000)).toLocaleString());
+            x.push(entry);
             y.push(data[entry]);
           }
           var diagramData = {"x":x};
@@ -374,6 +409,10 @@ This component shows an activity history, similar to the colored github chart.
           var plotlyData = [];
           plotlyData.push(diagramData);
           return plotlyData;
+        },
+
+        _convertToLocaleString: function(timestamp) {
+          return (new Date(timestamp * 1000)).toLocaleString();
         }
       });
     });
