@@ -69,16 +69,15 @@ This component shows an activity history, similar to the colored github chart.
             value: 20,
           },
           /** This property is computed automatically based on square-size and square-spacing and cannot be overwritten. */
-          spaceBetweenSquares: {
+          _spaceBetweenSquares: {
             type: Number,
             computed: '_computeSpaceBetweenSquares(squareSpacing, squareSize)'
           },
           /** Number of colored dots per column. Is always derived from the size of axisLabels.y.values provided and cannot be overwritten! */
-          squaresPerColumn: {
+          _squaresPerColumn: {
             type: Number,
-            computed: '_computeSquaresPerColumn(axisLabels)'
+            computed: '_deduceSquaresPerColumn(axisLabels)'
           },
-          //this could also be solved by setting value to a function calculating the default min/max value from the dataset (but only if we receive the dataset as a JSON object isntead of just receiving a URL)
           /** Minimum value from the dataset that is used for the color scale can be overwritten. */
           minValue: {
             type: Number,
@@ -91,7 +90,7 @@ This component shows an activity history, similar to the colored github chart.
           },
           /** Labels for x and y axis.
           Please provide as {'x': {'title': String[, 'type': String]}, 'y': {'title': String, 'values': String[]}}
-          'Type' can be 'week' to show the corresponding calendar week. If this key value pair is left out, the date is shown.
+          'Type' can be 'week' to show the corresponding calendar week. If this key-value-pair is left out, simply the date is shown.
           The correct labels for the x axis are chosen programmatically based on the data and type.*/
           axisLabels: {
             type: Object,
@@ -115,12 +114,12 @@ This component shows an activity history, similar to the colored github chart.
             type: Number,
             value: 2
           },
-          /** Set text size (in px) of label shown when hovering over a datum (opt, default: 13) */
+          /** Set text size (in px) of label shown when hovering over a datum (opt, default: 14) */
           labelTextSize: {
             type: Number,
             value: 14
           },
-          /** Customize the label background color (opt, default: white) */
+          /** Customize the label background color (opt, default: 'white') */
           labelBackgroundColor: {
             type: String,
             value: 'white'
@@ -142,12 +141,14 @@ This component shows an activity history, similar to the colored github chart.
           }
         },
 
-        _computeSquaresPerColumn: function(axisLabels) {
-          return axisLabels.y.values.length;
-        },
-
+        /** Computes the blank space between two squares. */
         _computeSpaceBetweenSquares: function(squareSpacing, squareSize) {
           return squareSpacing - squareSize;
+        },
+
+        /** Deduces the number of squares to be shown per column from the number of y labels provided. */
+        _deduceSquaresPerColumn: function(axisLabels) {
+          return axisLabels.y.values.length;
         },
 
         attached: function() {
@@ -155,24 +156,46 @@ This component shows an activity history, similar to the colored github chart.
             this.$.ajaxCaller.generateRequest();
           }
           else {
-            this._plotDiagram();
+            this._createDiagram();
           }
         },
+
         /**
         * Transforms the transmitted data into a plot
         *
         * @param {Object} data The data to be plotted
         */
-        handleResponse: function (data) {
+        handleResponse: function(data) {
           var goodData = this._normalizeJSON(data.detail.response);
           this.dataset = goodData[0]["y"];
           this.labels = goodData[0]["x"];
-          this._plotDiagram();
+          this._createDiagram();
         },
 
-        _buildDataset: function(labels, dataset) {
-          // create data like this:
-          // [ {'x': timeStamp0, 'y': value0}, ... ,{'x': timeStampN, 'y': valueN}]
+        /** Creates the activity diagram including the axes based on the data. */
+        _createDiagram: function() {
+          this.svg = Plotly.d3.select(this.$.diagram).append('svg');
+          //let other D3 functions later use this.svg in order to restrict D3's selection process to the local DOM of this component!
+
+          this.data = this._parseData(this.labels, this.dataset);
+
+          this._plotYAxis();
+          this._plotXAxis();
+          this._plotVisualization();
+
+          // set svg dimensions
+          this.svg
+            .attr('height', this._getBounds('y-axis').height + this._spaceBetweenSquares + this._getBounds('x-axis').height)
+            .attr('width', this._getBounds('y-axis').width + this._spaceBetweenSquares + this._getBounds('x-axis').width);
+        },
+
+        /**
+        * Parses the labels and the data into a more D3-friendly format:
+        * [ {'x': timeStamp_0, 'y': value_0}, ... ,{'x': timeStamp_N, 'y': value_N}]
+        *
+        * @return {Object}
+        */
+        _parseData: function(labels, dataset) {
           var data = [];
           for(var j = 0; j < labels.length; j++) {
             data[j] = {'x': labels[j], 'y': dataset[j]};
@@ -180,32 +203,15 @@ This component shows an activity history, similar to the colored github chart.
           return data;
         },
 
-        _plotDiagram: function () {
-          this.diagramDiv = this.$.diagram; //hand this diagram wrapper to D3 later on to limit D3's selection process to the local DOM
-
-          var data = this._buildDataset(this.labels, this.dataset);
-
-          if(this.minValue == null) {
-            this.minValue = Math.min(...this.dataset);
-          }
-          if(this.maxValue == null) {
-            this.maxValue = Math.max(...this.dataset);
-          }
-
-          //so far, the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
-          var colorScale = Plotly.d3.scale.linear()
-            .domain([this.minValue, this.maxValue])
-            .range([this.accentcolor, this.primarycolor]);
-
-          var svg = Plotly.d3.select(this.diagramDiv).append('svg');
-
-          //create y axis
-          var yAxis = svg.append('g');
+        /** Creates the Y axis of the diagram */
+        _plotYAxis: function() {
+          var yAxis = this.svg.append('g')
+            .attr('id', 'y-axis');
 
           var yAxisTitle = yAxis.append('text')
             .text(this.axisLabels.y.title)
             .style('font-size', this.axisTitleTextSize)
-            .attr('x', 0) //make this customizable as some kind of margin maybe?
+            .attr('x', 0)
             .attr('y', this.axisTitleTextSize);
 
           var yLabelValues = this.axisLabels.y.values;
@@ -219,25 +225,24 @@ This component shows an activity history, similar to the colored github chart.
             .attr('x', 0)
             .attr('y', this._spaceSquareVert.bind(this));
 
-          yAxisLabels.attr('transform', 'translate(0, ' + (3 * this.axisTitleTextSize) + ')');
+          yAxisLabels.attr('transform', 'translate(0, ' + (2.5 * this.axisTitleTextSize) + ')');
+        },
 
-          //calculate dimensions of the actual visualization (without the axes)
-          var visualizationHeight = (this.squaresPerColumn * this.squareSpacing) + this.spaceBetweenSquares;
-          var visualizationWidth = (Math.ceil(this.dataset.length / this.squaresPerColumn) * this.squareSpacing) + this.spaceBetweenSquares;
-
-          //create x axis
-          var xAxis = svg.append('g');
+        /** Creates the X axis of the diagram */
+        _plotXAxis: function() {
+          var xAxis = this.svg.append('g')
+            .attr('id', 'x-axis');
 
           var xLabelValues = [];
 
-          for(var i = 0; i < data.length; i++) {
-            if((i % this.squaresPerColumn == 0) && ((i / this.squaresPerColumn) % this.xAxisLabelFrequency == 0)) {
-                xLabelValues.push(data[i]);
+          for(var i = 0; i < this.data.length; i++) {
+            if((i % this._squaresPerColumn == 0) && ((i / this._squaresPerColumn) % this.xAxisLabelFrequency == 0)) {
+                xLabelValues.push(this.data[i]);
             }
           }
 
-          var xAxisLabels = xAxis.append('g');
-          var xAxisLabelsTexts = xAxisLabels.selectAll('text')
+          //add x axis labels
+          xAxis.append('g').selectAll('text')
             .data(xLabelValues)
             .enter().append('text')
             .text(function(d) {
@@ -251,42 +256,67 @@ This component shows an activity history, similar to the colored github chart.
             .attr('transform', this._transformXAxisLabels.bind(this))
             .attr('alignment-baseline', 'after-edge');
 
-          var xAxisTitle = xAxis.append('text')
+          //add title
+          xAxis.append('text')
             .text(this.axisLabels.x.title)
             .style('font-size', this.axisTitleTextSize)
-            .attr('x', visualizationWidth - this.spaceBetweenSquares)
+            .attr('x', this._getVisualizationWidth() - this._spaceBetweenSquares)
             .attr('y', this.axisTitleTextSize)
             .attr('alignment-baseline', 'after-edge');
 
-          var yAxisBounds = yAxis.node().getBBox();
-          var xAxisBounds = xAxis.node().getBBox();
+          xAxis.attr('transform', 'translate('
+            + (this._getBounds('y-axis').width + this._spaceBetweenSquares)
+            + ', '
+            + (this._getBounds('y-axis').height + this._spaceBetweenSquares)
+            + ')');
+        },
 
-          xAxis.attr('transform', 'translate(' + (yAxisBounds.width + this.spaceBetweenSquares) + ', ' + (yAxisBounds.height + this.spaceBetweenSquares) + ')');
+        /** Plots the actual activity visualization consisting solely of squares */
+        _plotVisualization: function() {
+          if(this.minValue == null) {
+            this.minValue = Math.min(...this.dataset);
+          }
+          if(this.maxValue == null) {
+            this.maxValue = Math.max(...this.dataset);
+          }
 
-          //create actual activity visualization
-          var visualization = svg.append('g')
-            .attr('transform', 'translate(' + (yAxisBounds.width + this.spaceBetweenSquares) + ', ' + (yAxisBounds.height - visualizationHeight + 2 * this.spaceBetweenSquares) + ')')
+          //the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
+          var colorScale = Plotly.d3.scale.linear()
+            .domain([this.minValue, this.maxValue])
+            .range([this.accentcolor, this.primarycolor]);
+
+          var visualization = this.svg.append('g')
+            .attr('transform', 'translate('
+              + (this._getBounds('y-axis').width + this._spaceBetweenSquares)
+              + ', '
+              + (this._getBounds('y-axis').height - this._getVisualizationHeight() + 2 * this._spaceBetweenSquares)
+              + ')')
             .attr('id', 'visualization');
 
           var squares = visualization.selectAll('rect')
-            .data(data)
+            .data(this.data)
             .enter().append('rect')
             .attr('width', this.squareSize)
             .attr('height', this.squareSize)
             .attr('x', this._spaceSquareHor.bind(this))
             .attr('y', this._spaceSquareVert.bind(this))
             .attr('fill', function(d) { return colorScale(d.y); })
-            .on('mouseover', this._showLabel.bind(this))
-            .on('mouseout', this._hideLabel.bind(this));
-
-          // set svg dimensions
-          svg
-            .attr('height', yAxisBounds.height + this.spaceBetweenSquares + xAxisBounds.height)
-            .attr('width', yAxisBounds.width + this.spaceBetweenSquares + xAxisBounds.width);
+            .on('mouseover', this._appendLabel.bind(this))
+            .on('mouseout', this._deleteLabel.bind(this));
         },
 
+        /** Returns the bounding box of a group element, useful for accessing a group's width and height */
+        _getBounds: function(id) {
+          return this.svg.select('#' + id).node().getBBox();
+        },
+
+        _convertToLocaleString: function(timestamp) {
+          return (new Date(timestamp * 1000)).toLocaleString();
+        },
+
+        /** Returns a 'translate(...)rotate(...)' String that helps position the labels of the X axis right and rotates them if they are dates. */
         _transformXAxisLabels: function(d, i) {
-          var xTranslation = this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this.squaresPerColumn));
+          var xTranslation = this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this._squaresPerColumn));
           var yTranslation;
           var rotation;
 
@@ -301,8 +331,7 @@ This component shows an activity history, similar to the colored github chart.
           return 'translate(' + xTranslation + ', ' + yTranslation + ')rotate(' + rotation + ')';
         },
 
-        //calculate and return calendar week from the given time stamp
-        //after ISO 8601: week starts on Monday, 1st week of the year = week with 1st Thursday of the year
+        /** Returns the calendar week the given time stamp falls into; conforms to ISO 8601: Week starts on Monday, 1st week of the year is the week with the 1st Thursday of the year. */
         _calculateCalendarWeek: function(timeStamp) {
           var millisecondsInASecond = 1000;
           var millisecondsInAWeek = 604800000;
@@ -324,23 +353,32 @@ This component shows an activity history, similar to the colored github chart.
           return Math.ceil((firstThursday - thisDay) / millisecondsInAWeek) + 1;
         },
 
-        _showLabel: function (d, i) {
-          //using a group element 'label' with an appended text element and a rect element as background to display a label
+        /** Calculates width of the actual visualization (without the axes) */
+        _getVisualizationWidth: function() {
+          return (Math.ceil(this.dataset.length / this._squaresPerColumn) * this.squareSpacing) + this._spaceBetweenSquares;
+        },
 
-          var label = Plotly.d3.select(this.diagramDiv).select('#visualization').append('g')
+        /** Calculates height of the actual visualization (without the axes) */
+        _getVisualizationHeight: function() {
+          return (this._squaresPerColumn * this.squareSpacing) + this._spaceBetweenSquares;
+        },
+
+        /** Appends a label showing the detailed activity count and date of the activity square that the mouse hovers over. */
+        _appendLabel: function(d, i) {
+          //use a group element 'label-...' with an appended text element and a rect element as background
+          var label = this.svg.select('#visualization').append('g')
             .attr('id', 'label-' + i);
 
           var labelText = label.append('text')
   					.text(d.y + this.labelSeparator + this._convertToLocaleString(d.x))
   					.style('font-size', this.labelTextSize)
-  					.attr('fill', 'black')
             .attr('alignment-baseline', 'after-edge');
 
-          var textWidth = labelText.node().getBBox().width;
+          var labelTextWidth = labelText.node().getBBox().width;
 
           //position is set relative to the size of the text element
           labelText
-            .attr('x', this._spaceLabelHor(d, i, textWidth))
+            .attr('x', this._spaceLabelHor(d, i, labelTextWidth))
             .attr('y', this._spaceLabelVert(d, i));
 
           //insert rect as background
@@ -348,18 +386,20 @@ This component shows an activity history, similar to the colored github chart.
             .attr('x', labelText.attr('x') - this.labelPadding)
     				.attr('y', labelText.attr('y') - this.labelTextSize - this.labelPadding)
     				.attr('fill', this.labelBackgroundColor)
-    				.attr('width', textWidth + (2 * this.labelPadding))
+    				.attr('width', labelTextWidth + (2 * this.labelPadding))
         		.attr('height', this.labelTextSize + (2 * this.labelPadding));
   			},
 
-        _hideLabel: function (d, i) {
-          Plotly.d3.select(this.diagramDiv).select('#label-' + i).remove();
+        /** Deletes the label once the mouse doesn't hover over the corresponding square anymore */
+        _deleteLabel: function(d, i) {
+          this.svg.select('#label-' + i).remove();
         },
 
-        _spaceLabelHor: function(d, i, textWidth) {
+        /** Returns the x position of a label considering the corresponding square's position, the label's width as well as the bounds of the SVG */
+        _spaceLabelHor: function(d, i, labelTextWidth) {
           var x = this._spaceSquareHor(d, i);
           //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
-          var maxPosition = Plotly.d3.select(this.diagramDiv).select('#visualization').node().getBBox().width - textWidth - this.labelPadding;
+          var maxPosition = this._getBounds('visualization').width - labelTextWidth - this.labelPadding;
 
           if(x > maxPosition) { // label would normally be "shown" outside the SVG space
             x = maxPosition;
@@ -367,28 +407,33 @@ This component shows an activity history, similar to the colored github chart.
           return x;
         },
 
+        /** Returns the y position of a label considering the corresponding square's position, the label's height as well as the bounds of the SVG */
         _spaceLabelVert: function(d, i) {
           var y = this._spaceSquareVert(d, i) - this.labelPadding;
-          if(y <= this.labelTextSize + this.labelPadding) { // there wouldn't enough space above the square to show its label
-            y = this.squareSize + this.labelTextSize + this.labelPadding;
+          var maxPosition = this.labelTextSize + this.labelPadding;
+          if(y <= maxPosition) { // there wouldn't be enough space above the square to show its label
+            y = this.squareSize + maxPosition;
           }
           return y;
         },
 
-        _spaceSquareHor: function (d, i) {
-  				return this.squareSpacing * (Math.floor(i / this.squaresPerColumn));
+        /** Returns the x position where the square should be placed */
+        _spaceSquareHor: function(d, i) {
+  				return this.squareSpacing * (Math.floor(i / this._squaresPerColumn));
   			},
 
-        _spaceSquareVert: function (d, i) {
-          return this.squareSpacing * (i % this.squaresPerColumn);
+        /** Returns the y position where the square should be placed */
+        _spaceSquareVert: function(d, i) {
+          return this.squareSpacing * (i % this._squaresPerColumn);
   			},
+
         /**
         * Normalizes the data supplied by the API to work with Plotly
         *
         * @param {Object} data The data (as JSON) to be normalized
         * @return {Array} The normalized data
         */
-        _normalizeJSON: function (data) {
+        _normalizeJSON: function(data) {
           var x = [];
           var y = [];
           for (entry in data) {
@@ -403,10 +448,6 @@ This component shows an activity history, similar to the colored github chart.
           var plotlyData = [];
           plotlyData.push(diagramData);
           return plotlyData;
-        },
-
-        _convertToLocaleString: function(timestamp) {
-          return (new Date(timestamp * 1000)).toLocaleString();
         }
       });
     });
