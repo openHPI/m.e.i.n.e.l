@@ -16,6 +16,15 @@ This component shows an activity history, similar to the colored github chart.
       :host {
         display: block;
       }
+      #diagram {
+        overflow: hidden;
+      }
+      #left-part, #right-part-wrapper {
+        float: left;
+      }
+      #right-part-wrapper {
+        overflow-y: auto;
+      }
     </style>
 
     <iron-ajax
@@ -26,7 +35,16 @@ This component shows an activity history, similar to the colored github chart.
         debounce-duration="300">
     </iron-ajax>
     <div style="display:none;">{{dataset}}</div>
-    <div id="diagram"></div>
+    <div id="diagram">
+      <svg id="left-part">
+        <!-- draw y axis here -->
+      </svg>
+      <div id="right-part-wrapper">
+        <svg id="right-part">
+          <!-- draw x axis and actual visualization here -->
+        </svg>
+      </div>
+    </div>
   </template>
 
   <script>
@@ -57,6 +75,11 @@ This component shows an activity history, similar to the colored github chart.
           accentcolor: {
             type: String,
             value: '#F5E8BB',
+          },
+          /** Width of the whole diagram in px*/
+          width: {
+            type: Number,
+            value: 750,
           },
           /** Size of square (opt, default: 15) */
           squareSize: {
@@ -174,8 +197,8 @@ This component shows an activity history, similar to the colored github chart.
 
         /** Creates the activity diagram including the axes based on the data. */
         _createDiagram: function() {
-          this.svg = Plotly.d3.select(this.$.diagram).append('svg');
-          //let other D3 functions later use this.svg in order to restrict D3's selection process to the local DOM of this component!
+          this.diagramDiv = Plotly.d3.select(this.$.diagram);
+          //let other D3 functions later use this.diagramDiv in order to restrict D3's selection process to the local DOM of this component!
 
           this.data = this._parseData(this.labels, this.dataset);
 
@@ -183,10 +206,8 @@ This component shows an activity history, similar to the colored github chart.
           this._plotXAxis();
           this._plotVisualization();
 
-          // set svg dimensions
-          this.svg
-            .attr('height', this._getBounds('y-axis').height + this._spaceBetweenSquares + this._getBounds('x-axis').height)
-            .attr('width', this._getBounds('y-axis').width + this._spaceBetweenSquares + this._getBounds('x-axis').width);
+          this.diagramDiv.select('#right-part-wrapper')
+            .style('width', this.width - this._getBounds('y-axis').width + 'px');
         },
 
         /**
@@ -205,7 +226,7 @@ This component shows an activity history, similar to the colored github chart.
 
         /** Creates the Y axis of the diagram */
         _plotYAxis: function() {
-          var yAxis = this.svg.append('g')
+          var yAxis = this.diagramDiv.select('#left-part').append('g')
             .attr('id', 'y-axis');
 
           var yAxisTitle = yAxis.append('text')
@@ -226,11 +247,15 @@ This component shows an activity history, similar to the colored github chart.
             .attr('y', this._spaceSquareVert.bind(this));
 
           yAxisLabels.attr('transform', 'translate(0, ' + (2.5 * this.axisTitleTextSize) + ')');
+
+          this.diagramDiv.select('#left-part')
+            .attr('height', this._getBounds('y-axis').height)
+            .attr('width', this._getBounds('y-axis').width);
         },
 
         /** Creates the X axis of the diagram */
         _plotXAxis: function() {
-          var xAxis = this.svg.append('g')
+          var xAxis = this.diagramDiv.select('#right-part').append('g')
             .attr('id', 'x-axis');
 
           var xLabelValues = [];
@@ -265,7 +290,7 @@ This component shows an activity history, similar to the colored github chart.
             .attr('alignment-baseline', 'after-edge');
 
           xAxis.attr('transform', 'translate('
-            + (this._getBounds('y-axis').width + this._spaceBetweenSquares)
+            + this._spaceBetweenSquares
             + ', '
             + (this._getBounds('y-axis').height + this._spaceBetweenSquares)
             + ')');
@@ -285,9 +310,9 @@ This component shows an activity history, similar to the colored github chart.
             .domain([this.minValue, this.maxValue])
             .range([this.accentcolor, this.primarycolor]);
 
-          var visualization = this.svg.append('g')
+          var visualization = this.diagramDiv.select('#right-part').append('g')
             .attr('transform', 'translate('
-              + (this._getBounds('y-axis').width + this._spaceBetweenSquares)
+              + this._spaceBetweenSquares
               + ', '
               + (this._getBounds('y-axis').height - this._getVisualizationHeight() + 2 * this._spaceBetweenSquares)
               + ')')
@@ -303,11 +328,15 @@ This component shows an activity history, similar to the colored github chart.
             .attr('fill', function(d) { return colorScale(d.y); })
             .on('mouseover', this._appendLabel.bind(this))
             .on('mouseout', this._deleteLabel.bind(this));
+
+          this.diagramDiv.select('#right-part')
+            .attr('height', this._getBounds('y-axis').height + this._spaceBetweenSquares + this._getBounds('x-axis').height)
+            .attr('width', this._spaceBetweenSquares + this._getBounds('x-axis').width);
         },
 
         /** Returns the bounding box of a group element, useful for accessing a group's width and height */
         _getBounds: function(id) {
-          return this.svg.select('#' + id).node().getBBox();
+          return this.diagramDiv.select('#' + id).node().getBBox();
         },
 
         _convertToLocaleString: function(timestamp) {
@@ -366,7 +395,7 @@ This component shows an activity history, similar to the colored github chart.
         /** Appends a label showing the detailed activity count and date of the activity square that the mouse hovers over. */
         _appendLabel: function(d, i) {
           //use a group element 'label-...' with an appended text element and a rect element as background
-          var label = this.svg.select('#visualization').append('g')
+          var label = this.diagramDiv.select('#visualization').append('g')
             .attr('id', 'label-' + i);
 
           var labelText = label.append('text')
@@ -392,7 +421,7 @@ This component shows an activity history, similar to the colored github chart.
 
         /** Deletes the label once the mouse doesn't hover over the corresponding square anymore */
         _deleteLabel: function(d, i) {
-          this.svg.select('#label-' + i).remove();
+          this.diagramDiv.select('#label-' + i).remove();
         },
 
         /** Returns the x position of a label considering the corresponding square's position, the label's width as well as the bounds of the SVG */
