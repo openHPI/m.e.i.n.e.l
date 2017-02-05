@@ -206,8 +206,8 @@ This component shows an activity history, similar to the colored github chart.
           this._plotXAxis();
           this._plotVisualization();
 
-          this.diagramDiv.select('#right-part-wrapper')
-            .style('width', this.width - this._getBounds('y-axis').width + 'px');
+          //scroll all the way to the right
+          this.$['right-part-wrapper'].scrollLeft = this.width;
         },
 
         /**
@@ -246,7 +246,7 @@ This component shows an activity history, similar to the colored github chart.
             .attr('x', 0)
             .attr('y', this._spaceSquareVert.bind(this));
 
-          yAxisLabels.attr('transform', 'translate(0, ' + (2.5 * this.axisTitleTextSize) + ')');
+          yAxisLabels.attr('transform', 'translate(0, ' + (this.axisTitleTextSize + 2 * this._spaceBetweenSquares + this.axisLabelsTextSize) + ')');
 
           this.diagramDiv.select('#left-part')
             .attr('height', this._getBounds('y-axis').height)
@@ -328,6 +328,9 @@ This component shows an activity history, similar to the colored github chart.
             .attr('fill', function(d) { return colorScale(d.y); })
             .on('mouseover', this._appendLabel.bind(this))
             .on('mouseout', this._deleteLabel.bind(this));
+
+          this.diagramDiv.select('#right-part-wrapper')
+            .style('width', this.width - this._getBounds('y-axis').width + 'px');
 
           this.diagramDiv.select('#right-part')
             .attr('height', this._getBounds('y-axis').height + this._spaceBetweenSquares + this._getBounds('x-axis').height)
