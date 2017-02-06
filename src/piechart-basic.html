@@ -90,20 +90,13 @@ This is a basic component for plotly piecharts
                         type: 'pie',
                         marker: {
                             colors: this.colors
-                        },
+                        }
                     }];
                     Plotly.newPlot(gd, dataSet);
                     window.addEventListener('resize', function() {
                         Plotly.Plots.resize(gd);
                     });
                 },
-                ready: function() {
-                    if (this.dataset && this.labels) {
-                        this._plotDiagram(this.dataset, this.labels, this.colors);
-                    } else {
-                        console.error("[ERROR] You did not supply any data.");
-                    }
-                }
             });
         });
     </script>
