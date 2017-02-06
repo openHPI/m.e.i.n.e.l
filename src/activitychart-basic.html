@@ -1,0 +1,485 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+
+<!--
+`activitychart-basic`
+This component shows an activity history, similar to the colored github chart.
+
+@demo demo/activitychart_basic_demo.html
+-->
+<dom-module id="activitychart-basic">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #diagram {
+        overflow: hidden;
+      }
+      #left-part, #right-part-wrapper {
+        float: left;
+      }
+      #right-part-wrapper {
+        overflow-y: auto;
+      }
+    </style>
+
+    <iron-ajax
+        id="ajaxCaller"
+        url="[[dataurl]]"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+    <div style="display:none;">{{dataset}}</div>
+    <div id="diagram">
+      <svg id="left-part">
+        <!-- draw y axis here -->
+      </svg>
+      <div id="right-part-wrapper">
+        <svg id="right-part">
+          <!-- draw x axis and actual visualization here -->
+        </svg>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    window.addEventListener("WebComponentsReady", function() {
+      Polymer({
+        is: 'activitychart-basic',
+
+        properties: {
+          /** URL of data to be plotted */
+          dataurl: {
+            type: String,
+            value: '',
+          },
+          /** y values in JSON format (data to be displayed) */
+          dataset: {
+            type: Array,
+          },
+          /** x values in JSON format (labels for data) */
+          labels: {
+            type: Array,
+          },
+          /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
+          primarycolor: {
+            type: String,
+            value: '#930517',
+          },
+          /** Accent color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA  */
+          accentcolor: {
+            type: String,
+            value: '#F5E8BB',
+          },
+          /** Width of the whole diagram in px*/
+          width: {
+            type: Number,
+            value: 750,
+          },
+          /** Size of square (opt, default: 15) */
+          squareSize: {
+            type: Number,
+            value: 15,
+          },
+          /** Spacing of squares, should be greater than square-size (opt, default: 20) */
+          squareSpacing: {
+            type: Number,
+            value: 20,
+          },
+          /** This property is computed automatically based on square-size and square-spacing and cannot be overwritten. */
+          _spaceBetweenSquares: {
+            type: Number,
+            computed: '_computeSpaceBetweenSquares(squareSpacing, squareSize)'
+          },
+          /** Number of colored dots per column. Is always derived from the size of axisLabels.y.values provided and cannot be overwritten! */
+          _squaresPerColumn: {
+            type: Number,
+            computed: '_deduceSquaresPerColumn(axisLabels)'
+          },
+          /** Minimum value from the dataset that is used for the color scale can be overwritten. */
+          minValue: {
+            type: Number,
+            value: null
+          },
+          /** Maximum value from the dataset that is used for the color scale can be overwritten. */
+          maxValue: {
+            type: Number,
+            value: null
+          },
+          /** Labels for x and y axis.
+          Please provide as {'x': {'title': String[, 'type': String]}, 'y': {'title': String, 'values': String[]}}
+          'Type' can be 'week' to show the corresponding calendar week. If this key-value-pair is left out, simply the date is shown.
+          The correct labels for the x axis are chosen programmatically based on the data and type.*/
+          axisLabels: {
+            type: Object,
+            value: {
+              "x": {
+                "title": "Tag"
+              },
+              "y": {
+            		"title": "Stunde",
+                "values": ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
+              }
+            }
+          },
+          /** String that is displayed between datum and date when label is shown. */
+          labelSeparator: {
+            type: String,
+            value: ' bei '
+          },
+          /** Set padding (in px) of the label shown when hovering over a datum (opt, default: 2) */
+          labelPadding: {
+            type: Number,
+            value: 2
+          },
+          /** Set text size (in px) of label shown when hovering over a datum (opt, default: 14) */
+          labelTextSize: {
+            type: Number,
+            value: 14
+          },
+          /** Customize the label background color (opt, default: 'white') */
+          labelBackgroundColor: {
+            type: String,
+            value: 'white'
+          },
+          /** Set text size (in px) of the axes' title labels (opt, default: 14) */
+          axisTitleTextSize: {
+            type: Number,
+            value: 14
+          },
+          /** Set text size (in px) of the axes' labels (opt, default: 12) */
+          axisLabelsTextSize: {
+            type: Number,
+            value: 12
+          },
+          /** Decide with what column-frequency the lables on the x axis should be shown (opt, default: 5)*/
+          xAxisLabelFrequency: {
+            type: Number,
+            value: 5
+          }
+        },
+
+        /** Computes the blank space between two squares. */
+        _computeSpaceBetweenSquares: function(squareSpacing, squareSize) {
+          return squareSpacing - squareSize;
+        },
+
+        /** Deduces the number of squares to be shown per column from the number of y labels provided. */
+        _deduceSquaresPerColumn: function(axisLabels) {
+          return axisLabels.y.values.length;
+        },
+
+        attached: function() {
+          if(this.dataurl) {
+            this.$.ajaxCaller.generateRequest();
+          }
+          else {
+            this._createDiagram();
+          }
+        },
+
+        /**
+        * Transforms the transmitted data into a plot
+        *
+        * @param {Object} data The data to be plotted
+        */
+        handleResponse: function(data) {
+          var goodData = this._normalizeJSON(data.detail.response);
+          this.dataset = goodData[0]["y"];
+          this.labels = goodData[0]["x"];
+          this._createDiagram();
+        },
+
+        /** Creates the activity diagram including the axes based on the data. */
+        _createDiagram: function() {
+          this.diagramDiv = Plotly.d3.select(this.$.diagram);
+          //let other D3 functions later use this.diagramDiv in order to restrict D3's selection process to the local DOM of this component!
+
+          this.data = this._parseData(this.labels, this.dataset);
+
+          this._plotYAxis();
+          this._plotXAxis();
+          this._plotVisualization();
+
+          //scroll all the way to the right
+          this.$['right-part-wrapper'].scrollLeft = this.width;
+        },
+
+        /**
+        * Parses the labels and the data into a more D3-friendly format:
+        * [ {'x': timeStamp_0, 'y': value_0}, ... ,{'x': timeStamp_N, 'y': value_N}]
+        *
+        * @return {Object}
+        */
+        _parseData: function(labels, dataset) {
+          var data = [];
+          for(var j = 0; j < labels.length; j++) {
+            data[j] = {'x': labels[j], 'y': dataset[j]};
+          }
+          return data;
+        },
+
+        /** Creates the Y axis of the diagram */
+        _plotYAxis: function() {
+          var yAxis = this.diagramDiv.select('#left-part').append('g')
+            .attr('id', 'y-axis');
+
+          var yAxisTitle = yAxis.append('text')
+            .text(this.axisLabels.y.title)
+            .style('font-size', this.axisTitleTextSize + 'px')
+            .attr('x', 0)
+            .attr('y', this.axisTitleTextSize);
+
+          var yLabelValues = this.axisLabels.y.values;
+
+          var yAxisLabels = yAxis.append('g');
+          var yAxisLabelsTexts = yAxisLabels.selectAll('text')
+            .data(yLabelValues)
+            .enter().append('text')
+            .text(function(d) { return d; })
+            .style('font-size', this.axisLabelsTextSize + 'px')
+            .attr('x', 0)
+            .attr('y', this._spaceSquareVert.bind(this));
+
+          yAxisLabels.attr('transform', 'translate(0, ' + (this.axisTitleTextSize + 2 * this._spaceBetweenSquares + this.axisLabelsTextSize) + ')');
+
+          this.diagramDiv.select('#left-part')
+            .attr('height', this._getBounds('y-axis').height)
+            .attr('width', this._getBounds('y-axis').width);
+        },
+
+        /** Creates the X axis of the diagram */
+        _plotXAxis: function() {
+          var xAxis = this.diagramDiv.select('#right-part').append('g')
+            .attr('id', 'x-axis');
+
+          var xLabelValues = [];
+
+          for(var i = 0; i < this.data.length; i++) {
+            if((i % this._squaresPerColumn == 0) && ((i / this._squaresPerColumn) % this.xAxisLabelFrequency == 0)) {
+                xLabelValues.push(this.data[i]);
+            }
+          }
+
+          //add x axis labels
+          xAxis.append('g').selectAll('text')
+            .data(xLabelValues)
+            .enter().append('text')
+            .text(function(d) {
+                    if(this.axisLabels.x.type == 'week') {
+                      return this._calculateCalendarWeek(d.x);
+                    } else {
+                      return this._convertToLocaleString(d.x);
+                    }
+                  }.bind(this))
+            .style('font-size', this.axisLabelsTextSize + 'px')
+            .attr('transform', this._transformXAxisLabels.bind(this))
+            .attr('alignment-baseline', 'after-edge');
+
+          //add title
+          xAxis.append('text')
+            .text(this.axisLabels.x.title)
+            .style('font-size', this.axisTitleTextSize + 'px')
+            .attr('x', this._getVisualizationWidth() - this._spaceBetweenSquares)
+            .attr('y', this.axisTitleTextSize)
+            .attr('alignment-baseline', 'after-edge');
+
+          xAxis.attr('transform', 'translate('
+            + this._spaceBetweenSquares
+            + ', '
+            + (this._getBounds('y-axis').height + this._spaceBetweenSquares)
+            + ')');
+        },
+
+        /** Plots the actual activity visualization consisting solely of squares */
+        _plotVisualization: function() {
+          if(this.minValue == null) {
+            this.minValue = Math.min(...this.dataset);
+          }
+          if(this.maxValue == null) {
+            this.maxValue = Math.max(...this.dataset);
+          }
+
+          //the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
+          var colorScale = Plotly.d3.scale.linear()
+            .domain([this.minValue, this.maxValue])
+            .range([this.accentcolor, this.primarycolor]);
+
+          var visualization = this.diagramDiv.select('#right-part').append('g')
+            .attr('transform', 'translate('
+              + this._spaceBetweenSquares
+              + ', '
+              + (this._getBounds('y-axis').height - this._getVisualizationHeight() + 2 * this._spaceBetweenSquares)
+              + ')')
+            .attr('id', 'visualization');
+
+          var squares = visualization.selectAll('rect')
+            .data(this.data)
+            .enter().append('rect')
+            .attr('width', this.squareSize)
+            .attr('height', this.squareSize)
+            .attr('x', this._spaceSquareHor.bind(this))
+            .attr('y', this._spaceSquareVert.bind(this))
+            .attr('fill', function(d) { return colorScale(d.y); })
+            .on('mouseover', this._appendLabel.bind(this))
+            .on('mouseout', this._deleteLabel.bind(this));
+
+          this.diagramDiv.select('#right-part-wrapper')
+            .style('width', this.width - this._getBounds('y-axis').width + 'px');
+
+          this.diagramDiv.select('#right-part')
+            .attr('height', this._getBounds('y-axis').height + this._spaceBetweenSquares + this._getBounds('x-axis').height)
+            .attr('width', this._spaceBetweenSquares + this._getBounds('x-axis').width);
+        },
+
+        /** Returns the bounding box of a group element, useful for accessing a group's width and height */
+        _getBounds: function(id) {
+          return this.diagramDiv.select('#' + id).node().getBBox();
+        },
+
+        _convertToLocaleString: function(timestamp) {
+          return (new Date(timestamp * 1000)).toLocaleString();
+        },
+
+        /** Returns a 'translate(...)rotate(...)' String that helps position the labels of the X axis right and rotates them if they are dates. */
+        _transformXAxisLabels: function(d, i) {
+          var xTranslation = this._spaceSquareHor(d, (i * this.xAxisLabelFrequency * this._squaresPerColumn));
+          var yTranslation;
+          var rotation;
+
+          if(this.axisLabels.x.type == 'week') {
+            yTranslation = this.axisLabelsTextSize;
+            rotation = 0;
+          } else {
+            yTranslation = 0;
+            rotation = 90;
+          }
+
+          return 'translate(' + xTranslation + ', ' + yTranslation + ')rotate(' + rotation + ')';
+        },
+
+        /** Returns the calendar week the given time stamp falls into; conforms to ISO 8601: Week starts on Monday, 1st week of the year is the week with the 1st Thursday of the year. */
+        _calculateCalendarWeek: function(timeStamp) {
+          var millisecondsInASecond = 1000;
+          var millisecondsInAWeek = 604800000;
+
+          var thisDay = new Date(timeStamp * millisecondsInASecond);
+
+          //start on monday
+          var weekDay = (thisDay.getDay() + 6) % 7;
+
+          //ISO 8601: 1st week is week with 1st Thursday of the year
+          thisDay.setDate(thisDay.getDate() - weekDay + 3);
+          var firstThursday = thisDay.valueOf();
+          thisDay.setMonth(0, 1);
+
+          if(thisDay.getDay() != 4) { //no Thursday
+          		thisDay.setMonth(0, 1 + ((4 - thisDay.getDay()) + 7) % 7);
+          }
+
+          return Math.ceil((firstThursday - thisDay) / millisecondsInAWeek) + 1;
+        },
+
+        /** Calculates width of the actual visualization (without the axes) */
+        _getVisualizationWidth: function() {
+          return (Math.ceil(this.dataset.length / this._squaresPerColumn) * this.squareSpacing) + this._spaceBetweenSquares;
+        },
+
+        /** Calculates height of the actual visualization (without the axes) */
+        _getVisualizationHeight: function() {
+          return (this._squaresPerColumn * this.squareSpacing) + this._spaceBetweenSquares;
+        },
+
+        /** Appends a label showing the detailed activity count and date of the activity square that the mouse hovers over. */
+        _appendLabel: function(d, i) {
+          //use a group element 'label-...' with an appended text element and a rect element as background
+          var label = this.diagramDiv.select('#visualization').append('g')
+            .attr('id', 'label-' + i);
+
+          var labelText = label.append('text')
+  					.text(d.y + this.labelSeparator + this._convertToLocaleString(d.x))
+  					.style('font-size', this.labelTextSize + 'px')
+            .attr('dominant-baseline', 'text-after-edge');
+
+          var labelTextWidth = labelText.node().getBBox().width;
+
+          //position is set relative to the size of the text element
+          labelText
+            .attr('x', this._spaceLabelHor(d, i, labelTextWidth))
+            .attr('y', this._spaceLabelVert(d, i));
+
+          //insert rect as background
+          label.insert('rect', 'text')
+            .attr('x', labelText.attr('x') - this.labelPadding)
+    				.attr('y', labelText.attr('y') - this.labelTextSize - this.labelPadding)
+    				.attr('fill', this.labelBackgroundColor)
+    				.attr('width', labelTextWidth + (2 * this.labelPadding))
+        		.attr('height', this.labelTextSize + (2 * this.labelPadding));
+  			},
+
+        /** Deletes the label once the mouse doesn't hover over the corresponding square anymore */
+        _deleteLabel: function(d, i) {
+          this.diagramDiv.select('#label-' + i).remove();
+        },
+
+        /** Returns the x position of a label considering the corresponding square's position, the label's width as well as the bounds of the SVG */
+        _spaceLabelHor: function(d, i, labelTextWidth) {
+          var x = this._spaceSquareHor(d, i);
+          //calculate the maximum x position possible so that the label won't be cut off on the edge of the SVG
+          var maxPosition = this._getBounds('visualization').width - labelTextWidth - this.labelPadding;
+
+          if(x > maxPosition) { // label would normally be "shown" outside the SVG space
+            x = maxPosition;
+          }
+          return x;
+        },
+
+        /** Returns the y position of a label considering the corresponding square's position, the label's height as well as the bounds of the SVG */
+        _spaceLabelVert: function(d, i) {
+          var y = this._spaceSquareVert(d, i) - this.labelPadding;
+          var maxPosition = this.labelTextSize + this.labelPadding;
+          if(y <= maxPosition) { // there wouldn't be enough space above the square to show its label
+            y = this.squareSize + maxPosition;
+          }
+          return y;
+        },
+
+        /** Returns the x position where the square should be placed */
+        _spaceSquareHor: function(d, i) {
+  				return this.squareSpacing * (Math.floor(i / this._squaresPerColumn));
+  			},
+
+        /** Returns the y position where the square should be placed */
+        _spaceSquareVert: function(d, i) {
+          return this.squareSpacing * (i % this._squaresPerColumn);
+  			},
+
+        /**
+        * Normalizes the data supplied by the API to work with Plotly
+        *
+        * @param {Object} data The data (as JSON) to be normalized
+        * @return {Array} The normalized data
+        */
+        _normalizeJSON: function(data) {
+          var x = [];
+          var y = [];
+          for (entry in data) {
+            //compute date string
+            x.push(entry);
+            y.push(data[entry]);
+          }
+          var diagramData = {"x":x};
+          diagramData["y"] = y;
+          diagramData["type"] = "bar";
+          diagramData["marker"] = {color:this.primarycolor};
+          var plotlyData = [];
+          plotlyData.push(diagramData);
+          return plotlyData;
+        }
+      });
+    });
+  </script>
+</dom-module>
