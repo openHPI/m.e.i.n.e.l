@@ -32,28 +32,35 @@ This is a basic component for plotly linecharts
                     width: {
                         type: Number,
                         reflectToAttribute: true,
+                        value: 150,
                     },
                     /** Height of the outer div */
                     height: {
                         type: Number,
                         reflectToAttribute: true,
+                        value: 150,
                     },
                     /** Fill and text color*/
                     primarycolor: {
-                        type: String
+                        type: String,
+                        value: '#f2503f',
                     },
                     /** Background color of the circle*/
                     accentcolor: {
-                        type: String
+                        type: String,
+                        value: '#404F70',
                     }
                 },
+
                 attached: function() {
                     this.listen(this, 'data-changed', '_dataChanged');
                     this._plotDiagram();
                 },
+
                 _dataChanged: function() {
                     this._plotDiagram();
                 },
+
                 _plotDiagram: function() {
                     var d3 = Plotly.d3;
                     /** Reset plot area in case we're redrawing*/
