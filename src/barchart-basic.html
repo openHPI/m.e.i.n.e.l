@@ -1,0 +1,108 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+
+
+<!--
+`barchart-basic`
+This is a basic component for plotly barcharts
+
+@demo demo/barchart_basic_demo.html
+-->
+<dom-module id="barchart-basic">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div style="display:none;">{{data}}</div>
+    <div id="diagram"></div>
+  </template>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'barchart-basic',
+                properties: {
+                    data: {
+                        type: Array,
+                    },
+                    /** Width of the outer div */
+                    width: {
+                        type: Number,
+                    },
+                    /** Height of the outer div */
+                    height: {
+                        type: Number,
+                    },
+                    /** Primary color of chart */
+                    primarycolor: {
+                        type: String,
+                        value: 'rgba(0,0,0,1)',
+                    },
+                    /** Accent color of chart */
+                    accentcolor: {
+                        type: String,
+                        value: 'rgba(0,0,0,1)',
+                    },
+                },
+                attached: function() {
+                    this._plotDiagram();
+                },
+
+                _plotDiagram: function() {
+                    this.data[0]["type"] = "bar";
+                    this.data[0]["marker"] = {
+                        color: this.primarycolor
+                    };
+
+                    var d3 = Plotly.d3;
+                    var WIDTH_IN_PERCENT_OF_PARENT = 100,
+                        HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+                    /** Defines the width and height of the outer div */
+                    if (this.width && this.height) {
+                        var diagram = d3.select(this.$.diagram);
+
+                        diagram.style('width', this.width + "px");
+                        diagram.style('height', this.height + "px");
+                    }
+
+                    /** Create new div with specific attributes under outer div */
+                    var gd3 = d3.select(this.$.diagram)
+                        .append('div')
+                        .style({
+                            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                            height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                            'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+                        });
+
+                    var gd = gd3.node();
+                    var layout = {
+                        xaxis: {
+                            tickmode: "auto",
+                            nticks: 4,
+                            tickfont: {
+                                size: 14,
+                                color: this.accentcolor,
+                            },
+                        },
+                        yaxis: {
+                            tickfont: {
+                                size: 14,
+                                color: this.accentcolor,
+                            },
+                        },
+                    };
+                    Plotly.newPlot(gd, this.data, layout);
+                    window.addEventListener('resize', function() {
+                        Plotly.Plots.resize(gd);
+                    });
+                },
+            });
+        });
+    </script>
+</dom-module>

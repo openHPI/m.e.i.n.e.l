@@ -1,0 +1,88 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="plotly-import.html">
+<link rel="import" href="linechart-basic.html">
+
+
+<!--
+`data-filter`
+This is a component for filtering data based on user input.
+
+@demo demo/data_filter_demo.html
+-->
+<dom-module id="data-filter">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #filterBar {
+        height: 50px;
+        /*background-color: gray;*/
+      }
+    </style>
+
+    <iron-ajax
+        id="ajaxCaller"
+        url="[[dataurl]]"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+    <div style="display:none;">{{data}}</div>
+    <div id="filterBar"></div>
+    <linechart-basic id="linechart" data={{data}} width={{width}} height={{height}}></linechart-basic>
+  </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+        Polymer({
+            is: 'data-filter',
+
+            properties: {
+                /** URL of data to be plotted */
+                dataurl: {
+                    type: String,
+                    value: "",
+                },
+                /** Data provided as an array of x,y objects */
+                data: {
+                    type: Array,
+                },
+                /** Width of the outer div */
+                width: {
+                    type: Number,
+                },
+                /** Height of the out div */
+                height: {
+                    type: Number,
+                },
+            },
+            attached: function() {
+                for (var ii = 0; ii < this.data.length; ii++) {
+                    var newButton = document.createElement("paper-button");
+                    var buttonText = document.createTextNode("Data " + ii);
+                    newButton.appendChild(buttonText);
+                    newButton.setAttribute("toggles", "");
+                    newButton.setAttribute("raised", "");
+                    newButton.setAttribute("on-click", "test");
+                    newButton.active = true;
+                    newButton.setAttribute("data-array", JSON.stringify(this.data[ii]));
+                    this.$.filterBar.appendChild(newButton);
+                    this.listen(newButton, 'tap', '_passData');
+                }
+            },
+            _passData: function(button) {
+                var newDataset = [];
+                var buttons = this.$.filterBar.children;
+                for (var ii = 0; ii < buttons.length; ii++) {
+                    if (buttons[ii].active) {
+                        newDataset.push(JSON.parse(buttons[ii].getAttribute("data-array")));
+                    }
+                }
+                this.$.linechart.data = newDataset;
+            },
+        });
+    });
+    </script>
+</dom-module>

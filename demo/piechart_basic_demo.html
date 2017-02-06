@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
+
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
     <title>piechart-basic demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../piechart-basic.html">
+    <link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../src/piechart-basic.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
-      div.vertical-section-container {
-        max-width: 1500px;
-      }
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
     </style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>piechart-basic demo (custom element)</h3>
-      <demo-snippet>
-        <template>
-          <piechart-basic primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" dataurl=""></piechart-basic>
+</head>
+
+<body>
+    <div>
+        <h3>piechart-basic demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+          <piechart-basic dataset='[19, 26, 55]' labels='["Residential", "Non-Residential", "Utility"]' colors='["#4a148c", "#ffcc80", "rgba(177,6,58,1)"]'></piechart-basic>
         </template>
-      </demo-snippet>
+        </demo-snippet>
     </div>
-  </body>
+</body>
+
 </html>
