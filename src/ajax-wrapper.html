@@ -1,5 +1,5 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 <link rel="import" href="all-imports.html">
 
@@ -24,7 +24,7 @@ creating and passing the data to a charting component, specified in a parameter.
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
-    <div id="diagramComponent"></div>
+    <content id="chartingElement"></content>
   </template>
     <script>
         window.addEventListener("WebComponentsReady", function(){
@@ -36,9 +36,10 @@ creating and passing the data to a charting component, specified in a parameter.
                 dataurl: {
                     type: String,
                 },
-                /** Name of charting component to be used */
+                /** Name of charting component to be created (optional).*/
                 diagramType: {
                     type: String,
+                    value: '',
                 },
                 /** Width of the outer div */
                 width: {
@@ -73,22 +74,27 @@ creating and passing the data to a charting component, specified in a parameter.
                 this.$.ajaxCaller.generateRequest();
             },
             /**
-             * Handle the ajax response, create and add the desired charting element.
+             * Handle the ajax response and pass data and parameters down to
+             * contained elements. Or create a new charting element if a
+             * diagramType was defined.
              *
              * @param {Object} data The data returned from the dataurl
              */
             handleResponse: function(data) {
                 var dataArray = this._readDataFromResponse(data.detail.response);
-                var diagramElement = document.createElement(this.diagramType);
-                // console.log(dataArray);
-                diagramElement.data = dataArray;
-                diagramElement.primarycolor = this.primarycolor;
-                diagramElement.accentcolor = this.accentcolor;
-                diagramElement.width = this.width;
-                diagramElement.height = this.height;
-                diagramElement.scrollzoom = this.scrollzoom;
-                diagramElement.scrollrange = this.scrollrange;
-                this.$.diagramComponent.appendChild(diagramElement);
+                if (this.diagramType) {
+                    var newChartingElement = document.createElement(this.diagramType);
+                    Polymer.dom(this).appendChild(newChartingElement);
+                }
+                for (const chartingElement of Polymer.dom(this).children) {
+                    chartingElement.primarycolor = this.primarycolor;
+                    chartingElement.accentcolor = this.accentcolor;
+                    chartingElement.width = this.width;
+                    chartingElement.height = this.height;
+                    chartingElement.scrollzoom = this.scrollzoom;
+                    chartingElement.scrollrange = this.scrollrange;
+                    chartingElement.data = JSON.parse(JSON.stringify(dataArray));   //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
+                }
             },
 
             /**

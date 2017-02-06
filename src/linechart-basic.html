@@ -1,5 +1,5 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -32,10 +32,12 @@ This is a basic component for plotly linecharts
                 /** Width of the outer div */
                 width: {
                     type: Number,
+                    reflectToAttribute: true,
                 },
                 /** Height of the out div */
                 height: {
                     type: Number,
+                    reflectToAttribute: true,
                 },
                 /** Scroll and zoom activation */
                 scrollzoom: {
@@ -49,7 +51,7 @@ This is a basic component for plotly linecharts
                 },
             },
             attached: function() {
-                this.listen(this, 'data-changed', '_dataChanged')
+                this.listen(this, 'data-changed', '_dataChanged');
                 this._plotDiagram();
             },
             _dataChanged: function() {
