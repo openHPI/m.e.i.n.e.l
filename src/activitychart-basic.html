@@ -229,7 +229,7 @@ This component shows an activity history, similar to the colored github chart.
 
           var yAxisTitle = yAxis.append('text')
             .text(this.axisLabels.y.title)
-            .style('font-size', this.axisTitleTextSize)
+            .style('font-size', this.axisTitleTextSize + 'px')
             .attr('x', 0)
             .attr('y', this.axisTitleTextSize);
 
@@ -240,7 +240,7 @@ This component shows an activity history, similar to the colored github chart.
             .data(yLabelValues)
             .enter().append('text')
             .text(function(d) { return d; })
-            .style('font-size', this.axisLabelsTextSize)
+            .style('font-size', this.axisLabelsTextSize + 'px')
             .attr('x', 0)
             .attr('y', this._spaceSquareVert.bind(this));
 
@@ -275,14 +275,14 @@ This component shows an activity history, similar to the colored github chart.
                       return this._convertToLocaleString(d.x);
                     }
                   }.bind(this))
-            .style('font-size', this.axisLabelsTextSize)
+            .style('font-size', this.axisLabelsTextSize + 'px')
             .attr('transform', this._transformXAxisLabels.bind(this))
             .attr('alignment-baseline', 'after-edge');
 
           //add title
           xAxis.append('text')
             .text(this.axisLabels.x.title)
-            .style('font-size', this.axisTitleTextSize)
+            .style('font-size', this.axisTitleTextSize + 'px')
             .attr('x', this._getVisualizationWidth() - this._spaceBetweenSquares)
             .attr('y', this.axisTitleTextSize)
             .attr('alignment-baseline', 'after-edge');
@@ -401,8 +401,8 @@ This component shows an activity history, similar to the colored github chart.
 
           var labelText = label.append('text')
   					.text(d.y + this.labelSeparator + this._convertToLocaleString(d.x))
-  					.style('font-size', this.labelTextSize)
-            .attr('alignment-baseline', 'after-edge');
+  					.style('font-size', this.labelTextSize + 'px')
+            .attr('dominant-baseline', 'text-after-edge');
 
           var labelTextWidth = labelText.node().getBBox().width;
 
