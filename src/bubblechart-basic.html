@@ -1,0 +1,119 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+
+
+<!--
+`bubblechart-basic`
+This is a basic component for plotly bubblecharts
+
+@demo demo/bubblechart_basic_demo.html
+-->
+<dom-module id="bubblechart-basic">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div style="display:none;">{{data}}</div>
+    <div id="diagram"></div>
+  </template>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'bubblechart-basic',
+                properties: {
+                    data: {
+                        type: Array,
+                        notify: true,
+                    },
+                    /** Width of the outer div */
+                    width: {
+                        type: Number,
+                        reflectToAttribute: true,
+                    },
+                    /** Height of the outer div */
+                    height: {
+                        type: Number,
+                        reflectToAttribute: true,
+                    },
+                    /** Primary color of chart */
+                    primarycolor: {
+                        type: String,
+                        value: 'rgba(0,0,0,1)',
+                        reflectToAttribute: true,
+                    },
+                    /** Accent color of chart */
+                    accentcolor: {
+                        type: String,
+                        value: 'rgba(0,0,0,1)',
+                        reflectToAttribute: true,
+                    },
+                },
+                attached: function() {
+                    this.listen(this, 'data-changed', '_dataChanged');
+                    this._plotDiagram();
+                },
+                _dataChanged: function() {
+                    this._plotDiagram();
+                },
+                _plotDiagram: function() {
+                    if(this.data == null) {
+                        return;
+                    }
+                    this.data[0]["mode"] = "markers";
+                    this.data[0]["marker"]["color"] = this.primarycolor;
+
+                    var d3 = Plotly.d3;
+
+                    /** Reset plot area in case we're redrawing*/
+                    var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
+
+                    var WIDTH_IN_PERCENT_OF_PARENT = 100,
+                        HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+                    /** Defines the width and height of the outer div */
+                    if (this.width && this.height) {
+                        var diagram = d3.select(this.$.diagram);
+
+                        diagram.style('width', this.width + "px");
+                        diagram.style('height', this.height + "px");
+                    }
+
+                    /** Create new div with specific attributes under outer div */
+                    var gd3 = d3.select(this.$.diagram)
+                        .append('div')
+                        .style({
+                            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                            height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                            'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+                        });
+
+                    var gd = gd3.node();
+                    var layout = {
+                      xaxis: {
+                          tickfont: {
+                              size: 14,
+                              color: this.accentcolor,
+                          },
+                      },
+                      yaxis: {
+                          tickfont: {
+                              size: 14,
+                              color: this.accentcolor,
+                          },
+                      },
+                    };
+                    Plotly.newPlot(gd, this.data, layout);
+                    window.addEventListener('resize', function() {
+                        Plotly.Plots.resize(gd);
+                    });
+                },
+            });
+        });
+    </script>
+</dom-module>
