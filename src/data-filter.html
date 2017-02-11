@@ -30,7 +30,6 @@ This is a component for filtering data based on user input.
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
-    <div style="display:none;">{{data}}</div>
     <div id="filterBar"></div>
     <linechart-basic id="linechart" data={{data}} width={{width}} height={{height}}></linechart-basic>
   </template>
