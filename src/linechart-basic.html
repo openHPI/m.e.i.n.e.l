@@ -44,9 +44,17 @@ This is a basic component for plotly linecharts
                 this.listen(this, 'data-changed', '_dataChanged');
                 this._plotDiagram();
             },
+            /**
+             * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+             *
+             */
             _dataChanged: function() {
                 this._plotDiagram();
             },
+            /**
+             * Plots the linechart diagram.
+             *
+             */
             _plotDiagram: function() {
                 var rawData = this.data;
                 var d3 = Plotly.d3;

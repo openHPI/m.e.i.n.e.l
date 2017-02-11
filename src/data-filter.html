@@ -19,7 +19,6 @@ This is a component for filtering data based on user input.
       }
       #filterBar {
         height: 50px;
-        /*background-color: gray;*/
       }
     </style>
 
@@ -72,6 +71,14 @@ This is a component for filtering data based on user input.
                     this.listen(newButton, 'tap', '_passData');
                 }
             },
+            /**
+            *
+            * Acts as an eventhandler and is called every time a button is pressed.
+            * It then alters the data array corresponding to the active buttons and passes
+            * the data to the contained linechart element.
+            *
+            * @param {button} button the button that was pressed
+            */
             _passData: function(button) {
                 var newDataset = [];
                 var buttons = this.$.filterBar.children;

@@ -340,6 +340,12 @@ This component shows an activity history, similar to the colored github chart.
           return this.diagramDiv.select('#' + id).node().getBBox();
         },
 
+        /**
+         * Converts a timestamp to a human readable datetime format
+         *
+         * @param {Object} timestamp
+         * @return {String}
+         */
         _convertToLocaleString: function(timestamp) {
           return (new Date(timestamp * 1000)).toLocaleString();
         },

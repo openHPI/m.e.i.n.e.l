@@ -5,8 +5,8 @@
 
 <!--
 `ajax-wrapper`
-This component handles a given url by asynchronously fetching data from it and
-creating and passing the data to a charting component, specified in a parameter.
+This component handles a given url by asynchronously fetching data from it and passing the data to its inner children.
+It may also create a new charting component if specified in a parameter.
 @demo demo/ajax_wrapper_demo.html
 -->
 <dom-module id="ajax-wrapper">
@@ -86,9 +86,10 @@ creating and passing the data to a charting component, specified in a parameter.
             },
 
             /**
-             * Parse the received data to a plotly readable Object
+             * Parse the received data to a plotly readable object
              *
-             * @param {Object} data data to be parsed
+             * @param {Object} data to be parsed
+             * @return {Object} which is understandable by plotly
              */
             _readDataFromResponse: function(data) {
                 var x = [];
