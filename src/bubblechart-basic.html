@@ -25,6 +25,7 @@ This is a basic component for plotly bubblecharts
             Polymer({
                 is: 'bubblechart-basic',
                 properties: {
+                    /** Datavalues to be plotted */
                     data: {
                         type: Array,
                         notify: true,
@@ -56,9 +57,17 @@ This is a basic component for plotly bubblecharts
                     this.listen(this, 'data-changed', '_dataChanged');
                     this._plotDiagram();
                 },
+                /**
+                * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+                *
+                */
                 _dataChanged: function() {
                     this._plotDiagram();
                 },
+                /**
+                * Plots the bubblechart diagram.
+                *
+                */
                 _plotDiagram: function() {
                     if(this.data == null) {
                         return;
