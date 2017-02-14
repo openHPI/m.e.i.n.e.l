@@ -87,49 +87,36 @@ This is a basic component for plotly linecharts
 
                 var gd = gd3.node();
 
+                var layout = {
+                    xaxis: {
+                        tickmode: "auto",
+                        nticks: 4,
+                        tickfont: {
+                            size: 14,
+                            color: this.accentcolor,
+                        },
+                    },
+                    yaxis: {
+                        fixedrange: true,
+                        tickfont: {
+                            size: 14,
+                            color: this.accentcolor,
+                        },
+                    },
+                };
+
                 /** Create different layouts depending on scrollzoom being active or not */
                 if (this.scrollzoom) {
                   var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
                   var minX = this.data[0]["x"][Math.round(this.data[0]["x"].length*(1-this.scrollrange/100))];
-                  var layout = {
-                      xaxis: {
-                          tickmode: "auto",
-                          nticks: 4,
-                          range: [minX, maxX],
-                          rangeslider: {},
-                          tickfont: {
-                              size: 14,
-                              color: this.accentcolor,
-                          },
-                      },
-                      yaxis: {
-                          fixedrange: true,
-                          tickfont: {
-                              size: 14,
-                              color: this.accentcolor,
-                          },
-                      },
-                  };
+                  layout.xaxis.rangeslider = {};
+                  layout.xaxis.range = [minX, maxX];
+
                   Plotly.newPlot(gd, rawData, layout, {scrollZoom: true});
                 } else {
-                  var layout = {
-                      xaxis: {
-                          tickmode: "auto",
-                          nticks: 4,
-                          tickfont: {
-                              size: 14,
-                              color: this.accentcolor,
-                          },
-                      },
-                      yaxis: {
-                          tickfont: {
-                              size: 14,
-                              color: this.accentcolor,
-                          },
-                      },
-                  };
                   Plotly.newPlot(gd, rawData, layout);
                 }
+                
                 window.addEventListener('resize', function() {
                     Plotly.Plots.resize(gd);
                 });
