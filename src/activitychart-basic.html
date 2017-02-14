@@ -1,5 +1,4 @@
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 <!--
@@ -25,14 +24,7 @@ This component shows an activity history, similar to the colored github chart.
       }
     </style>
 
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
-    <div style="display:none;">{{dataset}}</div>
+    <div style="display:none;">{{dataset}}</div> <!-- can this go too?-->
     <div id="diagram">
       <svg id="left-part">
         <!-- draw y axis here -->
@@ -51,18 +43,10 @@ This component shows an activity history, similar to the colored github chart.
         is: 'activitychart-basic',
 
         properties: {
-          /** URL of data to be plotted */
-          dataurl: {
-            type: String,
-            value: '',
-          },
-          /** y values in JSON format (data to be displayed) */
-          dataset: {
+          /** X (timestamp) and Y (measure) values to be plotted (in JSON format) */
+          data: {
             type: Array,
-          },
-          /** x values in JSON format (labels for data) */
-          labels: {
-            type: Array,
+            notify: true,
           },
           /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
           primarycolor: {
@@ -123,12 +107,22 @@ This component shows an activity history, similar to the colored github chart.
             		"title": "Stunde",
                 "values": ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
               }
-            }
+            },
+            // English:
+            // value: {
+            //     "x": {
+            //       "title": "Days"
+            //     },
+            //     "y": {
+            //   		"title": "Hours",
+            //       "values": ["0 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"]
+            //     }
+            // },
           },
           /** String that is displayed between datum and date when label is shown. */
           labelSeparator: {
             type: String,
-            value: ' bei '
+            value: 'bei'
           },
           /** Set padding (in px) of the label shown when hovering over a datum (opt, default: 2) */
           labelPadding: {
@@ -172,25 +166,11 @@ This component shows an activity history, similar to the colored github chart.
           return axisLabels.y.values.length;
         },
 
+        /** This is called by Polymer after the component instance is attached to the document. */
         attached: function() {
-          if(this.dataurl) {
-            this.$.ajaxCaller.generateRequest();
-          }
-          else {
-            this._createDiagram();
-          }
-        },
-
-        /**
-        * Transforms the transmitted data into a plot
-        *
-        * @param {Object} data The data to be plotted
-        */
-        handleResponse: function(data) {
-          var goodData = this._normalizeJSON(data.detail.response);
-          this.dataset = goodData[0]["y"];
-          this.labels = goodData[0]["x"];
-          this._createDiagram();
+          //if this.data is not null, then activity chart is probably used without an ajax wrapper and the diagram should be drawn because the data will not be updated later anymore so that the listener won't fire
+          if(this.data) this._createDiagram();
+          this.listen(this, 'data-changed', '_createDiagram');
         },
 
         /** Creates the activity diagram including the axes based on the data. */
@@ -198,7 +178,7 @@ This component shows an activity history, similar to the colored github chart.
           this.diagramDiv = Plotly.d3.select(this.$.diagram);
           //let other D3 functions later use this.diagramDiv in order to restrict D3's selection process to the local DOM of this component!
 
-          this.data = this._parseData(this.labels, this.dataset);
+          this.parsedData = this._parseData(this.data[0].x, this.data[0].y);
 
           this._plotYAxis();
           this._plotXAxis();
@@ -258,9 +238,9 @@ This component shows an activity history, similar to the colored github chart.
 
           var xLabelValues = [];
 
-          for(var i = 0; i < this.data.length; i++) {
+          for(var i = 0; i < this.parsedData.length; i++) {
             if((i % this._squaresPerColumn == 0) && ((i / this._squaresPerColumn) % this.xAxisLabelFrequency == 0)) {
-                xLabelValues.push(this.data[i]);
+                xLabelValues.push(this.parsedData[i]);
             }
           }
 
@@ -296,11 +276,12 @@ This component shows an activity history, similar to the colored github chart.
 
         /** Plots the actual activity visualization consisting solely of squares */
         _plotVisualization: function() {
+          // find min/max values in the data except if they're overwritten, use original data input array for convenience
           if(this.minValue == null) {
-            this.minValue = Math.min(...this.dataset);
+            this.minValue = Math.min(...this.data[0].y);
           }
           if(this.maxValue == null) {
-            this.maxValue = Math.max(...this.dataset);
+            this.maxValue = Math.max(...this.data[0].y);
           }
 
           //the appropriate color is calculated based on the value of the datum, there is no set of fixed colors
@@ -317,7 +298,7 @@ This component shows an activity history, similar to the colored github chart.
             .attr('id', 'visualization');
 
           var squares = visualization.selectAll('rect')
-            .data(this.data)
+            .data(this.parsedData)
             .enter().append('rect')
             .attr('width', this.squareSize)
             .attr('height', this.squareSize)
@@ -385,7 +366,7 @@ This component shows an activity history, similar to the colored github chart.
 
         /** Calculates width of the actual visualization (without the axes) */
         _getVisualizationWidth: function() {
-          return (Math.ceil(this.dataset.length / this._squaresPerColumn) * this.squareSpacing) + this._spaceBetweenSquares;
+          return (Math.ceil(this.parsedData.length / this._squaresPerColumn) * this.squareSpacing) + this._spaceBetweenSquares;
         },
 
         /** Calculates height of the actual visualization (without the axes) */
@@ -400,7 +381,7 @@ This component shows an activity history, similar to the colored github chart.
             .attr('id', 'label-' + i);
 
           var labelText = label.append('text')
-  					.text(d.y + this.labelSeparator + this._convertToLocaleString(d.x))
+  					.text(d.y + ' ' + this.labelSeparator + ' ' + this._convertToLocaleString(d.x))
   					.style('font-size', this.labelTextSize + 'px')
             .attr('dominant-baseline', 'text-after-edge');
 
@@ -456,29 +437,6 @@ This component shows an activity history, similar to the colored github chart.
         _spaceSquareVert: function(d, i) {
           return this.squareSpacing * (i % this._squaresPerColumn);
   			},
-
-        /**
-        * Normalizes the data supplied by the API to work with Plotly
-        *
-        * @param {Object} data The data (as JSON) to be normalized
-        * @return {Array} The normalized data
-        */
-        _normalizeJSON: function(data) {
-          var x = [];
-          var y = [];
-          for (entry in data) {
-            //compute date string
-            x.push(entry);
-            y.push(data[entry]);
-          }
-          var diagramData = {"x":x};
-          diagramData["y"] = y;
-          diagramData["type"] = "bar";
-          diagramData["marker"] = {color:this.primarycolor};
-          var plotlyData = [];
-          plotlyData.push(diagramData);
-          return plotlyData;
-        }
       });
     });
   </script>
