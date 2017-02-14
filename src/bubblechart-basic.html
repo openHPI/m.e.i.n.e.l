@@ -4,27 +4,31 @@
 
 
 <!--
-`barchart-basic`
-This is a basic component for plotly barcharts
+`bubblechart-basic`
+<br />This is a basic component for plotly bubblecharts.
+<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/bubble-charts/" target="_blank">Plotly bubble chart documentation</a>.
 
-@demo demo/barchart_basic_demo.html
+@demo demo/bubblechart_basic_demo.html
 -->
-<dom-module id="barchart-basic">
+<dom-module id="bubblechart-basic">
     <template>
     <style>
       :host {
         display: block;
       }
     </style>
-    <div style="display:none;">{{data}}</div>
     <div id="diagram"></div>
   </template>
 
     <script>
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
-                is: 'barchart-basic',
+                is: 'bubblechart-basic',
                 properties: {
+                    /** Datavalues to be plotted.
+                    * <br />Example values: [{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17], "marker": {"size":[30, 80, 30, 40]}}].
+                    * <br />Where x and y specify where the bubbles are centered and marker->size defines the size of the single bubbles.
+                    */
                     data: {
                         type: Array,
                         notify: true,
@@ -56,17 +60,23 @@ This is a basic component for plotly barcharts
                     this.listen(this, 'data-changed', '_dataChanged');
                     this._plotDiagram();
                 },
+                /**
+                * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+                *
+                */
                 _dataChanged: function() {
                     this._plotDiagram();
                 },
+                /**
+                * Plots the bubblechart diagram.
+                *
+                */
                 _plotDiagram: function() {
                     if(this.data == null) {
                         return;
                     }
-                    this.data[0]["type"] = "bar";
-                    this.data[0]["marker"] = {
-                        color: this.primarycolor
-                    };
+                    this.data[0]["mode"] = "markers";
+                    this.data[0]["marker"]["color"] = this.primarycolor;
 
                     var d3 = Plotly.d3;
 
@@ -97,19 +107,18 @@ This is a basic component for plotly barcharts
 
                     var gd = gd3.node();
                     var layout = {
-                        xaxis: {
-                            tickmode: "auto",
-                            tickfont: {
-                                size: 14,
-                                color: this.accentcolor,
-                            },
-                        },
-                        yaxis: {
-                            tickfont: {
-                                size: 14,
-                                color: this.accentcolor,
-                            },
-                        },
+                      xaxis: {
+                          tickfont: {
+                              size: 14,
+                              color: this.accentcolor,
+                          },
+                      },
+                      yaxis: {
+                          tickfont: {
+                              size: 14,
+                              color: this.accentcolor,
+                          },
+                      },
                     };
                     Plotly.newPlot(gd, this.data, layout);
                     window.addEventListener('resize', function() {
