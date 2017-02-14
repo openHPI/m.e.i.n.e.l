@@ -76,7 +76,7 @@ creating and passing the data to a charting component, specified in a parameter.
                     var newChartingElement = document.createElement(this.diagramType);
                     Polymer.dom(this).appendChild(newChartingElement);
                 }
-                for (const chartingElement of Polymer.dom(this).children) {
+                for (let chartingElement of Polymer.dom(this).children) {
                     chartingElement.primarycolor = this.primarycolor;
                     chartingElement.accentcolor = this.accentcolor;
                     chartingElement.width = this.width;
