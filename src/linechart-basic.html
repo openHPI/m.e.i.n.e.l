@@ -5,7 +5,8 @@
 
 <!--
 `linechart-basic`
-This is a basic component for plotly linecharts
+<br />This is a basic component for plotly linecharts.
+<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/line-charts/" target="_blank">Plotly line chart documentation</a>.
 
 @demo demo/linechart_basic_demo.html
 -->
@@ -55,9 +56,17 @@ This is a basic component for plotly linecharts
                 this.listen(this, 'data-changed', '_dataChanged');
                 this._plotDiagram();
             },
+            /**
+             * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+             *
+             */
             _dataChanged: function() {
                 this._plotDiagram();
             },
+            /**
+             * Plots the linechart diagram.
+             *
+             */
             _plotDiagram: function() {
                 var rawData = this.data;
                 var d3 = Plotly.d3;

@@ -5,7 +5,8 @@
 
 <!--
 `barchart-basic`
-This is a basic component for plotly barcharts
+<br />This is a basic component for plotly barcharts.
+<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/bar-charts/" target="_blank">Plotly bar chart documentation</a>.
 
 @demo demo/barchart_basic_demo.html
 -->
@@ -24,6 +25,7 @@ This is a basic component for plotly barcharts
             Polymer({
                 is: 'barchart-basic',
                 properties: {
+                    /** Datavalues to be plotted */
                     data: {
                         type: Array,
                         notify: true,
@@ -73,9 +75,17 @@ This is a basic component for plotly barcharts
                     this.listen(this, 'data-changed', '_dataChanged');
                     this._plotDiagram();
                 },
+                /**
+                 * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+                 *
+                 */
                 _dataChanged: function() {
                     this._plotDiagram();
                 },
+                /**
+                 * Plots the barchart diagram.
+                 *
+                 */
                 _plotDiagram: function() {
                     if(this.data == null) {
                         return;
