@@ -50,11 +50,23 @@ This is a basic component for plotly barcharts
                         value: 'rgba(0,0,0,1)',
                         reflectToAttribute: true,
                     },
+                    /** Scroll and zoom activation */
+                    scrollzoom: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
+                    },
+                    /** Scroll range provided in % 0 to 100 */
+                    scrollrange: {
+                        type: Number,
+                        value: 100,
+                        reflectToAttribute: true,
+                    },
                     /** Enables stacked bar if multiple xy objects are provided */
                     stackedbar: {
-                      type: Boolean,
-                      value: false,
-                      reflectToAttribute: true,
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
                     },
                 },
                 attached: function() {
@@ -103,6 +115,7 @@ This is a basic component for plotly barcharts
                         });
 
                     var gd = gd3.node();
+
                     var layout = {
                         xaxis: {
                             tickmode: "auto",
@@ -118,8 +131,21 @@ This is a basic component for plotly barcharts
                             },
                         },
                     };
+                  
                     (this.stackedbar) ? layout.barmode = 'stack' : '';
-                    Plotly.newPlot(gd, this.data, layout);
+                  
+                    /** Create different layouts depending on scrollzoom being active or not */
+                    if (this.scrollzoom) {
+                      var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
+                      var minX = this.data[0]["x"][Math.round(this.data[0]["x"].length*(1-this.scrollrange/100))];
+                      layout.xaxis.rangeslider = {};
+                      layout.xaxis.range = [minX, maxX];
+
+                      Plotly.newPlot(gd, this.data, layout, {scrollZoom: true});
+                    } else {
+                      Plotly.newPlot(gd, this.data, layout);
+                    }
+                  
                     window.addEventListener('resize', function() {
                         Plotly.Plots.resize(gd);
                     });

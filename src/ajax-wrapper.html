@@ -59,6 +59,16 @@ creating and passing the data to a charting component, specified in a parameter.
                     type: String,
                     value: 'rgba(0,0,0,1)',
                 },
+                /** Scroll and zoom activation */
+                scrollzoom: {
+                    type: Boolean,
+                    value: false,
+                },
+                /** Scroll range provided in % 0 to 100 */
+                scrollrange: {
+                  type: Number,
+                  value: 100,
+                },
             },
             attached: function() {
                 this.$.ajaxCaller.generateRequest();
@@ -81,6 +91,8 @@ creating and passing the data to a charting component, specified in a parameter.
                     chartingElement.accentcolor = this.accentcolor;
                     chartingElement.width = this.width;
                     chartingElement.height = this.height;
+                    chartingElement.scrollzoom = this.scrollzoom;
+                    chartingElement.scrollrange = this.scrollrange;
                     chartingElement.stackedbar = this.stackedbar;
                     chartingElement.data = JSON.parse(JSON.stringify(dataArray));   //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
                 }
