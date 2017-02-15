@@ -42,11 +42,13 @@ This is a basic component for plotly linecharts
                 scrollzoom: {
                     type: Boolean,
                     value: false,
+                    reflectToAttribute: true,
                 },
                 /** Scroll range provided in % 0 to 100 */
                 scrollrange: {
-                  type: Number,
-                  value: 100,
+                    type: Number,
+                    value: 100,
+                    reflectToAttribute: true,
                 },
             },
             attached: function() {
