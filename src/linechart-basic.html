@@ -16,7 +16,6 @@ This is a basic component for plotly linecharts
         display: block;
       }
     </style>
-    <div style="display:none;">{{data}}</div>
     <div id="diagram"></div>
   </template>
     <script>
@@ -90,7 +89,6 @@ This is a basic component for plotly linecharts
                 var layout = {
                     xaxis: {
                         tickmode: "auto",
-                        nticks: 4,
                         tickfont: {
                             size: 14,
                             color: this.accentcolor,

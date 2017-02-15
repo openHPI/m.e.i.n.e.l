@@ -86,13 +86,14 @@ creating and passing the data to a charting component, specified in a parameter.
                     var newChartingElement = document.createElement(this.diagramType);
                     Polymer.dom(this).appendChild(newChartingElement);
                 }
-                for (const chartingElement of Polymer.dom(this).children) {
+                for (let chartingElement of Polymer.dom(this).children) {
                     chartingElement.primarycolor = this.primarycolor;
                     chartingElement.accentcolor = this.accentcolor;
                     chartingElement.width = this.width;
                     chartingElement.height = this.height;
                     chartingElement.scrollzoom = this.scrollzoom;
                     chartingElement.scrollrange = this.scrollrange;
+                    chartingElement.stackedbar = this.stackedbar;
                     chartingElement.data = JSON.parse(JSON.stringify(dataArray));   //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
                 }
             },
