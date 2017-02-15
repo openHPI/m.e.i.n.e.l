@@ -81,6 +81,7 @@ creating and passing the data to a charting component, specified in a parameter.
                     chartingElement.accentcolor = this.accentcolor;
                     chartingElement.width = this.width;
                     chartingElement.height = this.height;
+                    chartingElement.stackedbar = this.stackedbar;
                     chartingElement.data = JSON.parse(JSON.stringify(dataArray));   //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
                 }
             },

@@ -50,6 +50,12 @@ This is a basic component for plotly barcharts
                         value: 'rgba(0,0,0,1)',
                         reflectToAttribute: true,
                     },
+                    /** Enables stacked bar if multiple xy objects are provided */
+                    stackedbar: {
+                      type: Boolean,
+                      value: false,
+                      reflectToAttribute: true,
+                    },
                 },
                 attached: function() {
                     this.listen(this, 'data-changed', '_dataChanged');
@@ -62,7 +68,9 @@ This is a basic component for plotly barcharts
                     if(this.data == null) {
                         return;
                     }
-                    this.data[0]["type"] = "bar";
+                    for(var i = 0; i < this.data.length; i++) {
+                      this.data[i]["type"] = "bar";
+                    };
                     this.data[0]["marker"] = {
                         color: this.primarycolor
                     };
@@ -110,6 +118,7 @@ This is a basic component for plotly barcharts
                             },
                         },
                     };
+                    (this.stackedbar) ? layout.barmode = 'stack' : '';
                     Plotly.newPlot(gd, this.data, layout);
                     window.addEventListener('resize', function() {
                         Plotly.Plots.resize(gd);
