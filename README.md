@@ -38,3 +38,14 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
   - embed your component accordingly inside the `<demo-snippet><template>HERE</template></demo-snippet>` part
 
 6. append your diagram to the `to all-imports.html` file
+
+## Optimize for production
+
+To optimize the polymer components for production, you can use Vulcanize. More information can be found [in the Polymer docs.](https://www.polymer-project.org/1.0/docs/tools/optimize-for-production)
+
+1. install [Polymer Bundler](https://github.com/Polymer/polymer-bundler): `npm install -g polymer-bundler`
+2. figure out which chart you want from `src/`
+3. do `polymer-bundler --inline-scripts --inline-css src/YOUR-CHART.html > CHART.html`
+4. include the `CHART.html` as `<link rel="import" href="../path/CHART.html">`
+5. include `<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.23/webcomponents-lite.min.js"></script>` in your header to make polyfills work with firefox etc.
+6. use the `<CHART></CHART>` tag you just created
