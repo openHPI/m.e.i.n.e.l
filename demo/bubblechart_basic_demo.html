@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>piechart-basic demo</title>
+    <title>bubblechart-basic demo</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../src/piechart-basic.html">
+    <link rel="import" href="../src/bubblechart-basic.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         div.vertical-section-container {
@@ -22,11 +22,11 @@
 
 <body>
     <div>
-        <h3>piechart-basic demo (custom element)</h3>
+        <h3>basic bubblechart demo (custom element)</h3>
         <demo-snippet>
-            <template>
-          <piechart-basic data='[19, 26, 55]' labels='["Residential", "Non-Residential", "Utility"]' colors='["#4a148c", "#ffcc80", "rgba(177,6,58,1)"]'></piechart-basic>
-        </template>
+          <template>
+            <bubblechart-basic width="400" height="400" primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17], "marker": {"size":[30, 80, 30, 40]}}]'></bubblechart-basic>
+          </template>
         </demo-snippet>
     </div>
 </body>

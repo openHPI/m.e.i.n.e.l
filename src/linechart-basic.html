@@ -1,11 +1,12 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
 <!--
 `linechart-basic`
-This is a basic component for plotly linecharts
+<br />This is a basic component for plotly linecharts.
+<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/line-charts/" target="_blank">Plotly line chart documentation</a>.
 
 @demo demo/linechart_basic_demo.html
 -->
@@ -16,7 +17,6 @@ This is a basic component for plotly linecharts
         display: block;
       }
     </style>
-    <div style="display:none;">{{data}}</div>
     <div id="diagram"></div>
   </template>
     <script>
@@ -39,14 +39,34 @@ This is a basic component for plotly linecharts
                     type: Number,
                     reflectToAttribute: true,
                 },
+                /** Scroll and zoom activation */
+                scrollzoom: {
+                    type: Boolean,
+                    value: false,
+                    reflectToAttribute: true,
+                },
+                /** Scroll range provided in % 0 to 100 */
+                scrollrange: {
+                    type: Number,
+                    value: 100,
+                    reflectToAttribute: true,
+                },
             },
             attached: function() {
                 this.listen(this, 'data-changed', '_dataChanged');
                 this._plotDiagram();
             },
+            /**
+             * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+             *
+             */
             _dataChanged: function() {
                 this._plotDiagram();
             },
+            /**
+             * Plots the linechart diagram.
+             *
+             */
             _plotDiagram: function() {
                 var rawData = this.data;
                 var d3 = Plotly.d3;
@@ -76,23 +96,36 @@ This is a basic component for plotly linecharts
                     });
 
                 var gd = gd3.node();
+
                 var layout = {
                     xaxis: {
                         tickmode: "auto",
-                        nticks: 4,
                         tickfont: {
                             size: 14,
                             color: this.accentcolor,
                         },
                     },
                     yaxis: {
+                        fixedrange: true,
                         tickfont: {
                             size: 14,
                             color: this.accentcolor,
                         },
                     },
                 };
-                Plotly.newPlot(gd, rawData, layout);
+
+                /** Create different layouts depending on scrollzoom being active or not */
+                if (this.scrollzoom) {
+                  var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
+                  var minX = this.data[0]["x"][Math.round(this.data[0]["x"].length*(1-this.scrollrange/100))];
+                  layout.xaxis.rangeslider = {};
+                  layout.xaxis.range = [minX, maxX];
+
+                  Plotly.newPlot(gd, rawData, layout, {scrollZoom: true});
+                } else {
+                  Plotly.newPlot(gd, rawData, layout);
+                }
+                
                 window.addEventListener('resize', function() {
                     Plotly.Plots.resize(gd);
                 });

@@ -1,6 +1,6 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
+<link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="plotly-import.html">
 <link rel="import" href="linechart-basic.html">
 
@@ -19,7 +19,6 @@ This is a component for filtering data based on user input.
       }
       #filterBar {
         height: 50px;
-        /*background-color: gray;*/
       }
     </style>
 
@@ -30,7 +29,6 @@ This is a component for filtering data based on user input.
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
-    <div style="display:none;">{{data}}</div>
     <div id="filterBar"></div>
     <linechart-basic id="linechart" data={{data}} width={{width}} height={{height}}></linechart-basic>
   </template>
@@ -72,6 +70,14 @@ This is a component for filtering data based on user input.
                     this.listen(newButton, 'tap', '_passData');
                 }
             },
+            /**
+            *
+            * Acts as an eventhandler and is called every time a button is pressed.
+            * It then alters the data array corresponding to the active buttons and passes
+            * the data to the contained linechart element.
+            *
+            * @param {button} button the button that was pressed
+            */
             _passData: function(button) {
                 var newDataset = [];
                 var buttons = this.$.filterBar.children;

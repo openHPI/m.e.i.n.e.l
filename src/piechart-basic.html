@@ -1,10 +1,11 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="plotly-import.html">
 
 
 <!--
 `piechart-basic`
-This is a basic component for plotly piecharts
+<br />This is a basic component for plotly piecharts.
+<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/pie-charts/" target="_blank">Plotly pie chart documentation</a>.
 
 @demo demo/piechart_basic_demo.html
 -->
@@ -15,7 +16,6 @@ This is a basic component for plotly piecharts
         display: block;
       }
     </style>
-    <div style="display:none;">{{data}}</div>
     <div id="diagram"></div>
   </template>
 
@@ -90,20 +90,13 @@ This is a basic component for plotly piecharts
                         type: 'pie',
                         marker: {
                             colors: this.colors
-                        },
+                        }
                     }];
                     Plotly.newPlot(gd, dataSet);
                     window.addEventListener('resize', function() {
                         Plotly.Plots.resize(gd);
                     });
                 },
-                ready: function() {
-                    if (this.dataset && this.labels) {
-                        this._plotDiagram(this.dataset, this.labels, this.colors);
-                    } else {
-                        console.error("[ERROR] You did not supply any data.");
-                    }
-                }
             });
         });
     </script>
