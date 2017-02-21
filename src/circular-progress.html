@@ -116,8 +116,10 @@ This is a basic component for circular progress charts
                     var width = this.width,
                         height = this.height;
 
-                    var innerRadius = width / 3;
-                    var arcLineWeight = width / 10;
+                    var edgeLength = Math.min(width, height);
+
+                    var innerRadius = edgeLength / 3;
+                    var arcLineWeight = edgeLength / 10;
                     var outerRadius = innerRadius + arcLineWeight;
 
                     var svg = gd3.append("svg")
@@ -169,24 +171,24 @@ This is a basic component for circular progress charts
                         .attr({
                             class: 'middleText',
                             'text-anchor': 'middle',
-                            dy: width / 10,
-                            dx: -(width / 20)
+                            dy: edgeLength / 10,
+                            dx: -(edgeLength / 20)
                         })
                         .style({
                             fill: this.primarycolor,
-                            'font-size': (0.3 * width) + 'px'
+                            'font-size': (0.3 * edgeLength) + 'px'
                         });
                     svg.append('text')
                         .text('%')
                         .attr({
                             class: 'percent',
                             'text-anchor': 'middle',
-                            dx: width / 6,
-                            dy: -(width / 60)
+                            dx: edgeLength / 6,
+                            dy: -(edgeLength / 60)
                         })
                         .style({
                             fill: this.primarycolor,
-                            'font-size': (0.14 * width) + 'px'
+                            'font-size': (0.14 * edgeLength) + 'px'
                         });
 
                     var arcTween = function(transition, newAngle) {
