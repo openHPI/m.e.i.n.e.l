@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>circular-progress demo</title>
+    <title>circular-stacked demo</title>
 
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
     <link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../src/circular-progress.html">
+    <link rel="import" href="../src/circular-stacked.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         div.vertical-section-container {
@@ -22,10 +22,10 @@
 
 <body>
     <div>
-        <h3>circular-progress demo (custom element)</h3>
+        <h3>circular-stacked demo (custom element)</h3>
         <demo-snippet>
             <template>
-              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data='42' width="500" height="500"></circular-progress>
+              <circular-stacked primarycolor="#f2503f" accentcolor="#404F70" data='[42, 50]'></circular-stacked>
             </template>
         </demo-snippet>
     </div>
