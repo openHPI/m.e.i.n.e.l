@@ -113,8 +113,8 @@ This is a basic component for circular progress charts
                         })
                         .sort(null);
 
-                    var width = this.width,
-                        height = this.height;
+                    var width = this.offsetWidth,
+                        height = this.offsetHeight;
 
                     var edgeLength = Math.min(width, height);
 
@@ -211,6 +211,26 @@ This is a basic component for circular progress charts
                     };
 
                     setTimeout(animateProgress, 0);
+
+                    var waitForFinalEvent = (function () {
+                      var timers = {};
+                      return function (callback, ms, uniqueId) {
+                        if (!uniqueId) {
+                          uniqueId = "Don't call this twice without a uniqueId";
+                        }
+                        if (timers[uniqueId]) {
+                          clearTimeout (timers[uniqueId]);
+                        }
+                        timers[uniqueId] = setTimeout(callback, ms);
+                      };
+                    })();
+
+                    var _this = this;
+                    window.addEventListener('resize', function() {
+                        waitForFinalEvent(function() {
+                          _this._plotDiagram();
+                        }, 500, "JanIstToll");
+                    });
                 },
             });
         });
