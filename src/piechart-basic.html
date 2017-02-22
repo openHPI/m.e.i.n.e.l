@@ -46,9 +46,12 @@
                         type: Array,
                     },
                 },
+
+                /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
                     this._plotDiagram();
                 },
+                
                 /**
                  * Displays the data in a pie chart
                  *
@@ -56,7 +59,6 @@
                  * @param {Array<string>} labels The labels corresponding to the dataset
                  * @param {Array<string>} colors The colors the data shall be displayed in
                  */
-
                 _plotDiagram: function() {
                     var d3 = Plotly.d3;
 

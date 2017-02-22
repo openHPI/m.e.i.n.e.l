@@ -70,6 +70,7 @@ It may also create a new charting component if specified in a parameter.
                   value: 100,
                 },
             },
+            /** This is called by Polymer after the component instance is attached to the document. */
             attached: function() {
                 this.$.ajaxCaller.generateRequest();
             },

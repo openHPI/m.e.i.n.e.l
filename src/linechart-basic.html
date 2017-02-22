@@ -52,6 +52,8 @@
                     reflectToAttribute: true,
                 },
             },
+
+            /** This is called by Polymer after the component instance is attached to the document. */
             attached: function() {
                 this.listen(this, 'data-changed', '_dataChanged');
                 this._plotDiagram();
@@ -125,7 +127,7 @@
                 } else {
                   Plotly.newPlot(gd, rawData, layout);
                 }
-                
+
                 window.addEventListener('resize', function() {
                     Plotly.Plots.resize(gd);
                 });
