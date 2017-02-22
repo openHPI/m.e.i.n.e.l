@@ -1,0 +1,226 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+
+
+<!--
+`circular-progress`
+This is a basic component for circular progress charts
+
+@demo demo/circular_progress_demo.html
+-->
+<dom-module id="circular-progress">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div id="diagram"></div>
+  </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'circular-progress',
+                properties: {
+                    /** Data provided as an absolute number (percentage)*/
+                    data: {
+                        type: Number,
+                        notify: true,
+                    },
+                    /** Width of the outer div */
+                    width: {
+                        type: Number,
+                        reflectToAttribute: true,
+                        value: 200,
+                    },
+                    /** Height of the outer div */
+                    height: {
+                        type: Number,
+                        reflectToAttribute: true,
+                        value: 200,
+                    },
+                    /** Fill and text color*/
+                    primarycolor: {
+                        type: String,
+                        value: '#f2503f',
+                    },
+                    /** Background color of the circle*/
+                    accentcolor: {
+                        type: String,
+                        value: '#404F70',
+                    }
+                },
+
+                attached: function() {
+                    this.listen(this, 'data-changed', '_dataChanged');
+                    this._plotDiagram();
+                },
+
+                _dataChanged: function() {
+                    this._plotDiagram();
+                },
+
+                _plotDiagram: function() {
+                    var d3 = Plotly.d3;
+                    /** Reset plot area in case we're redrawing*/
+                    var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
+
+                    var WIDTH_IN_PERCENT_OF_PARENT = 100,
+                        HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+                    /** Defines the width and height of the outer div */
+                    if (this.width !== undefined && this.height !== undefined) {
+                        var diagram = d3.select(this.$.diagram);
+
+                        diagram.style('width', this.width + "px");
+                        diagram.style('height', this.height + "px");
+                    }
+
+                    /** Create new div with specific attributes under outer div */
+                    var gd3 = d3.select(this.$.diagram)
+                        .append('div')
+                        .style({
+                            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                            height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                            'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+                        });
+
+                    var createPercentageFill = function(svg, id, color) {
+                        var defs = svg.append("svg:defs")
+
+                        var red_gradient = defs.append("svg:linearGradient")
+                            .attr("id", id)
+                            .attr("x1", "0%")
+                            .attr("y1", "0%")
+                            .attr("x2", "50%")
+                            .attr("y2", "100%")
+                            .attr("spreadMethod", "pad");
+                        red_gradient.append("svg:stop")
+                            .attr("offset", "50%")
+                            .attr("stop-color", color)
+                            .attr("stop-opacity", 1);
+                    };
+
+                    var percent = this.data;
+                    var ratio = percent / 100;
+
+                    var pie = d3.layout.pie()
+                        .value(function(d) {
+                            return d
+                        })
+                        .sort(null);
+
+                    var width = this.offsetWidth,
+                        height = this.offsetHeight;
+
+                    var edgeLength = Math.min(width, height);
+
+                    var innerRadius = edgeLength / 3;
+                    var arcLineWeight = edgeLength / 10;
+                    var outerRadius = innerRadius + arcLineWeight;
+
+                    var svg = gd3.append("svg")
+                        .attr({
+                            width: width,
+                            height: height,
+                            class: 'shadow'
+                        }).append('g')
+                        .attr({
+                            transform: 'translate(' + width / 2 + ',' + height / 2 + ')'
+                        });
+
+                    createPercentageFill(svg, 'gradient', this.primarycolor);
+
+                    var arc = d3.svg.arc()
+                        .innerRadius(innerRadius)
+                        .outerRadius(outerRadius)
+                        .startAngle(0)
+                        .endAngle(2 * Math.PI);
+
+                    var arcLine = d3.svg.arc()
+                        .innerRadius(innerRadius)
+                        .outerRadius(outerRadius)
+                        .startAngle(0);
+
+                    var pathBackground = svg.append('path')
+                        .attr({
+                            d: arc
+                        })
+                        .style({
+                            fill: this.accentcolor
+                        });
+
+                    var pathChart = svg.append('path')
+                        .datum({
+                            endAngle: 0
+                        })
+                        .attr({
+                            d: arcLine
+                        })
+                        .style({
+                            fill: 'url(#gradient)'
+                        });
+
+                    var middleCount = svg.append('text')
+                        .text(function(d) {
+                            return d;
+                        })
+                        .attr({
+                            class: 'middleText',
+                            'text-anchor': 'middle',
+                            dy: edgeLength / 10,
+                            dx: -(edgeLength / 20)
+                        })
+                        .style({
+                            fill: this.primarycolor,
+                            'font-size': (0.3 * edgeLength) + 'px'
+                        });
+                    svg.append('text')
+                        .text('%')
+                        .attr({
+                            class: 'percent',
+                            'text-anchor': 'middle',
+                            dx: edgeLength / 6,
+                            dy: -(edgeLength / 60)
+                        })
+                        .style({
+                            fill: this.primarycolor,
+                            'font-size': (0.14 * edgeLength) + 'px'
+                        });
+
+                    var arcTween = function(transition, newAngle) {
+                        transition.attrTween("d", function(d) {
+                            var interpolate = d3.interpolate(d.endAngle, newAngle);
+                            var interpolateCount = d3.interpolate(0, percent);
+                            return function(t) {
+                                d.endAngle = interpolate(t);
+                                middleCount.text(Math.floor(interpolateCount(t)));
+                                return arcLine(d);
+                            };
+                        });
+                    };
+
+                    pathChart.transition()
+                        .duration(750)
+                        .ease('cubic')
+                        .call(arcTween, ((2 * Math.PI)) * ratio);
+
+                    var _this = this;
+                    var resizeTimer;
+                    window.addEventListener('resize', function() {
+                        clearTimeout(resizeTimer);
+                        resizeTimer = setTimeout(function() {
+                            if (_this.ignoreFirst) {
+                                _this._plotDiagram();
+                            }
+                            _this.ignoreFirst = true;
+                        }, 250);
+                    });
+                },
+            });
+        });
+    </script>
+</dom-module>
