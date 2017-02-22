@@ -167,7 +167,7 @@ This is a basic component for circular progress charts
                     pathChart.transition()
                         .duration(750)
                         .ease('cubic')
-                        .call(arcTween, ((2 * Math.PI)) * ratio);
+                        .call(arcTween, 2 * Math.PI * ratio);
 
                     var _this = this;
                     var resizeTimer;

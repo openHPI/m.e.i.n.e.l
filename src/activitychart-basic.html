@@ -177,6 +177,9 @@ This component shows an activity history, similar to the colored github chart.
           this.diagramDiv = Plotly.d3.select(this.$.diagram);
           //let other D3 functions later use this.diagramDiv in order to restrict D3's selection process to the local DOM of this component!
 
+          this.diagramDiv.select('#left-part').selectAll("*").remove();
+          this.diagramDiv.select('#right-part').selectAll("*").remove();
+
           this.parsedData = this._parseData(this.data[0].x, this.data[0].y);
 
           this._plotYAxis();
