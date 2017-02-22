@@ -203,33 +203,21 @@ This is a basic component for circular progress charts
                         });
                     };
 
-                    var animateProgress = function() {
-                        pathChart.transition()
-                            .duration(750)
-                            .ease('cubic')
-                            .call(arcTween, ((2 * Math.PI)) * ratio);
-                    };
-
-                    setTimeout(animateProgress, 0);
-
-                    var waitForFinalEvent = (function () {
-                      var timers = {};
-                      return function (callback, ms, uniqueId) {
-                        if (!uniqueId) {
-                          uniqueId = "Don't call this twice without a uniqueId";
-                        }
-                        if (timers[uniqueId]) {
-                          clearTimeout (timers[uniqueId]);
-                        }
-                        timers[uniqueId] = setTimeout(callback, ms);
-                      };
-                    })();
+                    pathChart.transition()
+                        .duration(750)
+                        .ease('cubic')
+                        .call(arcTween, ((2 * Math.PI)) * ratio);
 
                     var _this = this;
+                    var resizeTimer;
                     window.addEventListener('resize', function() {
-                        waitForFinalEvent(function() {
-                          _this._plotDiagram();
-                        }, 500, "JanIstToll");
+                        clearTimeout(resizeTimer);
+                        resizeTimer = setTimeout(function() {
+                            if (_this.ignoreFirst) {
+                                _this._plotDiagram();
+                            }
+                            _this.ignoreFirst = true;
+                        }, 250);
                     });
                 },
             });
