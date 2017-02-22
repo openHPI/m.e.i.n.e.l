@@ -50,11 +50,13 @@ This is a basic component for circular progress charts
                     }
                 },
 
+                /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
                     this._plotDiagram();
                     this.listen(this, 'data-changed', '_plotDiagram');
                 },
 
+                /** Creates the diagram */
                 _plotDiagram: function() {
                     var d3 = Plotly.d3;
 
