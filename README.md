@@ -39,6 +39,15 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 
 6. append your diagram to the `to all-imports.html` file
 
+## Typical problems when combining Polymer with D3 and Plotly.js
+- `d3.select(...)` typically scans the whole DOM, how can I limit it to the local DOM of the Polymer component?
+  - in your `<template>` section, use a `<div>` which wraps all parts of your chart
+  - everytime when you would do `d3.select(...)`, make sure to do a preselection using that div's ID to limit traversal to the local DOM: `d3.select(this.$.divID).select(...)`
+- When passing my function `f` to a D3 built-in function, I can't access my Polymer component's attributes using `this.attributeName` inside `f`
+  - Make sure to pass `f.bind(this)` instead of `f` to the D3 built-in function
+- It seems like the `data` attribute is `null` when my code attempts to plot the diagram
+  - Make sure to read up on [Polymer Lifecycle Callbacks](https://www.polymer-project.org/1.0/docs/devguide/registering-elements#lifecycle-callbacks). If you're using the `ready` function as a trigger to plot your diagram, it might be worth to see whether using `attached` can fix your issue.
+
 ## Optimize for production
 
 To optimize the polymer components for production, you can use Vulcanize. More information can be found [in the Polymer docs.](https://www.polymer-project.org/1.0/docs/tools/optimize-for-production)
