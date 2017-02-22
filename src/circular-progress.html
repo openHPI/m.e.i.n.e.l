@@ -23,7 +23,7 @@ This is a basic component for circular progress charts
             Polymer({
                 is: 'circular-progress',
                 properties: {
-                    /** Data provided as an absolute number (percentage)*/
+                    /** Data provided as an integer value (percentage) */
                     data: {
                         type: Number,
                         notify: true,
@@ -31,13 +31,11 @@ This is a basic component for circular progress charts
                     /** Width of the outer div */
                     width: {
                         type: Number,
-                        reflectToAttribute: true,
                         value: 200,
                     },
                     /** Height of the outer div */
                     height: {
                         type: Number,
-                        reflectToAttribute: true,
                         value: 200,
                     },
                     /** Fill and text color*/
@@ -63,30 +61,25 @@ This is a basic component for circular progress charts
 
                 _plotDiagram: function() {
                     var d3 = Plotly.d3;
+
+                    var diagram = d3.select(this.$.diagram);
+
                     /** Reset plot area in case we're redrawing*/
-                    var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
+                    var gd3 = diagram.selectAll("*").remove();
 
                     var WIDTH_IN_PERCENT_OF_PARENT = 100,
                         HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
                     /** Defines the width and height of the outer div */
-                    if (this.width !== undefined && this.height !== undefined) {
-                        var diagram = d3.select(this.$.diagram);
-
-                        diagram.style('width', this.width + "px");
-                        diagram.style('height', this.height + "px");
-                    }
+                    diagram.style('width', this.width + "px");
+                    diagram.style('height', this.height + "px");
 
                     /** Create new div with specific attributes under outer div */
-                    var gd3 = d3.select(this.$.diagram)
-                        .append('div')
-                        .style({
-                            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-                            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
-
-                            height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
-                            'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
-                        });
+                    gd3 = diagram.append('div')
+                        .style('width', WIDTH_IN_PERCENT_OF_PARENT + '%')
+                        .style('margin-left', (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%')
+                        .style('height', HEIGHT_IN_PERCENT_OF_PARENT + '%')
+                        .style('margin-top', (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%');
 
                     var createPercentageFill = function(svg, id, color) {
                         var defs = svg.append("svg:defs")
@@ -98,6 +91,7 @@ This is a basic component for circular progress charts
                             .attr("x2", "50%")
                             .attr("y2", "100%")
                             .attr("spreadMethod", "pad");
+
                         red_gradient.append("svg:stop")
                             .attr("offset", "50%")
                             .attr("stop-color", color)
@@ -123,14 +117,10 @@ This is a basic component for circular progress charts
                     var outerRadius = innerRadius + arcLineWeight;
 
                     var svg = gd3.append("svg")
-                        .attr({
-                            width: width,
-                            height: height,
-                            class: 'shadow'
-                        }).append('g')
-                        .attr({
-                            transform: 'translate(' + width / 2 + ',' + height / 2 + ')'
-                        });
+                        .attr('width', width)
+                        .attr('height', height)
+                        .append('g')
+                          .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
                     createPercentageFill(svg, 'gradient', this.primarycolor);
 
@@ -146,50 +136,31 @@ This is a basic component for circular progress charts
                         .startAngle(0);
 
                     var pathBackground = svg.append('path')
-                        .attr({
-                            d: arc
-                        })
-                        .style({
-                            fill: this.accentcolor
-                        });
+                        .attr('d', arc)
+                        .style('fill', this.accentcolor);
 
                     var pathChart = svg.append('path')
-                        .datum({
-                            endAngle: 0
-                        })
-                        .attr({
-                            d: arcLine
-                        })
-                        .style({
-                            fill: 'url(#gradient)'
-                        });
+                        .datum({ endAngle: 0 })
+                        .attr('d', arcLine)
+                        .style('fill', 'url(#gradient)');
 
                     var middleCount = svg.append('text')
                         .text(function(d) {
                             return d;
                         })
-                        .attr({
-                            class: 'middleText',
-                            'text-anchor': 'middle',
-                            dy: edgeLength / 10,
-                            dx: -(edgeLength / 20)
-                        })
-                        .style({
-                            fill: this.primarycolor,
-                            'font-size': (0.3 * edgeLength) + 'px'
-                        });
+                        .attr('text-anchor', 'middle')
+                        .attr('dy', edgeLength / 10)
+                        .attr('dx', -(edgeLength / 20))
+                        .style('fill', this.primarycolor)
+                        .style('font-size', (0.3 * edgeLength) + 'px');
+
                     svg.append('text')
                         .text('%')
-                        .attr({
-                            class: 'percent',
-                            'text-anchor': 'middle',
-                            dx: edgeLength / 6,
-                            dy: -(edgeLength / 60)
-                        })
-                        .style({
-                            fill: this.primarycolor,
-                            'font-size': (0.14 * edgeLength) + 'px'
-                        });
+                        .attr('text-anchor', 'middle')
+                        .attr('dx', edgeLength / 6)
+                        .attr('dy', -(edgeLength / 60))
+                        .style('fill', this.primarycolor)
+                        .style('font-size', (0.14 * edgeLength) + 'px');
 
                     var arcTween = function(transition, newAngle) {
                         transition.attrTween("d", function(d) {
@@ -213,7 +184,7 @@ This is a basic component for circular progress charts
                     window.addEventListener('resize', function() {
                         clearTimeout(resizeTimer);
                         resizeTimer = setTimeout(function() {
-                            if (_this.ignoreFirst) {
+                            if(_this.ignoreFirst) {
                                 _this._plotDiagram();
                             }
                             _this.ignoreFirst = true;
