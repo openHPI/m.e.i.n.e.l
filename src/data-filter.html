@@ -13,84 +13,165 @@ This is a component for filtering data based on user input.
 -->
 <dom-module id="data-filter">
     <template>
-    <style>
-      :host {
-        display: block;
-      }
-      #filterBar {
-        height: 50px;
-      }
-    </style>
+      <style>
+        :host {
+          display: block;
+        }
+        #filterBar {
+          /*height: 50px;*/
+        }
+      </style>
 
-    <iron-ajax
-        id="ajaxCaller"
-        url="[[dataurl]]"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-    </iron-ajax>
-    <div id="filterBar"></div>
-    <linechart-basic id="linechart" data={{data}} width={{width}} height={{height}}></linechart-basic>
-  </template>
+      <!-- braucht man hier drunter bei dataurl wirklich die quotes??? -->
+      <iron-ajax
+          id="ajaxCaller"
+          url="[[dataurl]]"
+          handle-as="json"
+          on-response="handleResponse"
+          debounce-duration="300">
+      </iron-ajax>
+
+      <div id="filterBar"></div>
+
+      <linechart-basic id="linechart" data="" width={{width}} height={{height}}></linechart-basic>
+    </template>
+
     <script>
         window.addEventListener("WebComponentsReady", function(){
-        Polymer({
-            is: 'data-filter',
+          Polymer({
+              is: 'data-filter',
 
-            properties: {
-                /** URL of data to be plotted */
-                dataurl: {
+              properties: {
+                  /** URL of data to be plotted */
+                  dataurl: {
+                      type: String,
+                      value: "",
+                  },
+                  /** Data provided as an array of x,y objects */
+                  data: {
+                      type: Array,
+                      value: null,
+                  },
+                  /** Width of the outer div */
+                  width: Number,
+                  /** Height of the outer div */
+                  height: Number,
+                  /** Chose the mode of the linechart,
+                  String of value 'markers', 'lines' or 'lines+markers',
+                  defaults to 'lines',
+                  only works if dataurl is provided and data is not */
+                  mode: {
                     type: String,
-                    value: "",
-                },
-                /** Data provided as an array of x,y objects */
-                data: {
-                    type: Array,
-                },
-                /** Width of the outer div */
-                width: {
-                    type: Number,
-                },
-                /** Height of the out div */
-                height: {
-                    type: Number,
-                },
-            },
-            
-            /** This is called by Polymer after the component instance is attached to the document. */
-            attached: function() {
-                for (var ii = 0; ii < this.data.length; ii++) {
-                    var newButton = document.createElement("paper-button");
-                    var buttonText = document.createTextNode("Data " + ii);
+                    value: 'lines',
+                  },
+              },
+
+              /** This is called by Polymer after the component instance is attached to the document. */
+              attached: function() {
+                  if(!this.data) {
+                      this.$.ajaxCaller.generateRequest();
+                  } else {
+                    this.plotDiagram();
+                  }
+              },
+
+              handleResponse: function(response) {
+                let responseData = response.detail.response;
+
+                responseData = JSON.parse('{"data":[{"type":"course-statistics","id":"4c3c9808-1433-4160-aaa1-89b8f34bf2d1","links":{"self":"/api/v2/course-statistics/4c3c9808-1433-4160-aaa1-89b8f34bf2d1"},"attributes":{"total_enrollments":198,"current_enrollments":198,"no_shows":197,"total_questions":4,"total_answers":3,"total_comments_on_answers":2,"total_comments_on_questions":103,"new_users":200,"updated_at":"2016-11-11T08:17:52.068Z","created_at":"2016-11-11T08:17:51.868Z"},"relationships":{"course":{"data":{"type":"courses","id":"00000001-3300-4444-9999-000000000001"},"links":{"related":"/api/v2/courses/00000001-3300-4444-9999-000000000001"}}}},{"type":"course-statistics","id":"4c3c9808-1433-4160-aaa1-89b8f34bf2d1","links":{"self":"/api/v2/course-statistics/4c3c9808-1433-4160-aaa1-89b8f34bf2d1"},"attributes":{"total_enrollments":199,"current_enrollments":199,"no_shows":198,"total_questions":4,"total_answers":3,"total_comments_on_answers":2,"total_comments_on_questions":103,"new_users":200,"updated_at":"2017-03-07T13:21:15.885Z","created_at":"2016-11-11T08:17:51.868Z"},"relationships":{"course":{"data":{"type":"courses","id":"00000001-3300-4444-9999-000000000001"},"links":{"related":"/api/v2/courses/00000001-3300-4444-9999-000000000001"}}}}],"meta":{"current_page":1,"total_pages":1},"links":{"first":"http://0.0.0.0:3000/api/v2/course-statistics?filter%5Bcourse_id%5D=00000001-3300-4444-9999-000000000001&filter%5Bhistoric_data%5D=true&page%5Bnumber%5D=1","last":"http://0.0.0.0:3000/api/v2/course-statistics?filter%5Bcourse_id%5D=00000001-3300-4444-9999-000000000001&filter%5Bhistoric_data%5D=true&page%5Bnumber%5D=1"}}');
+
+                let timeline = [];
+
+                // add all timestamps to timeline
+                for(let i = 0; i < responseData.data.length; i++) {
+                    let updatedAt = responseData.data[i].attributes.updated_at;
+                    timeline.push(updatedAt);
+                }
+
+                // is going to store the y-data for all lines as tempObject = { attributeName1: [...], attributeName2: [...], ... }
+                this.tempObject = {};
+
+                // initialize tempObject's properties as Arrays
+                for(let key in responseData.data[0].attributes) {
+                    if(key !== 'updated_at' && key !== 'created_at') {
+                        this.tempObject[key] = [];
+                    }
+                }
+
+                // add attribute-specific data of all data points to its corresponding attribute
+                for(let i = 0; i < responseData.data.length; i++) {
+                    let entryAttributes = responseData.data[i].attributes
+                    for(let key in entryAttributes) {
+                        if(key !== 'updated_at' && key !== 'created_at') {
+                            this.tempObject[key].push(entryAttributes[key]);
+                        }
+                    }
+                }
+
+                this.data = [];
+                for(key in this.tempObject) {
+                  let dataElement = {
+                      x: timeline,
+                      y: this.tempObject[key],
+                      name: key,
+                      mode: this.mode,
+                  }
+                  console.log(this.mode);
+                  this.data.push(dataElement);
+                }
+
+                this.plotDiagram()
+              },
+
+              plotDiagram: function() {
+                this.$.linechart.data = this.data;
+                let i = 0;
+                if (this.tempObject) {
+                  for (let key in this.tempObject) {
+                      let newButton = document.createElement("paper-button");
+                      let buttonText = document.createTextNode(key);
+                      newButton.appendChild(buttonText);
+                      newButton.setAttribute("toggles", "");
+                      newButton.setAttribute("raised", "");
+                      newButton.active = true;
+                      newButton.setAttribute("data-array", JSON.stringify(this.data[i]));
+                      this.$.filterBar.appendChild(newButton);
+                      this.listen(newButton, 'tap', '_passData');
+                      i++;
+                  }
+                } else {
+                  for (let i = 0; i < this.data.length; i++) {
+                    let newButton = document.createElement("paper-button");
+                    let buttonText = document.createTextNode("Data " + i);
                     newButton.appendChild(buttonText);
                     newButton.setAttribute("toggles", "");
                     newButton.setAttribute("raised", "");
-                    newButton.setAttribute("on-click", "test");
                     newButton.active = true;
-                    newButton.setAttribute("data-array", JSON.stringify(this.data[ii]));
+                    newButton.setAttribute("data-array", JSON.stringify(this.data[i]));
                     this.$.filterBar.appendChild(newButton);
                     this.listen(newButton, 'tap', '_passData');
+                  }
                 }
-            },
-            /**
-            *
-            * Acts as an eventhandler and is called every time a button is pressed.
-            * It then alters the data array corresponding to the active buttons and passes
-            * the data to the contained linechart element.
-            *
-            * @param {button} button the button that was pressed
-            */
-            _passData: function(button) {
-                var newDataset = [];
-                var buttons = this.$.filterBar.children;
-                for (var ii = 0; ii < buttons.length; ii++) {
-                    if (buttons[ii].active) {
-                        newDataset.push(JSON.parse(buttons[ii].getAttribute("data-array")));
-                    }
-                }
-                this.$.linechart.data = newDataset;
-            },
-        });
+              },
+              /**
+              *
+              * Acts as an eventhandler and is called every time a button is pressed.
+              * It then alters the data array corresponding to the active buttons and passes
+              * the data to the contained linechart element.
+              *
+              * @param {button} button the button that was pressed
+              */
+              _passData: function(button) {
+                  let newDataset = [];
+                  const buttons = this.$.filterBar.children;
+                  for (let i = 0; i < buttons.length; i++) {
+                      if (buttons[i].active) {
+                          newDataset.push(JSON.parse(buttons[i].getAttribute("data-array")));
+                      }
+                  }
+                  this.$.linechart.data = newDataset;
+              },
+          });
     });
     </script>
 </dom-module>
