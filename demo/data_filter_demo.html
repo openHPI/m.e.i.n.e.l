@@ -43,10 +43,9 @@
                   }
                 ]
               -->
-
-              <!-- <data-filter primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17] }, { "x": [1, 2, 3, 4], "y": [16, 5, 11, 9] }, { "x": [1, 2, 3, 4], "y": [6, 4, 7, 12], "mode":"markers"}]'></data-filter> -->
-              <data-filter primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" mode='markers' dataurl="https://open.hpi.de/api/v2/stats/course/timebased.json?metric=CourseActivityTimebased&course_id=7793dd60-9a2f-4f01-828a-0dce340d8acd&start_date=2016-09-05T22:00:00.000Z&end_date=2016-10-31T22:00:00.000Z"></data-filter>
-          </template>
+                <data-filter primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17] }, { "x": [1, 2, 3, 4], "y": [16, 5, 11, 9] }, { "x": [1, 2, 3, 4], "y": [6, 4, 7, 12], "mode":"markers"}]'></data-filter>
+                <data-filter primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" accept="json" whitelist="total_enrollments;questions;answers" activelist="total_enrollments" dataurl="testdata.json"></data-filter>
+            </template>
         </demo-snippet>
     </div>
 </body>

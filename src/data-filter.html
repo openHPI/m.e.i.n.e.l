@@ -1,6 +1,6 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
+<link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="plotly-import.html">
 <link rel="import" href="linechart-basic.html">
 
@@ -73,16 +73,42 @@ This is a component for filtering data based on user input.
                   activelist: {
                       type: String,
                       value: 'total_enrollments',
+                  },
+                  /** what type of format to accept - default and json supported */
+                  accept: {
+                      type: String,
+                      value: 'default',
                   }
               },
 
               /** This is called by Polymer after the component instance is attached to the document. */
               attached: function() {
-                  if(!this.data) {
-                      this.allResponseData = [];
-                      this.$.ajaxCaller.generateRequest();
-                  } else {
-                    this.plotDiagram();
+                  //TODO make it pretty
+                  if(this.accept == 'default') {
+                      this.handleDefault();
+                  }
+                  else {
+                      if (!this.data) {
+                          this.allResponseData = [];
+                          this.$.ajaxCaller.generateRequest();
+                      } else {
+                          this.plotDiagram();
+                      }
+                  }
+              },
+
+              handleDefault: function() {
+                  for (var ii = 0; ii < this.data.length; ii++) {
+                      var newButton = document.createElement("paper-button");
+                      var buttonText = document.createTextNode("Data " + ii);
+                      newButton.appendChild(buttonText);
+                      newButton.setAttribute("toggles", "");
+                      newButton.setAttribute("raised", "");
+                      newButton.setAttribute("on-click", "test");
+                      newButton.active = true;
+                      newButton.setAttribute("data-array", JSON.stringify(this.data[ii]));
+                      this.$.filterBar.appendChild(newButton);
+                      this.listen(newButton, 'tap', '_passData');
                   }
               },
 
