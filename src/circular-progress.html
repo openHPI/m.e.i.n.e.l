@@ -1,5 +1,5 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="plotly-import.html">
 
 
@@ -43,13 +43,23 @@ This is a basic component for circular progress charts
                         type: Number,
                         value: 200,
                     },
-                    /** Fill and text color*/
+                    /** Fill color*/
                     primarycolor: {
                         type: String,
                         value: '#f2503f',
                     },
-                    /** Fill and text color of optional secondary value*/
+                    /** Text color*/
+                    primarytextcolor: {
+                        type: String,
+                        value: '#000000'
+                    },
+                    /** Fill color of optional secondary value*/
                     secondarycolor: {
+                        type: String,
+                        value: '#ffa64c',
+                    },
+                    /** Text color of optional secondary value*/
+                    secondarytextcolor: {
                         type: String,
                         value: '#ffa64c',
                     },
@@ -137,17 +147,17 @@ This is a basic component for circular progress charts
                         .attr('d', arc)
                         .style('fill', this.accentcolor);
                    
-                    if(this.data == 100){this.primarycolor = "#00d900";}
-                    if(this.secdata&&this.secdata==100){this.secondarycolor = "#008c00";}
+                    //if(this.data == 100){this.primarycolor = "#00d900";}
+                    //if(this.secdata&&this.secdata==100){this.secondarycolor = "#008c00";}
                     
                     if(this.secdata){                                            //  tx, ty, px, py,  fts,  fps                 
-                        build_value(this.data,    this.primarycolor,   'gradient1', -20, 25, 6,-20, 0.30, 0.15);
-                        build_value(this.secdata, this.secondarycolor, 'gradient2', -40,  4, 8,  6, 0.20, 0.10);
+                        build_value(this.data,    this.primarycolor, this.primarytextcolor,  'gradient1', -20, 25, 6,-20, 0.30, 0.15);
+                        build_value(this.secdata, this.secondarycolor, this.secondarytextcolor, 'gradient2', -40,  4, 8,  6, 0.20, 0.10);
                     }else{
-                        build_value(this.data,    this.primarycolor,   'gradient1', -20, 10, 6,-60, 0.30, 0.15);
+                        build_value(this.data,    this.primarycolor, this.primarytextcolor, 'gradient1', -20, 10, 6,-60, 0.30, 0.15);
                     }
                     
-                    function build_value(percent, color, id, tx,ty,px,py,fts,fps){
+                    function build_value(percent, color, textcolor, id, tx,ty,px,py,fts,fps){
                         //percent to fill, fill-color, unique ID, textx, texty, %x, %y, font-size(text), font-size(%)
                         if(percent==100){px=px-2;} //move % to right if 100% to prevent overlap
                         
@@ -166,7 +176,7 @@ This is a basic component for circular progress charts
                             .attr('text-anchor', 'middle')
                             .attr('dy', edgeLength / ty)
                             .attr('dx', edgeLength / tx)
-                            .style('fill', color)
+                            .style('fill', textcolor)
                             .style('font-size', (fts * edgeLength) + 'px');
 
                         svg.append('text')
@@ -174,7 +184,7 @@ This is a basic component for circular progress charts
                             .attr('text-anchor', 'middle')
                             .attr('dy', edgeLength / py)
                             .attr('dx', edgeLength / px)
-                            .style('fill', color)
+                            .style('fill', textcolor)
                             .style('font-size', (fps * edgeLength) + 'px');
 
                         var arcTween = function(transition, newAngle) {

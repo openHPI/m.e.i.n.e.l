@@ -1,6 +1,6 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="plotly-import.html">
 <link rel="import" href="linechart-basic.html">
 
@@ -50,7 +50,7 @@ This is a component for filtering data based on user input.
                   /** Data provided as an array of x,y objects */
                   data: {
                       type: Array,
-                      value: null,
+                      //value: null,
                   },
                   /** Width of the outer div */
                   width: Number,
@@ -172,7 +172,6 @@ This is a component for filtering data based on user input.
                   //console.log(this.mode);
                   this.data.push(dataElement);
                 }
-
                 this.plotDiagram()
               },
 
