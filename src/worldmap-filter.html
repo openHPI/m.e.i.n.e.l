@@ -1,0 +1,126 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="plotly-import.html">
+<link rel="import" href="worldmap-basic.html">
+
+
+<!--
+`worldmap-filter`
+This is a component for filtering data based on user input.
+
+@demo demo/data_filter_demo.html
+-->
+<dom-module id="worldmap-filter">
+    <template>
+      <style>
+        :host {
+          display: block;
+        }
+        #filterBar {
+          /*height: 50px;*/
+        }
+      </style>
+
+      <!-- braucht man hier drunter bei dataurl wirklich die quotes??? -->
+      <iron-ajax
+          id="ajaxCaller"
+          url="[[dataurl]]"
+          handle-as="json"
+          on-response="handleResponse"
+          debounce-duration="300">
+      </iron-ajax>
+
+      <div id="filterBar"></div>
+
+      <worldmap-basic id="worldmap" data="" width={{width}} height={{height}}></worldmap-basic>
+    </template>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+          Polymer({
+              is: 'worldmap-filter',
+
+              properties: {
+                  /** URL of data to be plotted */
+                  dataurl: {
+                      type: String,
+                      value: ""
+                  },
+                  /** Data provided as an array of x,y objects */
+                  data: {
+                      type: Array
+                  },
+                  /** Width of the outer div */
+                  width: Number,
+                  /** Height of the outer div */
+                  height: Number,
+                  /** list of attributes as string with delimiter ';'*/
+                  attributelist: {
+                      type: String,
+                      default: "total_activity;distinct_users"
+                  }
+              },
+
+              /** This is called by Polymer after the component instance is attached to the document. */
+              attached: function() {
+                  if (!this.data) {
+                      this.allResponseData = [];
+                      this.$.ajaxCaller.generateRequest();
+                  } else {
+                      this.plotDiagram();
+                  }
+              },
+
+              handleResponse: function(response) {
+                // init attribute-data
+                this.data = response.detail.response;
+                this.attributesToUse = this.attributelist.split(";");
+                //console.log(this.attributesToBeActive);
+
+                this.plotDiagram()
+              },
+
+              plotDiagram: function() {
+
+                  for (let i = 0; i < this.attributesToUse.length; i++) {
+                      let newButton = document.createElement("paper-button");
+                      let buttonText = document.createTextNode(this.attributesToUse[i]);
+                      newButton.appendChild(buttonText);
+                      newButton.setAttribute("toggles", "");
+                      newButton.setAttribute("raised", "");
+                      //set button only on active when it should be
+                      newButton.active = false;
+                      newButton.setAttribute("button-key", this.attributesToUse[i]);
+                      this.$.filterBar.appendChild(newButton);
+                      this.listen(newButton, 'tap', '_passData');
+                  }
+                //initialize dataset of chart
+                const buttons = this.$.filterBar.children;
+                  if(buttons)
+                      this.$.worldmap.currentattribute = buttons[0].getAttribute("button-key");
+                      buttons[0].active = true;
+                this.$.worldmap.data = this.data;
+              },
+
+              /**
+              *
+              * Acts as an eventhandler and is called every time a button is pressed.
+              * It then alters the data array corresponding to the active buttons and passes
+              * the data to the contained linechart element.
+              *
+              * @param {button} button the button that was pressed
+              */
+              _passData: function(button) {
+                  const buttons = this.$.filterBar.children;
+                  for (let i = 0; i < buttons.length; i++) {
+                      buttons[i].active = false;
+                  }
+                  button.target.active = true;
+                  this.$.worldmap.currentattribute = button.target.getAttribute("button-key");
+                  this.$.worldmap._dataChanged();
+              },
+          });
+    });
+    </script>
+</dom-module>

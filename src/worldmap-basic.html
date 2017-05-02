@@ -1,0 +1,124 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="plotly-import.html">
+
+<dom-module id="worldmap-basic">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div id="diagram"></div>
+  </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+        Polymer({
+            is: 'worldmap-basic',
+            properties: {
+                /** Data provided as an array of x,y objects */
+                data: {
+                    type: Array,
+                    notify: true
+                },
+                /** Width of the outer div */
+                width: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                /** Height of the out div */
+                height: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                /** name of countrycode */
+                countrycode: {
+                    type: String,
+                    default: "country_code_iso3"
+                },
+                /** Attribute to be shown */
+                currentattribute: {
+                    type: String
+                }
+            },
+
+            /** This is called by Polymer after the component instance is attached to the document. */
+            attached: function() {
+                this.listen(this, 'data-changed', '_dataChanged');
+                if(this.data)
+                    this._plotDiagram();
+            },
+            /**
+             * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
+             *
+             */
+            _dataChanged: function() {
+                this._plotDiagram();
+            },
+            /**
+             * Plots the worldmap diagram.
+             *
+             */
+            _plotDiagram: function() {
+
+                function unpack(d, key){
+                    return d.map(function(item) {console.log(item[key]); return item[key];});
+                }
+
+                var rawData = this.data;
+                //var rawData = JSON.parse('[{"country_code": "DEU", "total_activity": 3041437, "distinct_users": 6901},{"country_code": "AUT", "total_activity": 156582, "distinct_users": 274},{"country_code": "CHE", "total_activity": 56264, "distinct_users": 175}]');
+                var d3 = Plotly.d3;
+                /** Reset plot area in case we're redrawing*/
+                var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
+
+                var WIDTH_IN_PERCENT_OF_PARENT = 100,
+                    HEIGHT_IN_PERCENT_OF_PARENT = 100;
+
+                /** Defines the width and height of the outer div */
+                if (this.width !== undefined && this.height !== undefined) {
+                    var diagram = d3.select(this.$.diagram);
+
+                    diagram.style('width', this.width + "px");
+                    diagram.style('height', this.height + "px");
+                }
+
+                /** Create new div with specific attributes under outer div */
+                var gd3 = d3.select(this.$.diagram)
+                    .append('div')
+                    .style({
+                        width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                        'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+                        height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                        'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + '%'
+                    });
+
+                var gd = gd3.node();
+
+                var plotdata = [{
+                    type: 'choropleth',
+                    locations: unpack(rawData, this.countrycode),
+                    z: unpack(rawData, this.currentattribute)
+                }];
+
+                var layout = {
+                    geo:{
+                        showframe: false,
+                        showcoastlines: true,
+                        projection:{
+                            type: 'robinson'
+                        }
+                    }
+                };
+
+                Plotly.newPlot(gd, plotdata, layout);
+
+
+                window.addEventListener('resize', function() {
+                    Plotly.Plots.resize(gd);
+                });
+            },
+        });
+     });
+    </script>
+</dom-module>
