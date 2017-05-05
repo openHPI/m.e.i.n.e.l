@@ -34,7 +34,7 @@
                 /** name of countrycode */
                 countrycode: {
                     type: String,
-                    default: "country_code_iso3"
+                    value: "country_code_iso3"
                 },
                 /** Attribute to be shown */
                 currentattribute: {
@@ -62,7 +62,7 @@
             _plotDiagram: function() {
 
                 function unpack(d, key){
-                    return d.map(function(item) {console.log(item[key]); return item[key];});
+                    return d.map(function(item) {return item[key];});
                 }
 
                 var rawData = this.data;
