@@ -78,6 +78,11 @@ This is a component for filtering data based on user input.
                   accept: {
                       type: String,
                       value: 'default',
+                  },
+                  /** livedata as string with ';' as delimiter and in order of attributesToUse */
+                  livedata: {
+                      type: String,
+                      value: null
                   }
               },
 
@@ -129,6 +134,15 @@ This is a component for filtering data based on user input.
                 this.attributesToBeActive = this.activelist.split(";");
                 //console.log(this.attributesToBeActive);
                 let attributesToUse = this.whitelist.split(";");
+                let livearray = [];
+                if(this.livedata != null) {
+                    livearray = this.livedata.split(";");
+                }
+                let livemap = {};
+                for(let i = 0; i < livearray.length; i++) {
+                    livemap[attributesToUse[i]] = livearray[i];
+                    console.log(livearray[i]);
+                }
 
                 //let responseData = response.detail.response;
                 //responseData = JSON.parse('{"data":[{"type":"course-statistics","id":"4c3c9808-1433-4160-aaa1-89b8f34bf2d1","links":{"self":"/api/v2/course-statistics/4c3c9808-1433-4160-aaa1-89b8f34bf2d1"},"attributes":{"total_enrollments":198,"current_enrollments":198,"no_shows":197,"total_questions":4,"total_answers":3,"total_comments_on_answers":2,"total_comments_on_questions":103,"new_users":200,"updated_at":"2016-11-11T08:17:52.068Z","created_at":"2016-11-11T08:17:51.868Z"},"relationships":{"course":{"data":{"type":"courses","id":"00000001-3300-4444-9999-000000000001"},"links":{"related":"/api/v2/courses/00000001-3300-4444-9999-000000000001"}}}},{"type":"course-statistics","id":"4c3c9808-1433-4160-aaa1-89b8f34bf2d1","links":{"self":"/api/v2/course-statistics/4c3c9808-1433-4160-aaa1-89b8f34bf2d1"},"attributes":{"total_enrollments":199,"current_enrollments":199,"no_shows":198,"total_questions":4,"total_answers":3,"total_comments_on_answers":2,"total_comments_on_questions":103,"new_users":200,"updated_at":"2017-03-07T13:21:15.885Z","created_at":"2016-11-11T08:17:51.868Z"},"relationships":{"course":{"data":{"type":"courses","id":"00000001-3300-4444-9999-000000000001"},"links":{"related":"/api/v2/courses/00000001-3300-4444-9999-000000000001"}}}}],"meta":{"current_page":1,"total_pages":1},"links":{"first":"http://0.0.0.0:3000/api/v2/course-statistics?filter%5Bcourse_id%5D=00000001-3300-4444-9999-000000000001&filter%5Bhistoric_data%5D=true&page%5Bnumber%5D=1","last":"http://0.0.0.0:3000/api/v2/course-statistics?filter%5Bcourse_id%5D=00000001-3300-4444-9999-000000000001&filter%5Bhistoric_data%5D=true&page%5Bnumber%5D=1"}}');
@@ -154,7 +168,7 @@ This is a component for filtering data based on user input.
 
                 // add attribute-specific data of all data points to its corresponding attribute
                 for(let i = 0; i < this.allResponseData.length; i++) {
-                    let entryAttributes = this.allResponseData[i].attributes
+                    let entryAttributes = this.allResponseData[i].attributes;
                     for(let j=0; j < attributesToUse.length; j++) {
                         this.tempObject[attributesToUse[j]].push(entryAttributes[attributesToUse[j]]);
                         //console.log(entryAttributes[attributesToUse[j]]);
@@ -163,12 +177,27 @@ This is a component for filtering data based on user input.
 
                 this.data = [];
                 for(key in this.tempObject) {
+
+                  let text = [];
+                  for(let i = 0; i < this.tempObject[key].length-1; i++) {
+                      text.push('');
+                  }
+                  try{
+                      text.push(livemap[key]);
+                  }
+                  catch(err) {}
+
                   let dataElement = {
                       x: timeline,
                       y: this.tempObject[key],
                       name: key,
-                      mode: this.mode,
-                  }
+                      mode: this.mode+"+text",
+                      text: text,
+                      textposition: 'middle right',
+                      textfont: {
+                          size: 16
+                      }
+                  };
                   //console.log(this.mode);
                   this.data.push(dataElement);
                 }
