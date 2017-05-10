@@ -152,6 +152,11 @@ This component shows an activity history, similar to the colored github chart.
           xAxisLabelFrequency: {
             type: Number,
             value: 5
+          },
+          /** flag to disable y-Axis */
+          showNoYAxis: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -230,7 +235,7 @@ This component shows an activity history, similar to the colored github chart.
 
           this.diagramDiv.select('#left-part')
             .attr('height', this._getBounds('y-axis').height)
-            .attr('width', this._getBounds('y-axis').width);
+            .attr('width', this.showNoYAxis ? 0 : this._getBounds('y-axis').width);
         },
 
         /** Creates the X axis of the diagram */
