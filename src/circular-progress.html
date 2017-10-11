@@ -121,7 +121,6 @@ This is a basic component for circular progress charts
                         .append('g')
                           .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-                          
                     var arc = d3.svg.arc()
                         .innerRadius(innerRadius)
                         .outerRadius(outerRadius)
@@ -136,21 +135,18 @@ This is a basic component for circular progress charts
                     var pathBackground = svg.append('path')
                         .attr('d', arc)
                         .style('fill', this.accentcolor);
-                   
-                    if(this.data == 100){this.primarycolor = "#00d900";}
-                    if(this.secdata&&this.secdata==100){this.secondarycolor = "#008c00";}
-                    
+
                     if(this.secdata){                                            //  tx, ty, px, py,  fts,  fps                 
                         build_value(this.data,    this.primarycolor,   'gradient1', -20, 25, 6,-20, 0.30, 0.15);
                         build_value(this.secdata, this.secondarycolor, 'gradient2', -40,  4, 8,  6, 0.20, 0.10);
                     }else{
                         build_value(this.data,    this.primarycolor,   'gradient1', -20, 10, 6,-60, 0.30, 0.15);
                     }
-                    
+
                     function build_value(percent, color, id, tx,ty,px,py,fts,fps){
                         //percent to fill, fill-color, unique ID, textx, texty, %x, %y, font-size(text), font-size(%)
                         if(percent==100){px=px-2;} //move % to right if 100% to prevent overlap
-                        
+
                         var ratio = percent / 100;
                         createPercentageFill(svg, id, color);
 
