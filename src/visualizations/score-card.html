@@ -1,14 +1,14 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="../../count-up/count-up.html">
-<link rel="import" href="font-awesome-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../count-up/count-up.html">
+<link rel="import" href="../imports/font-awesome-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 
 <!--
 `score-card`
 <br />This is a basic component for a score card displaying a single numeric value.
 
-@demo demo/score_card_demo.html
+@demo demo/visualizations/score_card_demo.html
 -->
 <dom-module id="score-card">
     <template>
@@ -98,13 +98,9 @@
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
                 is: 'score-card',
+                behaviors: [DataReceiverBehavior],
                 properties: {
-                    /** Datavalue to be displayed. */
-                    data: {
-                        type: Number,
-                        value: null,
-                    },
-                    /** Height of the control. */
+                    /** Height of the control */
                     height: {
                         type: Number,
                         value: 100,

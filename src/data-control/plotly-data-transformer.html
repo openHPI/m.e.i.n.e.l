@@ -1,0 +1,134 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../behaviors/data-transformer-behavior.html">
+
+<!--
+`plotly-data-transformer`
+This component transforms given data into a plotly readable object and passes it to its inner children.
+It supports transformation of two different data types:
+
+If `dataType` attribute is set to `series` (default), each data object is
+transformed to a single series with keys as X-values and values as Y-values.
+
+With `dataType` set to `data-points`, each data object should represent a single data point of one or more series.
+X- and Y-values are extracted from the particular data points using the keys specified in the `x-key` and `y-keys` attributes.
+For each key in the `y-keys` attribute, a separate series is created.
+The X-dimension is the same for all series.
+@demo demo/data_control/plotly_data_transformer_demo.html
+-->
+<dom-module id="plotly-data-transformer">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <content id="chartingElement"></content>
+  </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+        Polymer({
+            is: 'plotly-data-transformer',
+            behaviors: [DataTransformerBehavior],
+            properties: {
+                /** The type of data that is passed. Might be `series` or `data-points`. */
+                dataType: {
+                  type: String,
+                  value: 'series',
+                  observer: 'update',
+                },
+                /** The name of the key, whose values should be transformed to X-values.  */
+                xKey: {
+                  type: String,
+                  observer: 'update',
+                },
+                /**
+                 * The names of keys, whose values should be transformed to Y-values.
+                 * For each value, a series is created.
+                 */
+                yKeys: {
+                  type: Array,
+                  value: [],
+                },
+                /** The names of the series (optional). */
+                seriesNames: {
+                  type: Array,
+                  value: [],
+                }
+            },
+            observers: [
+                'update(yKeys.*, seriesNames.*)',
+            ],
+            /**
+             * Transforms the data into a plotly readable object.
+             * @param  {Object} data The source data.
+             * @return {Object}      The transformed data.
+             */
+            transformData: function(data) {
+                if(!Array.isArray(data)) {
+                    data = [data];
+                }
+
+                switch(this.dataType) {
+                    case 'data-points':
+                        return this._parseDataPoints(data);
+                    case 'series':
+                        return this._parseSeries(data);
+                }
+
+                return [];
+            },
+            /**
+             * Transform data-pointss to plotly-readable series objects.
+             * @param  {Array} data The data-pointss that should be transformed
+             * @return {Array}      The plotly-readable series objects
+             */
+            _parseDataPoints: function(data) {
+                if(!this.xKey || !this.yKeys) return [];
+
+                let that = this;
+                return this.yKeys.map(function(yKey, i) {
+                    let name = that._getSeriesName(i, yKey);
+                    let series = { name: name, x: [], y: [] };
+                    for(let item of data) {
+                        series.x.push(item[that.xKey]);
+                        series.y.push(item[yKey]);
+                    }
+                    return series;
+                });
+            },
+            /**
+             * Transform series to plotly-readable series objects.
+             * @param  {Array} data The series that should be transformed
+             * @return {Array}      The plotly-readable series objects
+             */
+            _parseSeries: function(data) {
+                let that = this;
+                return data.map(function(item, i) {
+                    return {
+                        name: that._getSeriesName(i),
+                        x: Object.keys(item),
+                        y: Object.values(item),
+                    };
+                });
+            },
+            /**
+             * Gets the name of a series.
+             * @param  {Number} index    The index of the series.
+             * @param  {String} fallback The optional fallback name, if not passes as attribute.
+             * @return {String}          The name.
+             */
+            _getSeriesName: function(index, fallback) {
+                if(!fallback) {
+                    fallback = 'Data ' + index;
+                }
+                if(this.seriesNames && this.seriesNames[index]) {
+                  return this.seriesNames[index];
+                }
+
+                return fallback;
+            },
+        });
+     });
+    </script>
+</dom-module>

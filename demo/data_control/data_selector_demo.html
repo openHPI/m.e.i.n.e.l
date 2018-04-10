@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>data-selector demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/data-control/data-selector.html">
+    <link rel="import" href="../../src/visualizations/score-card.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>data-selector demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+                <!-- Data
+                  {
+                    "total_enrollments": 8567,
+                    "questions": 210
+                  }
+                -->
+                <data-selector key="total_enrollments" data='{"total_enrollments": 8567, "questions": 210}'>
+                  <score-card primarycolor="#c1c1c1" icon="graduation-cap" name="Total Enrollments"></score-card>
+                </data-selector>
+
+                <!-- Data
+                  {
+                    "data": [
+                      {
+                        "total_enrollments": 8567,
+                        "questions": 210
+                      }
+                    ]
+                  }
+                -->
+                <data-selector keys='["data", 0, "questions"]' data='{"data": [{"total_enrollments": 8567, "questions": 210}]}'>
+                  <score-card primarycolor="#c1c1c1" icon="question" name="Total Questions"></score-card>
+                </data-selector>
+              </ajax-wrapper>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

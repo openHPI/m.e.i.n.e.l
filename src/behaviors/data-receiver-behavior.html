@@ -1,0 +1,74 @@
+<link rel="import" href="data-control-behavior.html">
+
+<script>
+    /**
+    * Behavior that accepts data passed by ancestor Polymer components or
+    * specified manually via attribute.
+    *
+    * This behavior needs to be added to all visualization components.
+    *
+    * @polymerBehavior
+    */
+    DataReceiverBehavior = {
+        properties: {
+            /** Data that should be processed/visualized. */
+            data: {
+                type: Object,
+                value: null,
+            },
+            /** Determines whether the component accepts data from other data-control components. */
+            acceptData: {
+                type: Boolean,
+                value: true,
+            },
+            _receivingData: {
+                type: Boolean,
+                value: false,
+            },
+        },
+        observers: [
+            '_dataChanged(data.*)',
+        ],
+        /** This is called by Polymer after the component instance is attached to the document. */
+        attached: function() {
+            this.update();
+        },
+        /**
+         * Receives data from other data-control components.
+         * @param  {Object} data The data that should be received.
+         */
+        receiveData: function(data) {
+            if(!this.acceptData) return;
+
+            this._receivingData = true;
+            this.data = data;
+            this._receivingData = false;
+        },
+        /**
+         * Forces the component to reprocess data as if it were new.
+         * Should be called if any property needed for processing has changed.
+         */
+        update: function() {
+            if(this.data == null) return;
+            this.dataChanged(this.data);
+        },
+        /** Observer that is executed when the data property has changed.*/
+        _dataChanged: function() {
+            // Ensure that all properties are initialized and data is provided
+            if(!this.isAttached || this.data == null) return;
+
+            // If property was set manually, no longer accept data from data-control components
+            if(!this._receivingData) {
+                this.acceptData = false;
+            }
+
+            this.dataChanged(this.data);
+        },
+        /**
+         * Callback that is executed when new data has been received.
+         * Needs to be implemented by concrete component.
+         * @param  {Object} data The received data.
+         */
+        dataChanged: function(data) { },
+    };
+</script>
