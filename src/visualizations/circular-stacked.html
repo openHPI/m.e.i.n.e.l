@@ -1,13 +1,15 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="plotly-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 
 <!--
 `circular-stacked`
 This is a basic component for stacked circular charts
 
-@demo demo/circular_stacked_demo.html
+***Data format:** array of integer values (percentage)
+
+@demo demo/visualizations/circular_stacked_demo.html
 -->
 <dom-module id="circular-stacked">
     <template>
@@ -22,12 +24,8 @@ This is a basic component for stacked circular charts
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
                 is: 'circular-stacked',
+                behaviors: [DataReceiverBehavior],
                 properties: {
-                    /** Data provided as an array (percentages as integer values)*/
-                    data: {
-                        type: Array,
-                        notify: true,
-                    },
                     /** Width of the outer div */
                     width: {
                         type: Number,
@@ -44,15 +42,8 @@ This is a basic component for stacked circular charts
                         value: '#f2503f',
                     }
                 },
-
-                /** This is called by Polymer after the component instance is attached to the document. */
-                attached: function() {
-                    this._plotDiagram();
-                    this.listen(this, 'data-changed', '_plotDiagram');
-                },
-
                 /** Creates the diagram */
-                _plotDiagram: function() {
+                dataChanged: function(data) {
                     var d3 = Plotly.d3;
                     var tau = 2 * Math.PI;
 
@@ -60,7 +51,6 @@ This is a basic component for stacked circular charts
                     var height = this.height;
                     var edgeLength = Math.min(width, height);
 
-                    var data = this.data;
                     var arcCount = data.length;
 
                     var innermostRadius = edgeLength / 8; //smallest

@@ -1,11 +1,14 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="plotly-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 <!--
 `activitychart-basic`
 This component shows an activity history, similar to the colored github chart.
 
-@demo demo/activitychart_basic_demo.html
+***Data format:** X (timestamp) and Y (measure) values to be plotted (in JSON format)
+
+@demo demo/visualizations/activitychart_basic_demo.html
 -->
 <dom-module id="activitychart-basic">
   <template>
@@ -40,13 +43,8 @@ This component shows an activity history, similar to the colored github chart.
     window.addEventListener("WebComponentsReady", function() {
       Polymer({
         is: 'activitychart-basic',
-
+        behaviors: [DataReceiverBehavior],
         properties: {
-          /** X (timestamp) and Y (measure) values to be plotted (in JSON format) */
-          data: {
-            type: Array,
-            notify: true,
-          },
           /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
           primarycolor: {
             type: String,
@@ -98,7 +96,7 @@ This component shows an activity history, similar to the colored github chart.
           The correct labels for the x axis are chosen programmatically based on the data and type.*/
           axisLabels: {
             type: Object,
-            value: {
+            /*value: {
               "x": {
                 "title": "Tag"
               },
@@ -106,17 +104,17 @@ This component shows an activity history, similar to the colored github chart.
             		"title": "Stunde",
                 "values": ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
               }
-            },
+            },*/
             // English:
-            // value: {
-            //     "x": {
-            //       "title": "Days"
-            //     },
-            //     "y": {
-            //   		"title": "Hours",
-            //       "values": ["0 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"]
-            //     }
-            // },
+            value: {
+              "x": {
+                "title": "Days"
+              },
+              "y": {
+                "title": "Hours",
+                "values": ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM", "0 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM"]
+              }
+            }
           },
           /** String that is displayed between datum and date when label is shown. */
           labelSeparator: {
@@ -152,6 +150,11 @@ This component shows an activity history, similar to the colored github chart.
           xAxisLabelFrequency: {
             type: Number,
             value: 5
+          },
+          /** flag to disable y-Axis */
+          showNoYAxis: {
+            type: Boolean,
+            value: false,
           }
         },
 
@@ -165,26 +168,19 @@ This component shows an activity history, similar to the colored github chart.
           return axisLabels.y.values.length;
         },
 
-        /** This is called by Polymer after the component instance is attached to the document. */
-        attached: function() {
-          //if this.data is not null, then activity chart is probably used without an ajax wrapper and the diagram should be drawn because the data will not be updated later anymore so that the listener won't fire
-          if(this.data) this._createDiagram();
-          this.listen(this, 'data-changed', '_createDiagram');
-        },
-
         /** Creates the activity diagram including the axes based on the data. */
-        _createDiagram: function() {
+        dataChanged: function(data) {
           this.diagramDiv = Plotly.d3.select(this.$.diagram);
           //let other D3 functions later use this.diagramDiv in order to restrict D3's selection process to the local DOM of this component!
 
           this.diagramDiv.select('#left-part').selectAll("*").remove();
           this.diagramDiv.select('#right-part').selectAll("*").remove();
 
-          this.parsedData = this._parseData(this.data[0].x, this.data[0].y);
+          this.parsedData = this._parseData(data[0].x, data[0].y);
 
           this._plotYAxis();
           this._plotXAxis();
-          this._plotVisualization();
+          this._plotVisualization(data);
 
           //scroll all the way to the right
           this.$['right-part-wrapper'].scrollLeft = this.width;
@@ -230,7 +226,7 @@ This component shows an activity history, similar to the colored github chart.
 
           this.diagramDiv.select('#left-part')
             .attr('height', this._getBounds('y-axis').height)
-            .attr('width', this._getBounds('y-axis').width);
+            .attr('width', this.showNoYAxis ? 0 : this._getBounds('y-axis').width);
         },
 
         /** Creates the X axis of the diagram */
@@ -277,13 +273,13 @@ This component shows an activity history, similar to the colored github chart.
         },
 
         /** Plots the actual activity visualization consisting solely of squares */
-        _plotVisualization: function() {
+        _plotVisualization: function(data) {
           // find min/max values in the data except if they're overwritten, use original data input array for convenience
           if(this.minValue == null) {
-            this.minValue = Math.min(...this.data[0].y);
+            this.minValue = Math.min.apply(null, data[0].y);
           }
           if(this.maxValue == null) {
-            this.maxValue = Math.max(...this.data[0].y);
+            this.maxValue = Math.max.apply(null, data[0].y);
           }
 
           //the appropriate color is calculated based on the value of the datum, there is no set of fixed colors

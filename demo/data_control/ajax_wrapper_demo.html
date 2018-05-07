@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>ajax-wrapper demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/data-control/ajax-wrapper.html">
+    <link rel="import" href="../../src/visualizations/score-card.html">
+    <link rel="import" href="../../src/visualizations/linechart-basic.html">
+    <link rel="import" href="../../src/visualizations/barchart-basic.html">
+
+    <!-- Needs to be loaded separately for rendering of icons in components -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>ajax-wrapper demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+              <ajax-wrapper data-url="https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain" refresh-interval="5000">
+                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
+              </ajax-wrapper>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

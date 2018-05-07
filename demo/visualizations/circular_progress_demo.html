@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>circular-progress demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/visualizations/circular-progress.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h3>circular-progress demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data="42" width="400" height="250"></circular-progress>
+              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data="[70, 40]" width="400" height="250"></circular-progress>
+              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data="42" width="100" height="100"></circular-progress>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

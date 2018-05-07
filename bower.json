@@ -12,8 +12,7 @@
     "dependencies": {
         "polymer": "^1.7.1",
         "plotly.js": "^1.22.0",
-        "count-up": "^0.2.2",
-        "Font-Awesome": "^5.0.9"
+        "count-up": "^0.2.2"
     },
     "devDependencies": {
         "iron-component-page": "^1.1.8",

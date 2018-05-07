@@ -7,11 +7,11 @@
 
     <title>piechart-basic demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../src/piechart-basic.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/visualizations/piechart-basic.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         div.vertical-section-container {
@@ -25,8 +25,8 @@
         <h3>piechart-basic demo (custom element)</h3>
         <demo-snippet>
             <template>
-          <piechart-basic data='[19, 26, 55]' labels='["Residential", "Non-Residential", "Utility"]' colors='["#4a148c", "#ffcc80", "rgba(177,6,58,1)"]'></piechart-basic>
-        </template>
+                <piechart-basic data='{"labels": ["Residential", "Non-Residential", "Utility"], "values": [19, 26, 55]}' colors='["#4a148c", "#ffcc80", "#b13a01"]'></piechart-basic>
+            </template>
         </demo-snippet>
     </div>
 </body>

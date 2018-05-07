@@ -1,0 +1,39 @@
+<link rel="import" href="data-receiver-behavior.html">
+
+<script>
+    /**
+    * Behavior that passes data down to all descendant Polymer components
+    * with `DataReceiverBehavior`.
+    *
+    * Should be used by components that create or process data before visualization.
+    *
+    * @polymerBehavior
+    */
+    DataControlBehavior = {
+        /**
+         * Passes data to accepting descendants.
+         * @param  {Object} data The data that should be passed.
+         */
+        passData: function(data) {
+            var that = this;
+            Polymer.dom(this).children.forEach(function(child) {
+                that._passDataTo(child, data);
+            });
+        },
+        _passDataTo: function(element, data) {
+            // Ensure that descendant elements are initialized
+            var that = this;
+            this.async(function() {
+              if(element.isDataSource) {
+                  return;
+              } else if(element.acceptData) {
+                  element.receiveData(data);
+              } else if(element.childNodes) {
+                  element.childNodes.forEach(function(child) {
+                      that._passDataTo(child, data);
+                  });
+              }
+            });
+        },
+    };
+</script>

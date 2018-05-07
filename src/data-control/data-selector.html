@@ -1,0 +1,63 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../behaviors/data-transformer-behavior.html">
+
+<!--
+`data-selector`
+This component performs a data projection on the passed data and passes the result to its inner children.
+
+@demo demo/data_control/data_selector_demo.html
+-->
+<dom-module id="data-selector">
+    <template>
+    <content id="chartingElement"></content>
+  </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+        Polymer({
+            is: 'data-selector',
+            behaviors: [DataTransformerBehavior],
+            properties: {
+                /** Key/index of the data object that should be passed on */
+                key: {
+                    type: String,
+                    observer: 'update',
+                },
+                /** Sequence of keys/indices of the data object that should be passed on */
+                keys: {
+                    type: Array,
+                }
+            },
+            observers: [
+                'update(keys.*)',
+            ],
+            /**
+             * Transforms the data by performing the projection.
+             * @param  {Object} data The source data.
+             * @return {Object}      The transformed data.
+             */
+            transformData: function(data) {
+                if(typeof data === 'undefined') return;
+
+                var keys = this.keys || (this.key ? [this.key] : []);
+                return this._selectData(data, keys);
+            },
+            /** Perform projection defined by key sequence on given data object */
+            _selectData: function(data, keys) {
+                if(Array.isArray(data)) {
+                    var that = this;
+                    return data.map(function(item) {
+                        return that._selectData(item, keys);
+                    });
+                }
+
+                keys.forEach(function(key) {
+                    if(typeof data !== 'object')
+                        return data;
+                    data = data[key];
+                });
+                return data;
+            }
+        });
+     });
+    </script>
+</dom-module>

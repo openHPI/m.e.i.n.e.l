@@ -1,13 +1,15 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="plotly-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 
 <!--
 `circular-progress`
 This is a basic component for circular progress charts
 
-@demo demo/circular_progress_demo.html
+***Data format:** integer value (percentage) or array of two integer values (percentage) to show secondary data
+
+@demo demo/visualizations/circular_progress_demo.html
 -->
 <dom-module id="circular-progress">
     <template>
@@ -22,17 +24,8 @@ This is a basic component for circular progress charts
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
                 is: 'circular-progress',
+                behaviors: [DataReceiverBehavior],
                 properties: {
-                    /** Data provided as an integer value (percentage) */
-                    data: {
-                        type: Number,
-                        notify: true,
-                    },
-                    /** Secondary Data (optional) provided as an integer value (percentage) */
-                    secdata: {
-                        type: Number,
-                        notify: true,
-                    },
                     /** Width of the outer div */
                     width: {
                         type: Number,
@@ -43,31 +36,47 @@ This is a basic component for circular progress charts
                         type: Number,
                         value: 200,
                     },
-                    /** Fill and text color*/
+                    /** Fill color */
                     primarycolor: {
                         type: String,
                         value: '#f2503f',
                     },
-                    /** Fill and text color of optional secondary value*/
+                    /** Text color*/
+                    primarytextcolor: {
+                        type: String,
+                        value: '#000000',
+                    },
+                    /** Fill color of optional secondary value*/
                     secondarycolor: {
                         type: String,
                         value: '#ffa64c',
                     },
-                    /** Background color of the circle*/
+                    /** Text color of optional secondary value*/
+                    secondarytextcolor: {
+                        type: String,
+                        value: '#ffa64c',
+                    },
+                    /** Background color of the circle */
                     accentcolor: {
                         type: String,
                         value: '#404F70',
                     }
                 },
-
-                /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
-                    this._plotDiagram();
-                    this.listen(this, 'data-changed', '_plotDiagram');
+                  var _this = this;
+                  var resizeTimer;
+                  window.addEventListener('resize', function() {
+                      clearTimeout(resizeTimer);
+                      resizeTimer = setTimeout(function() {
+                          if(_this.ignoreFirst) {
+                              _this.update();
+                          }
+                          _this.ignoreFirst = true;
+                      }, 250);
+                  });
                 },
-
                 /** Creates the diagram */
-                _plotDiagram: function() {
+                dataChanged: function(data) {
                     var d3 = Plotly.d3;
 
                     var diagram = d3.select(this.$.diagram);
@@ -136,14 +145,16 @@ This is a basic component for circular progress charts
                         .attr('d', arc)
                         .style('fill', this.accentcolor);
 
-                    if(this.secdata){                                            //  tx, ty, px, py,  fts,  fps                 
-                        build_value(this.data,    this.primarycolor,   'gradient1', -20, 25, 6,-20, 0.30, 0.15);
-                        build_value(this.secdata, this.secondarycolor, 'gradient2', -40,  4, 8,  6, 0.20, 0.10);
-                    }else{
-                        build_value(this.data,    this.primarycolor,   'gradient1', -20, 10, 6,-60, 0.30, 0.15);
+                    if(Array.isArray(data)) {                                                        //  tx, ty, px, py,  fts,  fps
+                        build_value(data[0], this.primarycolor,   this.primarytextcolor,   'gradient1', -20, 25, 6, -20, 0.30, 0.15);
+                        build_value(data[1], this.secondarycolor, this.secondarytextcolor, 'gradient2', -40,  4, 8,   6, 0.20, 0.10);
+                    } else{
+                        build_value(data,    this.primarycolor,   this.primarytextcolor,   'gradient1', -20, 10, 6, -60, 0.30, 0.15);
                     }
 
-                    function build_value(percent, color, id, tx,ty,px,py,fts,fps){
+                    function build_value(percent, color, textcolor, id, tx,ty,px,py,fts,fps) {
+                        if(percent == null) return;
+
                         //percent to fill, fill-color, unique ID, textx, texty, %x, %y, font-size(text), font-size(%)
                         if(percent==100){px=px-2;} //move % to right if 100% to prevent overlap
 
@@ -162,7 +173,7 @@ This is a basic component for circular progress charts
                             .attr('text-anchor', 'middle')
                             .attr('dy', edgeLength / ty)
                             .attr('dx', edgeLength / tx)
-                            .style('fill', color)
+                            .style('fill', textcolor)
                             .style('font-size', (fts * edgeLength) + 'px');
 
                         svg.append('text')
@@ -170,7 +181,7 @@ This is a basic component for circular progress charts
                             .attr('text-anchor', 'middle')
                             .attr('dy', edgeLength / py)
                             .attr('dx', edgeLength / px)
-                            .style('fill', color)
+                            .style('fill', textcolor)
                             .style('font-size', (fps * edgeLength) + 'px');
 
                         var arcTween = function(transition, newAngle) {
@@ -190,18 +201,6 @@ This is a basic component for circular progress charts
                             .ease('cubic')
                             .call(arcTween, 2 * Math.PI * ratio);
                     }
-
-                    var _this = this;
-                    var resizeTimer;
-                    window.addEventListener('resize', function() {
-                        clearTimeout(resizeTimer);
-                        resizeTimer = setTimeout(function() {
-                            if(_this.ignoreFirst) {
-                                _this._plotDiagram();
-                            }
-                            _this.ignoreFirst = true;
-                        }, 250);
-                    });
                 },
             });
         });

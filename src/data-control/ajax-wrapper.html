@@ -1,0 +1,105 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../iron-ajax/iron-ajax.html">
+<link rel="import" href="../behaviors/data-source-behavior.html">
+
+<!--
+`ajax-wrapper`
+This component handles a given url by asynchronously fetching data from it and passing the data to its inner children.
+@demo demo/data_control/ajax_wrapper_demo.html
+-->
+<dom-module id="ajax-wrapper">
+    <template>
+      <iron-ajax
+          id="ajaxCaller"
+          url="[[dataUrl]]"
+          handle-as="json"
+          on-response="_handleResponse"
+          debounce-duration="300">
+      </iron-ajax>
+      <content id="chartingElement"></content>
+    </template>
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'ajax-wrapper',
+                behaviors: [DataSourceBehavior],
+                properties: {
+                    /** URL of data to be fetched */
+                    dataUrl: String,
+                    /** The data schema of the requested data. So far, only `jsonapi` is supported. */
+                    dataSchema: String,
+                    /** If set, data is refreshed constantly after the specified interval (ms). */
+                    refreshInterval:  Number,
+                    _responseData: Object,
+                },
+                /** This is called by Polymer after the component instance is attached to the document. */
+                attached: function() {
+                    this.$.ajaxCaller.generateRequest();
+                },
+                /** This is called by Polymer after the element is detached from the document. */
+                detached: function() {
+                    if(this._refreshTimeout) {
+                        clearTimeout(this._refreshTimeout);
+                    }
+                },
+                /**
+                 * Handle the ajax response and pass data down to contained elements.
+                 * @param {Object} response The receeived response.
+                 */
+                _handleResponse: function(response) {
+                    if(!response.detail.response) return;
+
+                    var body = JSON.parse(JSON.stringify(response.detail.response));  //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
+                    var data = this._handlePagination(body);
+                    if(data) {
+                        this.publishData(this._parseData(data));
+                        if(this.refreshInterval) {
+                            var that = this;
+                            this._refreshTimeout = setTimeout(function() {
+                                that.$.ajaxCaller.generateRequest();
+                            }, this.refreshInterval);
+                        }
+                    }
+                },
+                /**
+                 * Request and append additional resources, if endpoint is paginated.
+                 * If all resources were retrieved, they are returned.
+                 * @param  {Object} body The body of the response.
+                 * @return {Object}      The entire resources or 'undefined', if additional request is in progress.
+                 */
+                _handlePagination: function(body) {
+                    if(this.dataSchema === 'jsonapi') {
+                        this._responseData = this._responseData || [];
+                        this._responseData = this._responseData.concat(body.data);
+                        if(body.links.next) {
+                            this.$.ajaxCaller.url = body.links.next;
+                            this.$.ajaxCaller.generateRequest();
+                            return;
+                        } else {
+                            var responseData = this._responseData;
+                            this._responseData = [];
+                            this.$.ajaxCaller.url = this.dataUrl;
+                            return responseData;
+                        }
+                    }
+
+                    return body;
+                },
+                /**
+                 * Parse data depending on the specified data schema.
+                 * @param  {Object} data The raw data that should be parsed
+                 * @return {Object}      The parsed data.
+                 */
+                _parseData: function(data) {
+                    if(this.dataSchema === 'jsonapi') {
+                        return data.map(function(resource) {
+                            return resource.attributes;
+                        });
+                    }
+
+                    return data;
+                }
+            });
+        });
+    </script>
+</dom-module>

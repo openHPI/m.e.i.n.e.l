@@ -1,0 +1,90 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../count-up/count-up.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
+
+
+<!--
+`counter-basic`
+<br />This is a basic component for a counter displaying a single numeric value.
+<br />FontAwesome is not shipped with M.E.I.N.E.L. and needs to be loaded separately.
+
+@demo demo/visualizations/counter_basic_demo.html
+-->
+<dom-module id="counter-basic">
+    <template>
+        <template is="dom-if" if="[[hasReceivedData]]">
+            <template is="dom-if" if="[[_isNumericData]]">
+                <count-up update-to="[[_value]]" prefix="[[prefix]]" suffix="[[suffix]]" decimals="[[decimals]]" duration="[[animationDuration]]"></count-up>
+            </template>
+            <template is="dom-if" if="[[_isTextData]]">
+                <span>[[_value]]</span>
+            </template>
+        </template>
+        <template is="dom-if" if="[[_showSpinner]]">
+            <i id="spinner" class="fa fas fa-spinner fa-spin"></i>
+        </template>
+    </template>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'counter-basic',
+                behaviors: [DataReceiverBehavior],
+                properties: {
+                    /** Optional text before the number. */
+                    prefix: String,
+                    /** Optional text after the number. */
+                    suffix: String,
+                    /** Number of decimals to show. */
+                    decimals: {
+                        type: Number,
+                        value: 0,
+                    },
+                    /** The default value that is shown if data is `null`. */
+                    defaultValue: {
+                      type: String,
+                      value: 'n/a',
+                    },
+                    /** Animation duration in seconds. */
+                    animationDuration: {
+                        type: Number,
+                        value: 1,
+                    },
+                    /** Determines whether the loading spinner should be hidden. */
+                    hideSpinner: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    _showSpinner: {
+                        type: Boolean,
+                        computed: '_computeShowSpinner(hideSpinner, hasReceivedData)',
+                    },
+                    _value: {
+                        type: Object,
+                        computed: '_computeValue(hasReceivedData, data, defaultValue)',
+                    },
+                    _isNumericData: {
+                        type: Boolean,
+                        computed: '_computeIsNumericValue(_value)',
+                    },
+                    _isTextData: {
+                        type: Boolean,
+                        computed: '_computeIsTextValue(_value)',
+                    },
+                },
+                _computeShowSpinner: function(hideSpinner, hasReceivedData) {
+                    return !hideSpinner && !hasReceivedData;
+                },
+                _computeValue: function(hasReceivedData, data, defaultValue) {
+                    return hasReceivedData && data != null ? data: defaultValue;
+                },
+                _computeIsNumericValue: function(value) {
+                    return typeof value === 'number';
+                },
+                _computeIsTextValue: function(value) {
+                    return typeof value == 'string';
+                },
+            });
+        });
+    </script>
+</dom-module>

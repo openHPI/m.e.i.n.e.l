@@ -1,0 +1,85 @@
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
+
+<script>
+    /**
+    * Behavior that acts as base class for plotly-based chart components.
+    *
+    * @polymerBehavior
+    */
+    PlotlyBehavior = [DataReceiverBehavior, {
+        properties: {
+            /** Width of the outer div */
+            width: {
+                type: Number,
+                observer: 'update',
+            },
+            /** Height of the out div */
+            height: {
+                type: Number,
+                observer: 'update',
+            },
+        },
+        attached: function() {
+            // Makes plot responsive
+            var that = this;
+            window.addEventListener('resize', function() {
+                var gd = that.getDiagram().children[0];
+                if(gd) {
+                    Plotly.Plots.resize(gd);
+                }
+            });
+        },
+        /** Plots the diagram */
+        dataChanged: function(data) {
+            var d3 = Plotly.d3;
+            var diagram = d3.select(this.getDiagram());
+
+            // Resets plot area in case we're redrawing
+            diagram.selectAll("*").remove();
+
+            // Defines the width and height of the outer div
+            if (this.width) {
+                diagram.style('width', this.width + 'px');
+            }
+            if(this.height) {
+                diagram.style('height', this.height + 'px');
+            }
+
+            // Creates new div with specific attributes under outer div
+            var WIDTH_IN_PERCENT_OF_PARENT = 100,
+                HEIGHT_IN_PERCENT_OF_PARENT = 100;
+            var gd3 = diagram
+                .append('div')
+                .style({
+                    width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                    'margin-left': ((100 - WIDTH_IN_PERCENT_OF_PARENT) / 2) + '%',
+
+                    height: HEIGHT_IN_PERCENT_OF_PARENT + '%',
+                    'margin-top': ((100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2) + '%'
+                });
+            var gd = gd3.node();
+
+            // Applies default config options
+            var config = this.getConfig();
+            config.displayModeBar = false;
+
+            // Creates plot
+            Plotly.newPlot(gd, this.getPlotData(data), this.getLayout(), config);
+        },
+        /** Gets the container element of the diagram that should be rendered */
+        getDiagram: function() { },
+        /** Gets the data of the plot */
+        getPlotData: function(data) {
+            return data;
+        },
+        /** Gets the layout options of the plot */
+        getLayout: function() {
+            return {};
+        },
+        /** Gets the config options of the plot */
+        getConfig: function() {
+            return {};
+        }
+    }];
+</script>
