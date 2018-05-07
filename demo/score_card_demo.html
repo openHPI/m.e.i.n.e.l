@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>score-card demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../src/score-card.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h3>score-card demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+              <score-card primarycolor="#c1c1c1" icon="user" name="Total Users" data="474359"></score-card>
+              <score-card primarycolor="#c1c1c1" icon="user" icon-style="regular" name="Total Users" link="http://www.google.com" link-text="More info" data="474359"></score-card>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>
