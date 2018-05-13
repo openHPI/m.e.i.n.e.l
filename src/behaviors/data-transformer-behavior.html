@@ -1,0 +1,29 @@
+<link rel="import" href="data-control-behavior.html">
+<link rel="import" href="data-receiver-behavior.html">
+
+<script>
+    /**
+    * Behavior that transforms data it receives and passes the result down to
+    * descendant Polymer components  with `DataReceiverBehavior`.
+    *
+    * @polymerBehavior
+    */
+    DataTransformerBehavior = [DataControlBehavior, DataReceiverBehavior, {
+        /**
+         * Callback that is executed when new data has been received.
+         * Will execute the transformation and pass results to descendants.
+         * @param  {Object} data The received data.
+         */
+        dataChanged: function(data) {
+            this.passData(this.transformData(data));
+        },
+        /**
+         * Applies the transformation. Needs to be implemented by the concrete component.
+         * @param  {Object} data The source data.
+         * @return {Object}      The transformed data.
+         */
+        transformData: function(data) {
+            return data;
+        },
+    }];
+</script>

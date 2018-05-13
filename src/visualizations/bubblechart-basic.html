@@ -1,6 +1,6 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="plotly-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 
 <!--
@@ -8,7 +8,7 @@
 <br />This is a basic component for plotly bubblecharts.
 <br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/bubble-charts/" target="_blank">Plotly bubble chart documentation</a>.
 
-@demo demo/bubblechart_basic_demo.html
+@demo demo/visualizations/bubblechart_basic_demo.html
 -->
 <dom-module id="bubblechart-basic">
     <template>
@@ -24,15 +24,8 @@
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
                 is: 'bubblechart-basic',
+                behaviors: [DataReceiverBehavior],
                 properties: {
-                    /** Datavalues to be plotted.
-                    * <br />Example values: [{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17], "marker": {"size":[30, 80, 30, 40]}}].
-                    * <br />Where x and y specify where the bubbles are centered and marker->size defines the size of the single bubbles.
-                    */
-                    data: {
-                        type: Array,
-                        notify: true,
-                    },
                     /** Width of the outer div */
                     width: {
                         type: Number,
@@ -56,28 +49,16 @@
                         reflectToAttribute: true,
                     },
                 },
-                /** This is called by Polymer after the component instance is attached to the document. */
-                attached: function() {
-                    this.listen(this, 'data-changed', '_dataChanged');
-                    this._plotDiagram();
-                },
-                /**
-                * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
-                *
-                */
-                _dataChanged: function() {
-                    this._plotDiagram();
-                },
                 /**
                 * Plots the bubblechart diagram.
                 *
                 */
-                _plotDiagram: function() {
-                    if(this.data == null) {
+                dataChanged: function(data) {
+                    if(data == null) {
                         return;
                     }
-                    this.data[0]["mode"] = "markers";
-                    this.data[0]["marker"]["color"] = this.primarycolor;
+                    data[0]["mode"] = "markers";
+                    data[0]["marker"]["color"] = this.primarycolor;
 
                     var d3 = Plotly.d3;
 
@@ -121,7 +102,7 @@
                           },
                       },
                     };
-                    Plotly.newPlot(gd, this.data, layout);
+                    Plotly.newPlot(gd, data, layout);
                     window.addEventListener('resize', function() {
                         Plotly.Plots.resize(gd);
                     });

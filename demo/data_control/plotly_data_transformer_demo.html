@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>plotly-data-transformer demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/data-control/plotly-data-transformer.html">
+    <link rel="import" href="../../src/visualizations/linechart-basic.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>plotly-data-transformer demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+              <!-- Data
+                [
+                  {
+                    "1": 10,
+                    "2": 42,
+                    "3": 37
+                  },
+                  {
+                    "1": 15,
+                    "2": 8,
+                    "3": 27
+                  }
+                ]
+              -->
+              <plotly-data-transformer data-type="series" series-names='["foo", "bar"]' data='[{"1": 10, "2": 42, "3": 37}, {"1": 15, "2": 8, "3": 27}]'>
+                <linechart-basic width="600"></linechart-basic>
+              </plotly-data-transformer>
+
+              <!-- Data
+                [
+                  {
+                    "timestamp": "2017-03-31T22:00:51.421Z",
+                    "total_enrollments": 8567,
+                    "current_enrollments": 8420
+                  },
+                  {
+                    "timestamp": "2017-04-01T22:00:49.204Z",
+                    "total_enrollments": 8642,
+                    "current_enrollments": 8489
+                  }
+                ]
+              -->
+              <plotly-data-transformer data-type="data-points" x-key="timestamp" y-keys='["total_enrollments", "current_enrollments"]' data='[{"timestamp": "2017-03-31T22:00:51.421Z", "total_enrollments": 8567, "current_enrollments": 8420}, {"timestamp": "2017-04-01T22:00:49.204Z", "total_enrollments": 8642, "current_enrollments": 8489}]'>
+                <linechart-basic width="600"></linechart-basic>
+              </plotly-data-transformer>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

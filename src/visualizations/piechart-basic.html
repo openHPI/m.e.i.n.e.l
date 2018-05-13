@@ -1,13 +1,13 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="plotly-import.html">
-
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 <!--
 `piechart-basic`
 <br />This is a basic component for plotly piecharts.
 <br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/pie-charts/" target="_blank">Plotly pie chart documentation</a>.
 
-@demo demo/piechart_basic_demo.html
+@demo demo/visualizations/piechart_basic_demo.html
 -->
 <dom-module id="piechart-basic">
     <template>
@@ -23,12 +23,8 @@
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
                 is: 'piechart-basic',
-
+                behaviors: [DataReceiverBehavior],
                 properties: {
-                    /** Datavalues to be plotted */
-                    data: {
-                        type: Array,
-                    },
                     /** Labels for the dataset (must be same size as dataset)*/
                     labels: {
                         type: Array,
@@ -46,20 +42,8 @@
                         type: Array,
                     },
                 },
-
-                /** This is called by Polymer after the component instance is attached to the document. */
-                attached: function() {
-                    this._plotDiagram();
-                },
-                
-                /**
-                 * Displays the data in a pie chart
-                 *
-                 * @param {Array<number>} dataset The data to be plotted
-                 * @param {Array<string>} labels The labels corresponding to the dataset
-                 * @param {Array<string>} colors The colors the data shall be displayed in
-                 */
-                _plotDiagram: function() {
+                /** Displays the data in a pie chart */
+                dataChanged: function(data) {
                     var d3 = Plotly.d3;
 
                     var WIDTH_IN_PERCENT_OF_PARENT = 100,
@@ -87,7 +71,7 @@
                     var gd = gd3.node();
 
                     var dataSet = [{
-                        values: this.data,
+                        values: data,
                         labels: this.labels,
                         type: 'pie',
                         marker: {

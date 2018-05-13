@@ -1,14 +1,13 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="plotly-import.html">
-
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 <!--
 `barchart-basic`
 <br />This is a basic component for plotly barcharts.
 <br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/bar-charts/" target="_blank">Plotly bar chart documentation</a>.
 
-@demo demo/barchart_basic_demo.html
+@demo demo/visualizations/barchart_basic_demo.html
 -->
 <dom-module id="barchart-basic">
     <template>
@@ -24,12 +23,8 @@
         window.addEventListener("WebComponentsReady", function() {
             Polymer({
                 is: 'barchart-basic',
+                behaviors: [DataReceiverBehavior],
                 properties: {
-                    /** Datavalues to be plotted */
-                    data: {
-                        type: Array,
-                        notify: true,
-                    },
                     /** Width of the outer div */
                     width: {
                         type: Number,
@@ -71,30 +66,18 @@
                         reflectToAttribute: true,
                     },
                 },
-                /** This is called by Polymer after the component instance is attached to the document. */
-                attached: function() {
-                    this.listen(this, 'data-changed', '_dataChanged');
-                    this._plotDiagram();
-                },
-                /**
-                 * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
-                 *
-                 */
-                _dataChanged: function() {
-                    this._plotDiagram();
-                },
                 /**
                  * Plots the barchart diagram.
                  *
                  */
-                _plotDiagram: function() {
-                    if(this.data == null) {
+                dataChanged: function(data) {
+                    if(data == null) {
                         return;
                     }
-                    for(var i = 0; i < this.data.length; i++) {
-                      this.data[i]["type"] = "bar";
+                    for(var i = 0; i < data.length; i++) {
+                      data[i]["type"] = "bar";
                     };
-                    this.data[0]["marker"] = {
+                    data[0]["marker"] = {
                         color: this.primarycolor
                     };
 
@@ -147,14 +130,14 @@
 
                     /** Create different layouts depending on scrollzoom being active or not */
                     if (this.scrollzoom) {
-                      var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
-                      var minX = this.data[0]["x"][Math.round(this.data[0]["x"].length*(1-this.scrollrange/100))];
+                      var maxX = data[0]["x"][data[0]["x"].length-1];
+                      var minX = data[0]["x"][Math.round(data[0]["x"].length*(1-this.scrollrange/100))];
                       layout.xaxis.rangeslider = {};
                       layout.xaxis.range = [minX, maxX];
 
-                      Plotly.newPlot(gd, this.data, layout, {scrollZoom: true});
+                      Plotly.newPlot(gd, data, layout, {scrollZoom: true});
                     } else {
-                      Plotly.newPlot(gd, this.data, layout);
+                      Plotly.newPlot(gd, data, layout);
                     }
 
                     window.addEventListener('resize', function() {

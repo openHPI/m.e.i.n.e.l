@@ -1,11 +1,14 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="plotly-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 <!--
 `activitychart-basic`
 This component shows an activity history, similar to the colored github chart.
 
-@demo demo/activitychart_basic_demo.html
+***Data format:** X (timestamp) and Y (measure) values to be plotted (in JSON format)
+
+@demo demo/visualizations/activitychart_basic_demo.html
 -->
 <dom-module id="activitychart-basic">
   <template>
@@ -40,13 +43,8 @@ This component shows an activity history, similar to the colored github chart.
     window.addEventListener("WebComponentsReady", function() {
       Polymer({
         is: 'activitychart-basic',
-
+        behaviors: [DataReceiverBehavior],
         properties: {
-          /** X (timestamp) and Y (measure) values to be plotted (in JSON format) */
-          data: {
-            type: Array,
-            notify: true,
-          },
           /** Primary color of chart; formats supported are Hex, Short Hex, RGB (absolute), RGB (percentual), RGBA (absolute), RGBA (percentual), keyword (e.g. 'white'), HSL and HSLA */
           primarycolor: {
             type: String,
@@ -165,26 +163,19 @@ This component shows an activity history, similar to the colored github chart.
           return axisLabels.y.values.length;
         },
 
-        /** This is called by Polymer after the component instance is attached to the document. */
-        attached: function() {
-          //if this.data is not null, then activity chart is probably used without an ajax wrapper and the diagram should be drawn because the data will not be updated later anymore so that the listener won't fire
-          if(this.data) this._createDiagram();
-          this.listen(this, 'data-changed', '_createDiagram');
-        },
-
         /** Creates the activity diagram including the axes based on the data. */
-        _createDiagram: function() {
+        dataChanged: function(data) {
           this.diagramDiv = Plotly.d3.select(this.$.diagram);
           //let other D3 functions later use this.diagramDiv in order to restrict D3's selection process to the local DOM of this component!
 
           this.diagramDiv.select('#left-part').selectAll("*").remove();
           this.diagramDiv.select('#right-part').selectAll("*").remove();
 
-          this.parsedData = this._parseData(this.data[0].x, this.data[0].y);
+          this.parsedData = this._parseData(data[0].x, data[0].y);
 
           this._plotYAxis();
           this._plotXAxis();
-          this._plotVisualization();
+          this._plotVisualization(data);
 
           //scroll all the way to the right
           this.$['right-part-wrapper'].scrollLeft = this.width;
@@ -277,13 +268,13 @@ This component shows an activity history, similar to the colored github chart.
         },
 
         /** Plots the actual activity visualization consisting solely of squares */
-        _plotVisualization: function() {
+        _plotVisualization: function(data) {
           // find min/max values in the data except if they're overwritten, use original data input array for convenience
           if(this.minValue == null) {
-            this.minValue = Math.min(...this.data[0].y);
+            this.minValue = Math.min(...data[0].y);
           }
           if(this.maxValue == null) {
-            this.maxValue = Math.max(...this.data[0].y);
+            this.maxValue = Math.max(...data[0].y);
           }
 
           //the appropriate color is calculated based on the value of the datum, there is no set of fixed colors

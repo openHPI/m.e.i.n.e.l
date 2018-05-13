@@ -1,6 +1,6 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../iron-ajax/iron-ajax.html">
-<link rel="import" href="plotly-import.html">
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../imports/plotly-import.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
 
 
 <!--
@@ -8,7 +8,7 @@
 <br />This is a basic component for plotly linecharts.
 <br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/line-charts/" target="_blank">Plotly line chart documentation</a>.
 
-@demo demo/linechart_basic_demo.html
+@demo demo/visualizations/linechart_basic_demo.html
 -->
 <dom-module id="linechart-basic">
     <template>
@@ -23,12 +23,8 @@
         window.addEventListener("WebComponentsReady", function(){
         Polymer({
             is: 'linechart-basic',
+            behaviors: [DataReceiverBehavior],
             properties: {
-                /** Data provided as an array of x,y objects */
-                data: {
-                    type: Array,
-                    notify: true,
-                },
                 /** Width of the outer div */
                 width: {
                     type: Number,
@@ -37,6 +33,12 @@
                 /** Height of the out div */
                 height: {
                     type: Number,
+                    reflectToAttribute: true,
+                },
+                /** Accent color of chart */
+                accentcolor: {
+                    type: String,
+                    value: 'rgba(0,0,0,1)',
                     reflectToAttribute: true,
                 },
                 /** Scroll and zoom activation */
@@ -52,25 +54,11 @@
                     reflectToAttribute: true,
                 },
             },
-
-            /** This is called by Polymer after the component instance is attached to the document. */
-            attached: function() {
-                this.listen(this, 'data-changed', '_dataChanged');
-                this._plotDiagram();
-            },
-            /**
-             * Eventhandler, called when value of the data attribute has changed. Will cause the diagram to redraw.
-             *
-             */
-            _dataChanged: function() {
-                this._plotDiagram();
-            },
             /**
              * Plots the linechart diagram.
              *
              */
-            _plotDiagram: function() {
-                var rawData = this.data;
+            dataChanged: function(data) {
                 var d3 = Plotly.d3;
                 /** Reset plot area in case we're redrawing*/
                 var gd3 = d3.select(this.$.diagram).selectAll("*").remove();
@@ -118,14 +106,14 @@
 
                 /** Create different layouts depending on scrollzoom being active or not */
                 if (this.scrollzoom) {
-                  var maxX = this.data[0]["x"][this.data[0]["x"].length-1];
-                  var minX = this.data[0]["x"][Math.round(this.data[0]["x"].length*(1-this.scrollrange/100))];
+                  var maxX = data[0]["x"][data[0]["x"].length-1];
+                  var minX = data[0]["x"][Math.round(data[0]["x"].length*(1-this.scrollrange/100))];
                   layout.xaxis.rangeslider = {};
                   layout.xaxis.range = [minX, maxX];
 
-                  Plotly.newPlot(gd, rawData, layout, {scrollZoom: true});
+                  Plotly.newPlot(gd, data, layout, {scrollZoom: true});
                 } else {
-                  Plotly.newPlot(gd, rawData, layout);
+                  Plotly.newPlot(gd, data, layout);
                 }
 
                 window.addEventListener('resize', function() {
