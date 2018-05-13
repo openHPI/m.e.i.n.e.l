@@ -1,0 +1,22 @@
+dist: trusty
+sudo: required
+language: node_js
+node_js: lts/*
+branches:
+  only:
+  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+before_install: npm install -g bower cross-zip-cli
+install: npm install
+script:
+- npm run build
+- mv dist m.e.i.n.e.l-$TRAVIS_TAG
+- cross-zip m.e.i.n.e.l-$TRAVIS_TAG m.e.i.n.e.l-$TRAVIS_TAG.zip
+deploy:
+  provider: releases
+  api_key:
+    secure: kNWUpZdxbaugxaQuxkKoOyT+OZH8eSxK2//cz2ud6rBXwB97I69fPO5nLwqpygN8/USx1GSBVGE8Fr++GNpaSrpqRtCBupdc11/8kmXpavx3yVPd8vriQ5gd96JyfOLVnSgxp9J607leFOLtrI3bLf9AUnNM7UOufHiVGz8ZjGFF0murqM0x48NgdLGkKtV7M+CNQKRenmOTWZDaZ3g3UB7o8JzeLFQDiEtsPm6cQwjVgjKrMfgZDaLKJGafnQnJyAQllXCC9eQ9knfW2J9XGEp7aOYcItS4BjGlW40mA1ant54u9baq0x2b78zCHJTeENqsBpxk7m/Kw3IvDvHbise/ZADYkgPkNnXOlvVsHH+Jr1PSuo4Nc5y9+4jU6oN2eNN9KbcdZ0iYNDoeofZbPCTjEkJn8LnMCMozAeohfTOflSm7RtR4MLkX1h69ANi9qL3W+r/qN2KxqYcop25aLKcb4eN58s1yVzAWCp9JB7xS2+AkbTbLrCbyycielP2GqYM7S8KwvkqGbucl8ls9t8irdPdHRzrhEp8bKAObiVd7Yik5MR0M5VaoaTfMGODnRbUk74pD5hUT0WvmUzN/mHN8P3XK0s/QPcP8OXYLBwxUIpZpU7SOInc5r9dWPAfzRGn1GZTL4h8kWrLr1Z11x5nyHd0+2nOWhuAjdo1FljQ=
+  skip_cleanup: true
+  file: m.e.i.n.e.l-$TRAVIS_TAG.zip
+  on:
+    repo: openHPI/m.e.i.n.e.l
+    tags: true
