@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>piechart-basic demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/visualizations/piechart-basic.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h3>piechart-basic demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+                <piechart-basic data='{"labels": ["Residential", "Non-Residential", "Utility"], "values": [19, 26, 55]}' colors='["#4a148c", "#ffcc80", "#b13a01"]'></piechart-basic>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

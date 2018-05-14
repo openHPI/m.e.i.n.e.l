@@ -1,0 +1,61 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../behaviors/plotly-behavior.html">
+
+<!--
+`piechart-basic`
+<br />This is a basic component for plotly piecharts.
+<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/pie-charts/" target="_blank">Plotly pie chart documentation</a>.
+
+@demo demo/visualizations/piechart_basic_demo.html
+-->
+<dom-module id="piechart-basic">
+    <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div id="diagram"></div>
+  </template>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'piechart-basic',
+                behaviors: [PlotlyBehavior],
+                properties: {
+                    /** Colors for the dataset (must be same size as dataset)*/
+                    colors: Array,
+                    /** Determines whether the legend should be hidden */
+                    hideLegend: Boolean,
+                },
+                /** Gets the container element of the diagram that should be rendered */
+                getDiagram: function() {
+                    return this.$.diagram;
+                },
+                /** Gets the data of the plot */
+                getPlotData: function(data) {
+                    if(Array.isArray(data)) {
+                      data = data[0];
+                    }
+
+                    return [{
+                        type: 'pie',
+                        values: data.values,
+                        labels: data.labels,
+                        showlegend: !this.hideLegend,
+                        marker: {
+                            colors: this.colors,
+                        },
+                    }];
+                },
+                /** Gets the layout options of the plot */
+                getLayout: function() {
+                    return {
+                        margin: { l: 0, r: 0, t: 0, b: 0 },
+                    };
+                },
+            });
+        });
+    </script>
+</dom-module>

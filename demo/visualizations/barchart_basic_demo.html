@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>barchart-basic demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/visualizations/barchart-basic.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h3>basic barchart demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+          <barchart-basic width="400" height="400" primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17]}]'></barchart-basic>
+          <barchart-basic width="400" height="400" stackedbar="true" primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17]}, { "x": [1, 2, 3, 4], "y": [10, 15, 13, 17]}]'></barchart-basic>
+        </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

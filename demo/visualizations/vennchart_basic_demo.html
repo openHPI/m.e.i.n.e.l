@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>vennchart-basic demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../src/visualizations/vennchart-basic.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        div.vertical-section-container {
+            max-width: 1500px;
+        }
+
+        vennchart-basic {
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h3>vennchart-basic demo (custom element)</h3>
+        <demo-snippet>
+            <template>
+                <!-- Data
+                [
+                  {
+                    "sets": ["A"],
+                    "size": 12,
+                    "label": "A"
+                  },
+                  {
+                    "sets": ["B"],
+                    "size": 12,
+                    "label": "B"
+                  },
+                  {
+                    "sets": ["A", "B"],
+                    "size": 2
+                  }
+                ]
+                -->
+                <vennchart-basic unit='%' data='[{"sets":["A"],"size":12,"label":"A"},{"sets":["B"],"size":12,"label":"B"},{"sets":["A","B"],"size":2}]'></vennchart-basic>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>
