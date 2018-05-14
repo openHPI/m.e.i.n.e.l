@@ -1,6 +1,6 @@
 {
   "name": "m.e.i.n.e.l",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **L**ibrary (or short: m.e.i.n.e.l.) is a visualization library for various forms of data. It focuses on abstracting the interfaces in a way that one only needs to supply the data and few (optional) parameters to embed visually appealing charts into existing environments. These interfaces are implemented by utilizing Polymer components.",
   "main": "index.html",
   "directories": {
