@@ -8,7 +8,7 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "build": "./build.sh"
+    "build": "gulp bundle"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,25 @@
   "license": "UNLICENSED",
   "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
   "devDependencies": {
-    "polymer-bundler": "^3.1.1"
+    "browserify": "^16.2.2",
+    "exposify": "^0.5.0",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-file": "^0.4.0",
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-insert": "^0.5.0",
+    "gulp-merge": "^0.1.1",
+    "gulp-rename": "^1.2.3",
+    "gulp-sequence": "^1.0.0",
+    "gulp-tap": "^1.0.1",
+    "gulp-uglify": "^3.0.0",
+    "into-stream": "^3.1.0",
+    "merge-stream": "^1.0.1",
+    "plotly.js": "^1.35.2",
+    "polymer-bundler": "^4.0.1",
+    "run-sequence": "^2.2.1",
+    "vinyl-buffer": "^1.0.1"
   }
 }

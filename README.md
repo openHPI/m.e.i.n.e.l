@@ -48,13 +48,26 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 - It seems like the `data` attribute is `null` when my code attempts to plot the diagram
   - Make sure to read up on [Polymer Lifecycle Callbacks](https://www.polymer-project.org/1.0/docs/devguide/registering-elements#lifecycle-callbacks). If you're using the `ready` function as a trigger to plot your diagram, it might be worth to see whether using `attached` can fix your issue.
 
-## Optimize for production
+## Use in production
 
-To optimize the polymer components for production, you can use Vulcanize. More information can be found [in the Polymer docs.](https://www.polymer-project.org/1.0/docs/tools/optimize-for-production)
+It is recommended to use the bundled version of m.e.i.n.e.l in production. It is created and attached to each release on GitHub, but can also be manually created by executing `npm run build`. The bundle consists of the following files:
+- `core.html`: Core components of m.e.i.n.e.l (without external libraries).
+- `dependencies.js` All dependencies bundled as a single file.
+- `bundle.html`: Both core components but also dependencies.
+- `webcomponents-lite.js`: Polyfills for browsers that do not support WebComponents natively.
 
-1. install [Polymer Bundler](https://github.com/Polymer/polymer-bundler): `npm install -g polymer-bundler`
-2. figure out which chart you want from `src/`
-3. do `polymer-bundler --inline-scripts --inline-css src/YOUR-CHART.html > CHART.html`
-4. include the `CHART.html` as `<link rel="import" href="../path/CHART.html">`
-5. include `<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.23/webcomponents-lite.min.js"></script>` in your header to make polyfills work with firefox etc.
-6. use the `<CHART></CHART>` tag you just created
+In addition, all files are also provided as minified version as well.
+
+To use m.e.i.n.e.l in your web application, you need to import either `bundle.html`, or `core.html` and `dependencies.js`.
+```html
+<!-- WebComponents polyfill needs to be loaded before m.e.i.n.e.l -->
+<script src="m.e.i.n.e.l/webcomponents-lite.min.js"></script>
+
+<!-- Either load the complete bundle ... -->
+<link rel="import" href="m.e.i.n.e.l/bundle.html">
+
+<!-- ... or load core components and dependencies separately -->
+<link rel="import" href="m.e.i.n.e.l/core.html">
+<script src="m.e.i.n.e.l/dependencies.js"></script>
+```
+In most cases, you should should be fine with using the complete bundle. However, there might be rare cases where it is necessary to load dependencies separately (e.g. when using Require.JS). Give it a try if you encounter problems with the first option.  

@@ -11,10 +11,10 @@
     "homepage": "https://openhpi.github.io/m.e.i.n.e.l/",
     "dependencies": {
         "polymer": "^1.7.1",
-        "plotly.js": "^1.22.0",
+        "plotly.js": "^1.35.2",
         "count-up": "^0.2.2",
         "venn.js": "^0.2.16",
-        "d3": "^5.1.0"
+        "d3": "^3.5.12"
     },
     "devDependencies": {
         "iron-component-page": "^1.1.8",
