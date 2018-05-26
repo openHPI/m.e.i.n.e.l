@@ -1,5 +1,3 @@
-<link rel="import" href="data-receiver-behavior.html">
-
 <script>
     /**
     * Behavior that passes data down to all descendant Polymer components
@@ -10,6 +8,10 @@
     * @polymerBehavior
     */
     DataControlBehavior = {
+        /** Fires redy event when the component has been attached to the DOM. */
+        attached: function() {
+            this.fire('ready');
+        },
         /**
          * Passes data to accepting descendants.
          * @param  {Object} data The data that should be passed.
