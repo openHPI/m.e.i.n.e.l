@@ -54,6 +54,8 @@
                         value: false,
                         reflectToAttribute: true,
                     },
+                    xTitle: String,
+                    yTitle: String,
                 },
                 /** Gets the container element of the diagram that should be rendered */
                 getDiagram: function() {
@@ -74,6 +76,8 @@
                 getLayout: function() {
                     var layout = {
                         xaxis: {
+                            title: this.xTitle,
+                            type: "category",
                             tickmode: "auto",
                             tickfont: {
                                 size: 14,
@@ -81,12 +85,13 @@
                             },
                         },
                         yaxis: {
+                            title: this.yTitle,
                             tickfont: {
                                 size: 14,
                                 color: this.accentcolor,
                             },
                         },
-                        margin: { l: 40, r: 10, t: 10, b: 25 },
+                        margin: { l: 50, r: 10, t: 10, b: 80 },
                     };
 
                     if(this.stackedbar) {
