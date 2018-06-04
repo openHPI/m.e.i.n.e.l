@@ -27,7 +27,9 @@
               if(element.isDataSource) {
                   return;
               } else if(element.acceptData) {
-                  element.receiveData(data);
+                  // Ensure that each element gets its own copy of the data
+                  var clonedData = JSON.parse(JSON.stringify(data));
+                  element.receiveData(clonedData);
               } else if(element.childNodes) {
                   element.childNodes.forEach(function(child) {
                       that._passDataTo(child, data);
