@@ -71,7 +71,7 @@
         </div>
         <div id="content-container">
           <span id="name">[[name]]</span>
-          <counter-basic id="value" data="[[data]]" prefix="[[prefix]]" suffix="[[suffix]]" decimals="[[decimals]]" default-value="[[defaultValue]]" animation-duration="[[animationDuration]]" hide-spinner="[[hideSpinner]]"></counter-basic>
+          <counter-basic id="value" data="[[data]]" prefix="[[prefix]]" suffix="[[suffix]]" decimals="[[decimals]]" default-value="[[defaultValue]]" value-formatter="[[valueFormatter]]" animation-duration="[[animationDuration]]" hide-spinner="[[hideSpinner]]"></counter-basic>
           <div id="link-container">
             <template is="dom-if" if="[[link]]">
               <a href="[[link]]">
@@ -133,6 +133,8 @@
                     link: String,
                     /** The text of the link (optional). */
                     linkText: String,
+                    /** Custom formatter function for displaying the value */
+                    valueFormatter: Object,
                 },
                 /** This is called by Polymer after property values are set and local DOM is initialized. */
                 ready: function() {

@@ -15,6 +15,19 @@
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../src/visualizations/vennchart-basic.html">
 
+    <script>
+      // As demo-snippet component is used, the vennchart-basic element is inserted deferred into the DOM.
+      // Therefore, custom value formatter is registered after vennchart-basic element has fired the ready event.
+      document.addEventListener('ready', function(e) {
+        e.target.labelFormatter = function(label) {
+          return 'Set ' + label;
+        };
+        e.target.valueFormatter = function(value) {
+          return value + '%';
+        };
+      });
+    </script>
+
     <style is="custom-style" include="demo-pages-shared-styles">
         div.vertical-section-container {
             max-width: 1500px;
@@ -49,7 +62,7 @@
                   }
                 ]
                 -->
-                <vennchart-basic unit='%' data='[{"sets":["A"],"size":12,"label":"A"},{"sets":["B"],"size":12,"label":"B"},{"sets":["A","B"],"size":2}]'></vennchart-basic>
+                <vennchart-basic data='[{"sets":["A"],"size":12,"label":"A"},{"sets":["B"],"size":12,"label":"B"},{"sets":["A","B"],"size":2}]'></vennchart-basic>
             </template>
         </demo-snippet>
     </div>

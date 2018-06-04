@@ -55,7 +55,8 @@
             if(!this.isAttached || typeof this.data == 'undefined') return;
 
             this.hasReceivedData = true;
-            this.dataChanged(this.data);
+            var clonedData = JSON.parse(JSON.stringify(this.data));
+            this.dataChanged(clonedData);
         },
         /** Observer that is executed when the data property has changed.*/
         _dataChanged: function() {
@@ -68,7 +69,8 @@
             }
 
             this.hasReceivedData = true;
-            this.dataChanged(this.data);
+            var clonedData = JSON.parse(JSON.stringify(this.data));
+            this.dataChanged(clonedData);
         },
         /**
          * Callback that is executed when new data has been received.

@@ -68,7 +68,21 @@
                         type: Number,
                         value: 300,
                     },
-                    unit: String,
+                    /** Padding of the inner chart */
+                    padding: {
+                        type: Number,
+                        value: 10,
+                    },
+                    /** Custom formatter function for displaying the labels */
+                    labelFormatter: {
+                        type: Object,
+                        observer: 'update',
+                    },
+                    /** Custom formatter function for displaying the value */
+                    valueFormatter: {
+                        type: Object,
+                        observer: 'update',
+                    },
                     hideIntersectionLabels: Boolean,
                 },
                 /** Displays the data in a pie chart */
@@ -80,6 +94,8 @@
                         if(typeof set.label === 'undefined') return;
                         if(that.hideIntersectionLabels && set.sets.length > 1) {
                             set.label = '';
+                        } else if(typeof that.labelFormatter === 'function') {
+                          set.label = that.labelFormatter(set.label);
                         }
                         if(typeof set.label !== 'string') {
                           set.label = set.label.toString();
@@ -89,7 +105,7 @@
                     var chart = venn.VennDiagram()
                                     .width(this.width)
                                     .height(this.height)
-                                    .padding(0);
+                                    .padding(this.padding);
                     var diagram = d3.select(this.$.diagram);
                     var tooltip = d3.select(this.$.tooltip)
                     diagram.datum(data).call(chart);
@@ -117,7 +133,8 @@
                             venn.sortAreas(diagram, d);
                             // Display a tooltip with the current size
                             tooltip.transition().duration(400).style("opacity", .9);
-                            tooltip.text(d.size + (that.unit ? that.unit : ''));
+                            var text = typeof that.valueFormatter === 'function' ? that.valueFormatter(d.size) : d.size;
+                            tooltip.text(text);
                             // Highlight the current path
                             var selection = d3.select(this).transition("tooltip").duration(400);
                             selection.select("path")
@@ -125,8 +142,11 @@
                                 .style("stroke-opacity", 1);
                         })
                         .on("mousemove", function() {
-                            tooltip.style("left", (d3.event.offsetX) + "px")
-                                   .style("top", (d3.event.offsetY - 35) + "px");
+                            var tooltipBounds = tooltip.node().getBoundingClientRect();
+                            var posX = Math.min(d3.event.offsetX + 5, that.width - tooltipBounds.width);
+                            var posY = Math.max(d3.event.offsetY - 35, 0);
+                            tooltip.style("left", posX + "px")
+                                   .style("top", posY + "px");
                         })
                         .on("mouseout", function(d, i) {
                             tooltip.transition().duration(400).style("opacity", 0);
