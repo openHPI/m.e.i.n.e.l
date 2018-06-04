@@ -68,6 +68,11 @@
                         type: Number,
                         value: 300,
                     },
+                    /** Padding of the inner chart */
+                    padding: {
+                        type: Number,
+                        value: 10,
+                    },
                     /** Custom formatter function for displaying the labels */
                     labelFormatter: {
                         type: Object,
@@ -100,7 +105,7 @@
                     var chart = venn.VennDiagram()
                                     .width(this.width)
                                     .height(this.height)
-                                    .padding(0);
+                                    .padding(this.padding);
                     var diagram = d3.select(this.$.diagram);
                     var tooltip = d3.select(this.$.tooltip)
                     diagram.datum(data).call(chart);
