@@ -9,7 +9,7 @@
     *
     * @polymerBehavior
     */
-    DataReceiverBehavior = {
+    DataReceiverBehavior = [DataControlBehavior, {
         properties: {
             /** Data that should be processed/visualized. */
             data: Object,
@@ -78,5 +78,5 @@
          * @param  {Object} data The received data.
          */
         dataChanged: function(data) { },
-    };
+    }];
 </script>

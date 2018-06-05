@@ -1,4 +1,3 @@
-<link rel="import" href="data-control-behavior.html">
 <link rel="import" href="data-receiver-behavior.html">
 
 <script>
@@ -8,7 +7,7 @@
     *
     * @polymerBehavior
     */
-    DataTransformerBehavior = [DataControlBehavior, DataReceiverBehavior, {
+    DataTransformerBehavior = [DataReceiverBehavior, {
         /**
          * Callback that is executed when new data has been received.
          * Will execute the transformation and pass results to descendants.
