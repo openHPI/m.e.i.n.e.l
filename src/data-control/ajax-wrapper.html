@@ -9,14 +9,25 @@ This component handles a given url by asynchronously fetching data from it and p
 -->
 <dom-module id="ajax-wrapper">
     <template>
+      <style>
+        #error-text {
+          display: block;
+        }
+      </style>
       <iron-ajax
           id="ajaxCaller"
           url="[[dataUrl]]"
           handle-as="json"
           on-response="_handleResponse"
+          on-error="_handleError"
           debounce-duration="300">
       </iron-ajax>
-      <content id="chartingElement"></content>
+      <template is="dom-if" if="[[_showErrorText]]" restamp>
+        <span id="error-text">[[errorText]]</span>
+      </template>
+      <template is="dom-if" if="[[!_showErrorText]]" restamp>
+        <content></content>
+      </template>
     </template>
     <script>
         window.addEventListener("WebComponentsReady", function() {
@@ -30,7 +41,20 @@ This component handles a given url by asynchronously fetching data from it and p
                     dataSchema: String,
                     /** If set, data is refreshed constantly after the specified interval (ms). */
                     refreshInterval:  Number,
+                    /** The text that should be shown in case of an erroneous response */
+                    errorText: {
+                        type: String,
+                        value: null,
+                    },
                     _responseData: Object,
+                    _responseError: {
+                        type: Object,
+                        value: null
+                    },
+                    _showErrorText: {
+                        type: Boolean,
+                        computed: '_computeShowErrorText(errorText, _responseError)',
+                    },
                 },
                 /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
@@ -47,11 +71,12 @@ This component handles a given url by asynchronously fetching data from it and p
                  * @param {Object} response The receeived response.
                  */
                 _handleResponse: function(response) {
-                    if(!response.detail.response) return;
+                    this._responseError = !response.detail.succeeded;
+                    if(this._responseError) return;
 
                     var body = JSON.parse(JSON.stringify(response.detail.response));  //we need a deep copy here. See benchmark: http://jsben.ch/#/bWfk9
                     var data = this._handlePagination(body);
-                    if(data) {
+                    if(typeof data !== 'undefined') {
                         this.publishData(this._parseData(data));
                         if(this.refreshInterval) {
                             var that = this;
@@ -68,7 +93,7 @@ This component handles a given url by asynchronously fetching data from it and p
                  * @return {Object}      The entire resources or 'undefined', if additional request is in progress.
                  */
                 _handlePagination: function(body) {
-                    if(this.dataSchema === 'jsonapi') {
+                    if(this.dataSchema === 'jsonapi' && Array.isArray(body)) {
                         this._responseData = this._responseData || [];
                         this._responseData = this._responseData.concat(body.data);
                         if(body.links.next) {
@@ -91,14 +116,20 @@ This component handles a given url by asynchronously fetching data from it and p
                  * @return {Object}      The parsed data.
                  */
                 _parseData: function(data) {
-                    if(this.dataSchema === 'jsonapi') {
+                    if(this.dataSchema === 'jsonapi' && Array.isArray(data)) {
                         return data.map(function(resource) {
                             return resource.attributes;
                         });
                     }
 
                     return data;
-                }
+                },
+                _handleError: function() {
+                    this._responseError = true;
+                },
+                _computeShowErrorText: function(errorText, responseError) {
+                    return typeof errorText !== 'undefined' && responseError;
+                },
             });
         });
     </script>

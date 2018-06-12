@@ -34,6 +34,11 @@
               <ajax-wrapper data-url="https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain" refresh-interval="5000">
                 <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
               </ajax-wrapper>
+
+              <!-- URL returns 404 response -->
+              <ajax-wrapper data-url="http://www.mocky.io/v2/5b1691ce31000091006f3fa1" error-text="Error while loading data">
+                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
+              </ajax-wrapper>
             </template>
         </demo-snippet>
     </div>
