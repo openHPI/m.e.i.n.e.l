@@ -126,9 +126,10 @@ This component handles a given url by asynchronously fetching data from it and p
                 },
                 _handleError: function() {
                     this._responseError = true;
+                    this.publishData(null);
                 },
                 _computeShowErrorText: function(errorText, responseError) {
-                    return typeof errorText !== 'undefined' && responseError;
+                    return errorText !== null && responseError;
                 },
             });
         });

@@ -14,7 +14,12 @@
          * @param  {Object} data The received data.
          */
         dataChanged: function(data) {
-            this.passData(this.transformData(data));
+          try {
+            data = this.transformData(data);
+          } catch(e) {
+            console.error(e);
+          }
+          this.passData(data);
         },
         /**
          * Applies the transformation. Needs to be implemented by the concrete component.
