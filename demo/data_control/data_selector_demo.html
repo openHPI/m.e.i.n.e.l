@@ -52,7 +52,24 @@
                 <data-selector keys='["data", 0, "questions"]' data='{"data": [{"total_enrollments": 8567, "questions": 210}]}'>
                   <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
                 </data-selector>
-              </ajax-wrapper>
+
+                <!-- Data
+                  {
+                    "data": [
+                      {
+                        "total_enrollments": 8567,
+                        "questions": 210
+                      }
+                    ]
+                  }
+                -->
+                <data-selector key='data' data='{"data": [{"total_enrollments": 8567, "questions": 210}]}'>
+                  <data-selector key='0'>
+                    <data-selector key='questions'>
+                      <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
+                    </data-selector>
+                  </data-selector>
+                </data-selector>
             </template>
         </demo-snippet>
     </div>
