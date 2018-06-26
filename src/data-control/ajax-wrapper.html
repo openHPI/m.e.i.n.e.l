@@ -79,10 +79,7 @@ This component handles a given url by asynchronously fetching data from it and p
                     if(typeof data !== 'undefined') {
                         this.publishData(this._parseData(data));
                         if(this.refreshInterval) {
-                            var that = this;
-                            this._refreshTimeout = setTimeout(function() {
-                                that.$.ajaxCaller.generateRequest();
-                            }, this.refreshInterval);
+                            this._scheduleRefresh();
                         }
                     }
                 },
@@ -127,6 +124,16 @@ This component handles a given url by asynchronously fetching data from it and p
                 _handleError: function() {
                     this._responseError = true;
                     this.publishData(null);
+
+                    if(this.refreshInterval) {
+                        this._scheduleRefresh();
+                    }
+                },
+                _scheduleRefresh: function() {
+                    var that = this;
+                    this._refreshTimeout = setTimeout(function() {
+                        that.$.ajaxCaller.generateRequest();
+                    }, this.refreshInterval);
                 },
                 _computeShowErrorText: function(errorText, responseError) {
                     return errorText !== null && responseError;
