@@ -114,7 +114,9 @@ For more concrete mapping examples visit the demo page.
                 }
 
                 return this._flatten(data.map(function(item) {
-                    return Object.values(item);
+                    return Object.keys(item).map(function(key) {
+                      return item[key];
+                    });
                 }));
             },
             _flatten: function(arrays) {

@@ -3,6 +3,7 @@ const gulp = require('gulp');
 const tap = require('gulp-tap');
 const file = require('gulp-file');
 const gulpif = require('gulp-if');
+const babel = require('gulp-babel');
 const clean = require('gulp-clean');
 const insert = require('gulp-insert');
 const merge = require('merge-stream');
@@ -16,6 +17,7 @@ const browserify = require('browserify');
 const intoStream = require('into-stream');
 const runSequence = require('run-sequence');
 const Bundler = require('polymer-bundler').Bundler;
+const HtmlSplitter = require('polymer-build').HtmlSplitter;
 
 const POLYMER_MANIFEST_PATH = 'src/all-imports.html';
 const PLOTLY_PARTIALS_PATH = [
@@ -42,8 +44,12 @@ gulp.task('bundle-core', () => {
   const bundler = new Bundler();
   return bundler.generateManifest([POLYMER_MANIFEST_PATH]).then((manifest) => {
   	return bundler.bundle(manifest).then((result) => {
+      let htmlSplitter = new HtmlSplitter();
       let bundleDocument = result.documents.values().next().value;
       return file('core.html', bundleDocument.content)
+        .pipe(htmlSplitter.split())
+        .pipe(gulpif(/\.js$/, babel({plugins: ["transform-es2015-arrow-functions"]})))
+        .pipe(htmlSplitter.rejoin())
         .pipe(gulp.dest('dist'));
   	});
   });

@@ -84,11 +84,12 @@ This is a component for filtering data based on user input.
                   var index = this.activeSeries.indexOf(name);
                   if(e.srcElement.active && index === -1) {
                       if(this.exclusive) {
-                          this.$.filterBar.querySelectorAll('paper-button').forEach(function(button) {
-                              if(button !== e.srcElement) {
-                                  button.active = false;
+                          var buttons = this.$.filterBar.querySelectorAll('paper-button');
+                          for(var i = 0; i < buttons.length; i++) {
+                              if(buttons[i] !== e.srcElement) {
+                                  buttons[i].active = false;
                               }
-                          });
+                          }
                           this.set('activeSeries', [name]);
                       } else {
                           this.push('activeSeries', name);
