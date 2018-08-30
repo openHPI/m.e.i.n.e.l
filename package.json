@@ -34,9 +34,12 @@
   "license": "UNLICENSED",
   "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
   "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
     "browserify": "^16.2.2",
     "exposify": "^0.5.0",
     "gulp": "^3.9.1",
+    "gulp-babel": "^8.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-concat": "^2.6.1",
     "gulp-file": "^0.4.0",
@@ -51,8 +54,12 @@
     "into-stream": "^3.1.0",
     "merge-stream": "^1.0.1",
     "plotly.js": "^1.35.2",
+    "polymer-build": "^3.0.4",
     "polymer-bundler": "^4.0.1",
     "run-sequence": "^2.2.1",
     "vinyl-buffer": "^1.0.1"
+  },
+  "dependencies": {
+    "gulp-print": "^5.0.0"
   }
 }

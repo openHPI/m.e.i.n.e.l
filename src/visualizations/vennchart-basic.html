@@ -83,6 +83,12 @@
                         type: Object,
                         observer: 'update',
                     },
+                    /** Excluded sets, which are not visualized */
+                    blacklist: {
+                        type: Array,
+                        value: [],
+                        observer: 'update',
+                    },
                     hideIntersectionLabels: Boolean,
                 },
                 /** Displays the data in a pie chart */
@@ -100,6 +106,16 @@
                         if(typeof set.label !== 'string') {
                           set.label = set.label.toString();
                         }
+                    });
+
+                    // Apply blacklist
+                    data = data.filter(function(set) {
+                      for(var i = 0; i < that.blacklist.length; i++) {
+                        if(set.sets.indexOf(that.blacklist[i]) >= 0) {
+                          return false;
+                        }
+                      }
+                      return true;
                     });
 
                     var chart = venn.VennDiagram()

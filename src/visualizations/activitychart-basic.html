@@ -385,7 +385,7 @@ This component shows an activity history, similar to the colored github chart.
         },
 
         /** Removes duplicate items from array */
-        _distinct(array) {
+        _distinct: function(array) {
           return array.filter(function(item, index, self) {
             return self.indexOf(item) == index;
           });

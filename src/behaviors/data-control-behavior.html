@@ -18,9 +18,10 @@
          */
         passData: function(data) {
             var that = this;
-            Polymer.dom(this).children.forEach(function(child) {
-                that._passDataTo(child, data);
-            });
+            var children = Polymer.dom(this).children;
+            for(var i = 0; i < children.length; i++) {
+                that._passDataTo(children[i], data);
+            }
         },
         _passDataTo: function(element, data) {
             // Ensure that descendant elements are initialized
@@ -33,9 +34,9 @@
                   var clonedData = JSON.parse(JSON.stringify(data));
                   element.receiveData(clonedData);
               } else if(element.childNodes) {
-                  element.childNodes.forEach(function(child) {
-                      that._passDataTo(child, data);
-                  });
+                  for(var i = 0; i < element.childNodes.length; i++) {
+                      that._passDataTo(element.childNodes[i], data);
+                  }
               }
             });
         },

@@ -43,7 +43,7 @@ This component performs a data projection on the passed data and passes the resu
             },
             /** Perform projection defined by key sequence on given data object */
             _selectData: function(data, keys) {
-                if(Array.isArray(data)) {
+                if(Array.isArray(data) && typeof data[keys[0]] === 'undefined') {
                     var that = this;
                     return data.map(function(item) {
                         return that._selectData(item, keys);
