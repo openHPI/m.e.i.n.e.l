@@ -82,11 +82,11 @@ This is a component for filtering data based on user input.
               _handleTap: function(e) {
                   var name = e.model.item.name;
                   var index = this.activeSeries.indexOf(name);
-                  if(e.srcElement.active && index === -1) {
+                  if(e.target.active && index === -1) {
                       if(this.exclusive) {
                           var buttons = this.$.filterBar.querySelectorAll('paper-button');
                           for(var i = 0; i < buttons.length; i++) {
-                              if(buttons[i] !== e.srcElement) {
+                              if(buttons[i] !== e.target) {
                                   buttons[i].active = false;
                               }
                           }
@@ -94,7 +94,7 @@ This is a component for filtering data based on user input.
                       } else {
                           this.push('activeSeries', name);
                       }
-                  } else if(!e.srcElement.active && index !== -1) {
+                  } else if(!e.target.active && index !== -1) {
                       this.splice('activeSeries', index, 1);
                   }
               },
