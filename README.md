@@ -48,6 +48,10 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 - It seems like the `data` attribute is `null` when my code attempts to plot the diagram
   - Make sure to read up on [Polymer Lifecycle Callbacks](https://www.polymer-project.org/1.0/docs/devguide/registering-elements#lifecycle-callbacks). If you're using the `ready` function as a trigger to plot your diagram, it might be worth to see whether using `attached` can fix your issue.
 
+## Deploy release
+
+Releases are built and deployed automatically by [travis-ci](https://travis-ci.com/openHPI/m.e.i.n.e.l/builds). To trigger a build, simply push a tag starting with the letter `v` followed by the version number, e.g. `v1.2.0`.
+
 ## Use in production
 
 It is recommended to use the bundled version of m.e.i.n.e.l in production. It is created and attached to each release on GitHub, but can also be manually created by executing `npm run build`. The bundle consists of the following files:
