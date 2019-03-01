@@ -1,7 +1,8 @@
 dist: trusty
 sudo: required
 language: node_js
-node_js: lts/*
+node_js: 
+  - "8"
 branches:
   only:
   - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
