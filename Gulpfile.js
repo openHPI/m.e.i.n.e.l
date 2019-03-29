@@ -21,7 +21,7 @@ const HtmlSplitter = require('polymer-build').HtmlSplitter;
 
 const POLYMER_MANIFEST_PATH = 'src/all-imports.html';
 const PLOTLY_PARTIALS_PATH = [
-  require.resolve('plotly.js/lib/index-basic'),
+  require.resolve('plotly.js/lib/index-cartesian'),
   require.resolve('plotly.js/lib/index-geo')
 ];
 const OTHER_DEPENDENCIES_PATH = [
