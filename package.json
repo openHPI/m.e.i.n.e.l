@@ -8,7 +8,8 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "build": "gulp bundle"
+    "build": "gulp bundle",
+    "postversion": "git push && git push --tags && bash ./utils/github-pages.sh openHPI m.e.i.n.e.l"
   },
   "repository": {
     "type": "git",
