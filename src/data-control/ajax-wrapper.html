@@ -41,6 +41,8 @@ This component handles a given url by asynchronously fetching data from it and p
                     dataSchema: String,
                     /** If set, data is refreshed constantly after the specified interval (ms). */
                     refreshInterval:  Number,
+                    /** If set, the initial request is delayed (ms). */
+                    initialDelay:  Number,
                     /** The text that should be shown in case of an erroneous response */
                     errorText: {
                         type: String,
@@ -58,10 +60,20 @@ This component handles a given url by asynchronously fetching data from it and p
                 },
                 /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
-                    this.$.ajaxCaller.generateRequest();
+                    var that = this;
+                    if(this.initialDelay) {
+                        this._delayTimeout = setTimeout(function() {
+                            that.$.ajaxCaller.generateRequest();
+                        }, this.initialDelay);
+                    } else {
+                        this.$.ajaxCaller.generateRequest();
+                    }
                 },
                 /** This is called by Polymer after the element is detached from the document. */
                 detached: function() {
+                    if(this._delayTimeout) {
+                        clearTimeout(this._delayTimeout);
+                    }
                     if(this._refreshTimeout) {
                         clearTimeout(this._refreshTimeout);
                     }
