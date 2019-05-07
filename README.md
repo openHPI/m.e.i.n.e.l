@@ -50,7 +50,7 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 
 ## Deploy release
 
-Releases are built and deployed automatically by [travis-ci](https://travis-ci.com/openHPI/m.e.i.n.e.l/builds). To trigger a build, simply push a tag starting with the letter `v` followed by the version number, e.g. `v1.2.0`.
+Releases are built and deployed automatically by [travis-ci](https://travis-ci.com/openHPI/m.e.i.n.e.l/builds). To trigger a build, simply run `npm version x.x.x`. Travis deployment is currently broken, please upload the release zip manually to the GitHub release.
 
 ## Use in production
 
