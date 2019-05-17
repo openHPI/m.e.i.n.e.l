@@ -22,12 +22,14 @@ This component handles a given url by asynchronously fetching data from it and p
           on-error="_handleError"
           debounce-duration="300">
       </iron-ajax>
-      <template is="dom-if" if="[[_showErrorText]]" restamp>
-        <span id="error-text">[[errorText]]</span>
-      </template>
-      <template is="dom-if" if="[[!_showErrorText]]" restamp>
-        <content></content>
-      </template>
+      <div id="contentWrapper">
+        <template is="dom-if" if="[[_showErrorText]]" restamp>
+          <span id="error-text">[[errorText]]</span>
+        </template>
+        <template is="dom-if" if="[[!_showErrorText]]" restamp>
+          <content></content>
+        </template>
+      </div>
     </template>
     <script>
         window.addEventListener("WebComponentsReady", function() {
@@ -40,9 +42,11 @@ This component handles a given url by asynchronously fetching data from it and p
                     /** The data schema of the requested data. So far, only `jsonapi` is supported. */
                     dataSchema: String,
                     /** If set, data is refreshed constantly after the specified interval (ms). */
-                    refreshInterval:  Number,
+                    refreshInterval: Number,
                     /** If set, the initial request is delayed (ms). */
-                    initialDelay:  Number,
+                    initialDelay: Number,
+                    /** If set, the initial request is delayed until the element is scrolled into the viewport. */
+                    lazyLoad: Boolean,
                     /** The text that should be shown in case of an erroneous response */
                     errorText: {
                         type: String,
@@ -61,21 +65,43 @@ This component handles a given url by asynchronously fetching data from it and p
                 /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
                     var that = this;
+                    if(this.lazyLoad) {
+                        this._intersectionObserver = new IntersectionObserver(function(entries) {
+                            // If intersectionRatio is 0, the target is out of view
+                            // and we do not need to do anything.
+                            if (entries[0].intersectionRatio <= 0) return;
+
+                            that._intersectionObserver.unobserve(entries[0].target);
+                            that._request();
+                        });
+                        this._intersectionObserver.observe(this.$.contentWrapper);
+                    } else {
+                        this._request();
+                    }
+                },
+                /** This is called by Polymer after the element is detached from the document. */
+                detached: function() {
+                    if(this._intersectionObserver) {
+                        this._intersectionObserver.disconnect();
+                    }
+                    if(this._delayTimeout) {
+                        clearTimeout(this._delayTimeout);
+                    }
+                    if(this._refreshTimeout) {
+                        clearTimeout(this._refreshTimeout);
+                    }
+                },
+                /**
+                 * Executes the request.
+                 */
+                _request: function() {
+                    var that = this;
                     if(this.initialDelay) {
                         this._delayTimeout = setTimeout(function() {
                             that.$.ajaxCaller.generateRequest();
                         }, this.initialDelay);
                     } else {
                         this.$.ajaxCaller.generateRequest();
-                    }
-                },
-                /** This is called by Polymer after the element is detached from the document. */
-                detached: function() {
-                    if(this._delayTimeout) {
-                        clearTimeout(this._delayTimeout);
-                    }
-                    if(this._refreshTimeout) {
-                        clearTimeout(this._refreshTimeout);
                     }
                 },
                 /**
