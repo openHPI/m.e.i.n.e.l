@@ -65,7 +65,7 @@ This component handles a given url by asynchronously fetching data from it and p
                 /** This is called by Polymer after the component instance is attached to the document. */
                 attached: function() {
                     var that = this;
-                    if(this.lazyLoad) {
+                    if(this.lazyLoad && 'IntersectionObserver' in window) {
                         this._intersectionObserver = new IntersectionObserver(function(entries) {
                             // If intersectionRatio is 0, the target is out of view
                             // and we do not need to do anything.
