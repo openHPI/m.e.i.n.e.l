@@ -52,6 +52,11 @@
                     type: Boolean,
                     value: false,
                 },
+                /** Draw vertical dotted lines at specified x-axis points */
+                vLines: {
+                    type: Array,
+                    value: [],
+                },
             },
             /** Gets the container element of the diagram that should be rendered */
             getDiagram: function() {
@@ -92,6 +97,7 @@
                         },
                     },
                     margin: { l: 40, r: 10, t: 10, b: 40 },
+                    shapes: [],
                 };
 
                 if (this.scrollzoom) {
@@ -100,6 +106,24 @@
                     layout.xaxis.rangeslider = {};
                     layout.xaxis.range = [minX, maxX];
                 }
+
+                this.vLines.forEach(function(item, index) {
+                    layout.shapes.push(
+                        {
+                            type: 'line',
+                            x0: item,
+                            y0: 0,
+                            x1: item,
+                            yref: 'paper',
+                            y1: 1,
+                            line: {
+                                color: 'grey',
+                                width: 1.5,
+                                dash: 'dot'
+                            }
+                        }
+                    )
+                });
 
                 return layout;
             },
