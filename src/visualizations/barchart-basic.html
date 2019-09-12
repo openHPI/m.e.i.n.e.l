@@ -36,6 +36,24 @@
                         value: 'rgba(0,0,0,1)',
                         reflectToAttribute: true,
                     },
+                    /** Background color of chart */
+                    bgcolor: {
+                        type: String,
+                        value: 'rgba(255,255,255,1)',
+                        reflectToAttribute: true,
+                    },
+                    /** Grid color of x axis */
+                    xGridcolor: {
+                        type: String,
+                        value: 'rgba(238,238,238,1)',
+                        reflectToAttribute: true,
+                    },
+                    /** Grid color of y axis */
+                    yGridcolor: {
+                        type: String,
+                        value: 'rgba(238,238,238,1)',
+                        reflectToAttribute: true,
+                    },
                     /** Scroll and zoom activation */
                     scrollzoom: {
                         type: Boolean,
@@ -66,9 +84,12 @@
                     data.forEach(function(item) {
                         item.type = "bar";
                     });
-                    data[0]["marker"] = {
-                        color: this.primarycolor
-                    };
+
+                    if (data[0]["marker"] === undefined || data[0]["marker"]["color"] === undefined) {
+                        data[0]["marker"] = {
+                            color: this.primarycolor
+                        };
+                    }
 
                     return data;
                 },
@@ -83,6 +104,7 @@
                                 size: 14,
                                 color: this.accentcolor,
                             },
+                            gridcolor: this.xGridcolor,
                         },
                         yaxis: {
                             title: this.yTitle,
@@ -90,11 +112,14 @@
                                 size: 14,
                                 color: this.accentcolor,
                             },
+                            gridcolor: this.yGridcolor,
                         },
                         margin: { l: 50, r: 10, t: 10, b: 80 },
+                        plot_bgcolor: this.bgcolor,
+                        paper_bgcolor: this.bgcolor,
                     };
 
-                    if(this.stackedbar) {
+                    if (this.stackedbar) {
                         layout.barmode = 'stack';
                     }
                     if (this.scrollzoom) {
