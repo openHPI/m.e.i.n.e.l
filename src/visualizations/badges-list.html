@@ -1,0 +1,72 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../behaviors/data-receiver-behavior.html">
+
+
+<!--
+`badges-list`
+<br />This is a component for a list of counter badges.
+
+@demo demo/visualizations/badges_list_demo.html
+-->
+<dom-module id="badges-list">
+    <template>
+        <style>
+            :host {
+                display: block;
+             }
+
+            .badge {
+                background-color: #000;
+                color: #fff;
+                display: inline-block;
+                padding-left: 8px;
+                padding-right: 8px;
+                text-align: center;
+                border-radius: 10px;
+                margin-right: 8px;
+                margin-top: 2px;
+                margin-bottom: 2px;
+            }
+            
+            .badge-cell {
+                text-align: right;
+            }
+        </style>
+        <template is="dom-if" if="[[hasReceivedData]]">
+            <table>
+                <template is="dom-repeat" items="[[data]]">
+                    <tr>
+                        <td class='badge-cell'><div class='badge'>[[item.value]]</div></td>
+                        <td class='badge-title-cell'><div class='badge-title'>[[item.title]]</div></td>
+                    </tr>
+                </template>
+            </table>
+        </template>
+        <template is="dom-if" if="[[_showSpinner]]">
+            <i id="spinner" class="fa fas fa-spinner fa-spin"></i>
+        </template>
+    </template>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function() {
+            Polymer({
+                is: 'badges-list',
+                behaviors: [DataReceiverBehavior],
+                properties: {
+                    /** Determines whether the loading spinner should be hidden. */
+                    hideSpinner: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    _showSpinner: {
+                        type: Boolean,
+                        computed: '_computeShowSpinner(hideSpinner, hasReceivedData)',
+                    },
+                },
+                _computeShowSpinner: function(hideSpinner, hasReceivedData) {
+                    return !hideSpinner && !hasReceivedData;
+                },
+            });
+        });
+    </script>
+</dom-module>
