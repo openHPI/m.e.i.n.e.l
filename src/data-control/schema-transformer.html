@@ -91,13 +91,21 @@ For more concrete mapping examples visit the demo page.
                 return mapping.value;
             },
             _applyCollectMapping: function(mapping, data) {
-                if(!Array.isArray(data)) {
+                if (!Array.isArray(data)) {
                     return data[mapping.sourceKey];
                 }
 
-                return data.map(function(item) {
+                var result = data.map(function(item) {
                     return item[mapping.sourceKey];
                 });
+
+                if (mapping.nestedTargetKey !== undefined) {
+                    var hash = {};
+                    hash[mapping.nestedTargetKey] = result;
+                    return hash;
+                } else {
+                    return result;
+                }
             },
             _applyKeysMapping: function(mapping, data) {
                 if(!Array.isArray(data)) {
