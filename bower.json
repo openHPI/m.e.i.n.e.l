@@ -10,16 +10,16 @@
     ],
     "homepage": "https://openhpi.github.io/m.e.i.n.e.l/",
     "dependencies": {
-        "polymer": "^1.7.1",
-        "plotly.js": "^1.35.2",
+        "polymer": "^1.12.0",
+        "plotly.js": "^1.51.3",
         "count-up": "^0.2.2",
         "venn.js": "^0.2.16",
-        "d3": "^3.5.12"
+        "d3": "^3.5.17"
     },
     "devDependencies": {
-        "iron-component-page": "^1.1.8",
-        "iron-demo-helpers": "^1.2.5",
-        "web-component-tester": "^5.0.0",
-        "webcomponentsjs": "^0.7.23"
+        "iron-component-page": "^1.1.9",
+        "iron-demo-helpers": "^1.2.6",
+        "web-component-tester": "^5.0.2",
+        "webcomponentsjs": "^0.7.24"
     }
 }
