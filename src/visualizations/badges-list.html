@@ -1,19 +1,17 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/data-receiver-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../polymer/lib/elements/custom-style.html">
 
+<link rel="import" href="../mixins/data-receiver-mixin.html">
 
-<!--
-`badges-list`
-<br />This is a component for a list of counter badges.
-
-@demo demo/visualizations/badges_list_demo.html
--->
 <dom-module id="badges-list">
     <template>
         <style>
             :host {
                 display: block;
-             }
+            }
 
             .badge {
                 background-color: #000;
@@ -27,7 +25,7 @@
                 margin-top: 2px;
                 margin-bottom: 2px;
             }
-            
+
             .badge-cell {
                 text-align: right;
             }
@@ -36,8 +34,12 @@
             <table>
                 <template is="dom-repeat" items="[[data]]">
                     <tr>
-                        <td class='badge-cell'><div class='badge'>[[item.value]]</div></td>
-                        <td class='badge-title-cell'><div class='badge-title'>[[item.title]]</div></td>
+                        <td class="badge-cell">
+                            <div class="badge">[[item.value]]</div>
+                        </td>
+                        <td class="badge-title-cell">
+                            <div class="badge-title">[[item.title]]</div>
+                        </td>
                     </tr>
                 </template>
             </table>
@@ -48,25 +50,46 @@
     </template>
 
     <script>
-        window.addEventListener("WebComponentsReady", function() {
-            Polymer({
-                is: 'badges-list',
-                behaviors: [DataReceiverBehavior],
-                properties: {
+        /**
+         * ## `badges-list`
+         *
+         * This is a component for a list of counter badges.
+         *
+         * @polymer
+         * @customElement
+         * @appliesMixin DataReceiverMixin
+         * @demo demo/visualizations/badges_list_demo.html
+         */
+        class BadgesList extends DataReceiverMixin(Polymer.Element) {
+
+            static get is() {
+                return 'badges-list';
+            }
+
+            static get properties() {
+                return {
                     /** Determines whether the loading spinner should be hidden. */
                     hideSpinner: {
                         type: Boolean,
-                        value: false,
+                        value: false
                     },
                     _showSpinner: {
                         type: Boolean,
-                        computed: '_computeShowSpinner(hideSpinner, hasReceivedData)',
-                    },
-                },
-                _computeShowSpinner: function(hideSpinner, hasReceivedData) {
-                    return !hideSpinner && !hasReceivedData;
-                },
-            });
-        });
+                        computed: '_computeShowSpinner(hideSpinner, hasReceivedData)'
+                    }
+                };
+            }
+
+            static get observers() {
+                return [];
+            }
+
+            _computeShowSpinner(hideSpinner, hasReceivedData) {
+                return !hideSpinner && !hasReceivedData;
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(BadgesList.is, BadgesList);
     </script>
 </dom-module>

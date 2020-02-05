@@ -1,0 +1,54 @@
+<link rel="import" href="../../../polymer/lib/utils/async.html">
+
+<script>
+    /**
+     * Mixin that passes data down to all descendant Polymer components
+     * with `DataReceiverMixin`.
+     *
+     * Should be used by components that create or process data before visualization.
+     *
+     * @polymer
+     * @mixinFunction
+     */
+    DataControlMixin = function (superClass) {
+        return class extends superClass {
+            /** Fires ready event when the component has been attached to the DOM. */
+            connectedCallback() {
+                super.connectedCallback();
+                // The CustomEvent constructor is not supported on IE, but the webcomponents
+                // polyfills include a small polyfill for it so you can use the same syntax everywhere.
+                this.dispatchEvent(new CustomEvent('ready', {bubbles: true, composed: true}));
+            }
+
+            /**
+             * Passes data to accepting descendants.
+             * @param  {Object} data The data that should be passed.
+             */
+            passData(data) {
+                let that = this;
+                let children = this.children;
+                for (let i = 0; i < children.length; i++) {
+                    that._passDataTo(children[i], data);
+                }
+            }
+
+            _passDataTo(element, data) {
+                // Ensure that descendant elements are initialized
+                let that = this;
+                Polymer.Async.animationFrame.run(() => {
+                    if (element.isDataSource) {
+
+                    } else if (element.acceptData) {
+                    // Ensure that each element gets its own copy of the data
+                        let clonedData = JSON.parse(JSON.stringify(data));
+                        element.receiveData(clonedData);
+                    } else if (element.childNodes) {
+                        for (let i = 0; i < element.childNodes.length; i++) {
+                            that._passDataTo(element.childNodes[i], data);
+                        }
+                    }
+                });
+            }
+        };
+    };
+</script>

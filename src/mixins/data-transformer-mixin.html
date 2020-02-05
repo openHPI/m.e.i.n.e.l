@@ -1,0 +1,41 @@
+<link rel="import" href="data-receiver-mixin.html">
+
+<script>
+    /**
+     * Mixin that transforms data it receives and passes the result down to
+     * descendant Polymer components  with `DataReceiverMixin`.
+     *
+     * @polymer
+     * @mixinFunction
+     */
+    DataTransformerMixin = function (superClass) {
+        return class extends DataReceiverMixin(superClass) {
+            static get properties() {
+                return {};
+            }
+
+            /**
+             * Callback that is executed when new data has been received.
+             * Will execute the transformation and pass results to descendants.
+             * @param  {Object} data The received data.
+             */
+            dataChanged(data) {
+                try {
+                    data = this.transformData(data);
+                } catch (e) {
+                    console.error(e);
+                }
+                this.passData(data);
+            }
+
+            /**
+             * Applies the transformation. Needs to be implemented by the concrete component.
+             * @param  {Object} data The source data.
+             * @return {Object}      The transformed data.
+             */
+            transformData(data) {
+                return data;
+            }
+        };
+    };
+</script>

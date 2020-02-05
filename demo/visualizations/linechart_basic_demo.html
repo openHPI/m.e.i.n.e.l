@@ -7,33 +7,35 @@
 
     <title>linechart-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../src/visualizations/linechart-basic.html">
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
 </head>
 
 <body>
-    <div>
-        <h3>basic linechart demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-          <linechart-basic highlight-latest accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17] }, { "x": [1, 2, 3, 4], "y": [16, 5, 11, 9] }, { "x": [1, 2, 3, 4], "y": [6, 4, 7, 12], "mode":"markers"}]' v-lines='[1.5, 3.5]'></linechart-basic>
+<div>
+    <h3>basic linechart demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <linechart-basic highlight-latest accentcolor="rgba(177,6,58,1)" data="[{ &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [10, 15, 13, 17] }, { &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [16, 5, 11, 9] }, { &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [6, 4, 7, 12], &quot;mode&quot;:&quot;markers&quot;}]" v-lines="[1.5, 3.5]"></linechart-basic>
         </template>
-        </demo-snippet>
-    </div>
-    <script>
-        /**
-              var data =
-              [{
+    </demo-snippet>
+</div>
+<script>
+    /**
+     Var data =
+     [{
                   "x": [1, 2, 3, 4],
                   "y": [5, 4, 6, 2]
               }, {
@@ -43,8 +45,8 @@
                   "x": [1, 2, 1, 9],
                   "y": [6, 4, 7, 3]
               }]
-                **/
-    </script>
+     **/
+</script>
 </body>
 
 </html>

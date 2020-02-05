@@ -1,103 +1,118 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/data-receiver-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../mixins/data-receiver-mixin.html">
 <link rel="import" href="counter-basic.html">
 
-
-<!--
-`score-card`
-<br />This is a basic component for a score card displaying a single numeric value.
-<br />FontAwesome is not shipped with M.E.I.N.E.L. and needs to be loaded separately.
-
-@demo demo/visualizations/score_card_demo.html
--->
 <dom-module id="score-card">
     <template>
-      <style>
-        :host {
-          display: block;
-        }
+        <!-- ToDo: Added FontAwesome temporarily. Will be fixed with Polymer 3.0 -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
 
-        #container {
-          display: flex;
-          width: 100%;
-        }
+        <style>
+            :host {
+                display: block;
+            }
 
-        #icon-container {
-          display: flex;
-          flex-grow: 0;
-          flex-shrink: 0;
-          align-items: center;
-          justify-content: center;
-          min-width: 50px;
-          min-height: 50px;
-          border-radius: 2px 0px 0px 2px;
-        }
+            #container {
+                display: flex;
+                width: 100%;
+            }
 
-        #content-container {
-          position: relative;
-          width: 100%;
-          padding: 5px 10px;
-          overflow: hidden;
-        }
+            #icon-container {
+                display: flex;
+                flex-grow: 0;
+                flex-shrink: 0;
+                align-items: center;
+                justify-content: center;
+                min-width: 50px;
+                min-height: 50px;
+                border-radius: 2px 0px 0px 2px;
+            }
 
-        #name {
-          display: block;
-          font-size: 14px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          margin-bottom: 3px;
-        }
+            #content-container {
+                position: relative;
+                width: 100%;
+                padding: 5px 10px;
+                overflow: hidden;
+            }
 
-        #value {
-          display: block;
-          font-weight: bold;
-          font-size: 18px;
-        }
+            #name {
+                display: block;
+                font-size: 14px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 3px;
+            }
 
-        #link-container {
-          position: absolute;
-          bottom: 5px;
-          font-size: 14px;
-        }
+            #value {
+                display: block;
+                font-weight: bold;
+                font-size: 18px;
+            }
 
-        #link-icon {
-          margin-right: 3px;
-        }
-      </style>
+            #link-container {
+                position: absolute;
+                bottom: 5px;
+                font-size: 14px;
+            }
 
-      <div id="container">
-        <div id="icon-container" style$="background-color: [[primarycolor]]; height: [[height]]px; flex-basis: [[height]]px;">
-          <span id="icon" class$="[[iconClasses]]" style$="font-size: [[iconSize]]px"></i>
+            #link-icon {
+                margin-right: 3px;
+            }
+        </style>
+
+        <div id="container">
+            <div id="icon-container"
+                 style$="background-color: [[primarycolor]]; height: [[height]]px; flex-basis: [[height]]px;">
+                <span id="icon" class$="[[iconClasses]]" style$="font-size: [[iconSize]]px"></span>
+            </div>
+            <div id="content-container">
+                <span id="name">[[name]]</span>
+                <counter-basic id="value" data="[[data]]" prefix="[[prefix]]" suffix="[[suffix]]"
+                               decimals="[[decimals]]" default-value="[[defaultValue]]"
+                               value-formatter="[[valueFormatter]]" animation-duration="[[animationDuration]]"
+                               hide-spinner="[[hideSpinner]]"></counter-basic>
+                <div id="link-container">
+                    <template is="dom-if" if="[[link]]">
+                        <a href="[[link]]">
+                            <i id="link-icon" class="fa fas fa-arrow-circle-right"></i>[[linkText]]
+                        </a>
+                    </template>
+                </div>
+            </div>
         </div>
-        <div id="content-container">
-          <span id="name">[[name]]</span>
-          <counter-basic id="value" data="[[data]]" prefix="[[prefix]]" suffix="[[suffix]]" decimals="[[decimals]]" default-value="[[defaultValue]]" value-formatter="[[valueFormatter]]" animation-duration="[[animationDuration]]" hide-spinner="[[hideSpinner]]"></counter-basic>
-          <div id="link-container">
-            <template is="dom-if" if="[[link]]">
-              <a href="[[link]]">
-                <i id="link-icon" class="fa fas fa-arrow-circle-right"></i>[[linkText]]
-              </a>
-            </template>
-          </div>
-        </div>
-      </div>
     </template>
 
     <script>
-        window.addEventListener("WebComponentsReady", function() {
-            Polymer({
-                is: 'score-card',
-                behaviors: [DataReceiverBehavior],
-                properties: {
+        /**
+         * ## `score-card`
+         *
+         * This is a basic component for a score card displaying a single numeric value.
+         *
+         * FontAwesome is not shipped with M.E.I.N.E.L. and needs to be loaded separately.
+         *
+         * @polymer
+         * @customElement
+         * @demo demo/visualizations/score_card_demo.html
+         */
+        class ScoreCard extends DataReceiverMixin(Polymer.Element) {
+
+            static get is() {
+                return 'score-card';
+            }
+
+            static get properties() {
+                return {
                     /** Height of the control */
                     height: {
                         type: Number,
-                        value: 100,
+                        value: 100
                     },
                     /** Font size of the icon (px). */
                     iconSize: {
                         type: Number,
-                        value: 50,
+                        value: 50
                     },
                     /** Primary color of the control. */
                     primarycolor: String,
@@ -111,38 +126,39 @@
                     suffix: String,
                     /** Number of decimals to show. */
                     decimals: {
-                      type: Number,
-                      value: 0,
+                        type: Number,
+                        value: 0
                     },
                     /** The default value that is shown if data is `null`. */
                     defaultValue: {
-                      type: String,
-                      value: 'n/a',
+                        type: String,
+                        value: 'n/a'
                     },
                     /** Animation duration in seconds. */
                     animationDuration: {
-                      type: Number,
-                      value: 1,
+                        type: Number,
+                        value: 1
                     },
                     /** Determines whether the loading spinner should be hidden. */
                     hideSpinner: {
                         type: Boolean,
-                        value: false,
+                        value: false
                     },
                     /** A link to a page showing related information (optional). */
                     link: String,
                     /** The text of the link (optional). */
                     linkText: String,
                     /** Custom formatter function for displaying the value */
-                    valueFormatter: Object,
-                },
-                /** This is called by Polymer after property values are set and local DOM is initialized. */
-                ready: function() {
-                  // Enable mutation observer on icon that apply Polymer CSS scoping
-                  // on nested SVG element inserted into the DOM by FontAwesome.
-                  this.scopeSubtree(this.$['icon'], true);
-                },
-            });
-        });
+                    valueFormatter: Object
+                };
+            }
+
+            static get observers() {
+                return [];
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(ScoreCard.is, ScoreCard);
     </script>
 </dom-module>

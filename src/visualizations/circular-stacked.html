@@ -1,103 +1,116 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/data-receiver-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../mixins/data-receiver-mixin.html">
 
-
-<!--
-`circular-stacked`
-This is a basic component for stacked circular charts
-
-***Data format:** array of integer values (percentage)
-
-@demo demo/visualizations/circular_stacked_demo.html
--->
 <dom-module id="circular-stacked">
     <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div id="diagram"></div>
-  </template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <div id="diagram"></div>
+    </template>
     <script>
-        window.addEventListener("WebComponentsReady", function() {
-            Polymer({
-                is: 'circular-stacked',
-                behaviors: [DataReceiverBehavior],
-                properties: {
+        /**
+         * ## `circular-stacked`
+         *
+         * This is a basic component for stacked circular charts
+         *
+         * **Data format:** array of integer values (percentage)
+         * @polymer
+         * @customElement
+         * @demo demo/visualizations/circular_stacked_demo.html
+         */
+        class CircularStacked extends DataReceiverMixin(Polymer.Element) {
+
+            static get is() {
+                return 'circular-stacked';
+            }
+
+            static get properties() {
+                return {
                     /** Width of the outer div */
                     width: {
                         type: Number,
-                        value: 200,
+                        value: 200
                     },
                     /** Height of the outer div */
                     height: {
                         type: Number,
-                        value: 200,
+                        value: 200
                     },
                     /** Fill and text color*/
                     primarycolor: {
                         type: String,
-                        value: '#f2503f',
+                        value: '#f2503f'
                     }
-                },
-                /** Creates the diagram */
-                dataChanged: function(data) {
-                    var d3 = Plotly.d3;
-                    var tau = 2 * Math.PI;
+                };
+            }
 
-                    var width = this.width;
-                    var height = this.height;
-                    var edgeLength = Math.min(width, height);
+            static get observers() {
+                return [];
+            }
 
-                    var arcCount = data.length;
+            /** Creates the diagram */
+            dataChanged(data) {
+                let d3 = Plotly.d3;
+                let tau = 2 * Math.PI;
 
-                    var innermostRadius = edgeLength / 8; //smallest
-                    var outermostRadius = innermostRadius * 3; //largest
+                let width = this.width;
+                let height = this.height;
+                let edgeLength = Math.min(width, height);
 
-                    var lineWeight = (outermostRadius - innermostRadius) / arcCount;
-                    var MAX_LINEWEIGHT = 50;
-                    if(lineWeight > MAX_LINEWEIGHT) {
-                      lineWeight = MAX_LINEWEIGHT;
-                    }
+                let arcCount = data.length;
 
-                    var spacing = lineWeight - 10;
+                let innermostRadius = edgeLength / 8; //Smallest
+                let outermostRadius = innermostRadius * 3; //Largest
 
-                    function buildArc(innerRadius, outerRadius, percentage) {
-                      var endAngle = percentage / 100 * tau;
-                      return d3.svg.arc()
-                          .innerRadius(innerRadius)
-                          .outerRadius(outerRadius)
-                          .startAngle(0)
-                          .endAngle(endAngle);
-                    }
+                let lineWeight = (outermostRadius - innermostRadius) / arcCount;
+                let MAX_LINEWEIGHT = 50;
+                if (lineWeight > MAX_LINEWEIGHT) {
+                    lineWeight = MAX_LINEWEIGHT;
+                }
 
-                    var diagram = d3.select(this.$.diagram)
+                let spacing = lineWeight - 10;
 
-                    //make sure to delte old diagram components on update
-                    diagram.selectAll('*').remove();
+                function buildArc(innerRadius, outerRadius, percentage) {
+                    let endAngle = percentage / 100 * tau;
+                    return d3.svg.arc()
+                        .innerRadius(innerRadius)
+                        .outerRadius(outerRadius)
+                        .startAngle(0)
+                        .endAngle(endAngle);
+                }
 
-                    var svg = diagram.append("svg")
-                      .attr("width", width)
-                      .attr("height", height)
-                      .append("g")
-                        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                let diagram = d3.select(this.$.diagram);
 
-                    var innerRadius = innermostRadius;
-                    var outerRadius = innerRadius + lineWeight;
-                    var delta = lineWeight + spacing;
+                //Make sure to delte old diagram components on update
+                diagram.selectAll('*').remove();
 
-                    for(var i = 0; i < arcCount; i++) {
-                      var arc = buildArc(innerRadius, outerRadius, data[i]);
-                      svg.append("path")
-                         .attr("d", arc)
-                         .attr("fill", this.primarycolor);
+                let svg = diagram.append('svg')
+                    .attr('width', width)
+                    .attr('height', height)
+                    .append('g')
+                    .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-                      innerRadius += delta;
-                      outerRadius += delta;
-                    }
-                },
-            });
-        });
+                let innerRadius = innermostRadius;
+                let outerRadius = innerRadius + lineWeight;
+                let delta = lineWeight + spacing;
+
+                for (let i = 0; i < arcCount; i++) {
+                    let arc = buildArc(innerRadius, outerRadius, data[i]);
+                    svg.append('path')
+                        .attr('d', arc)
+                        .attr('fill', this.primarycolor);
+
+                    innerRadius += delta;
+                    outerRadius += delta;
+                }
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(CircularStacked.is, CircularStacked);
     </script>
 </dom-module>

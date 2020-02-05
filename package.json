@@ -2,18 +2,23 @@
   "name": "m.e.i.n.e.l",
   "version": "2.5.0",
   "description": "The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **L**ibrary (or short: m.e.i.n.e.l.) is a visualization library for various forms of data. It focuses on abstracting the interfaces in a way that one only needs to supply the data and few (optional) parameters to embed visually appealing charts into existing environments. These interfaces are implemented by utilizing Polymer components.",
-  "main": "index.html",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "postinstall": "bower install",
-    "build": "gulp bundle",
-    "postversion": "git push && git push --tags && bash ./utils/github-pages.sh openHPI m.e.i.n.e.l"
-  },
+  "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/openHPI/m.e.i.n.e.l.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openHPI/m.e.i.n.e.l/issues"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "postinstall": "bower install",
+    "lint": "eslint src --fix && htmlhint --config .htmlhintrc src/**/*.html demo/**/*.html index.html && polymer lint",
+    "serve": "polymer serve",
+    "bundle": "gulp bundle",
+    "analyze": "polymer analyze > analysis.json",
+    "deploy": "./utils/deploy.sh",
+    "postversion": "git push && git push --tags && bash ./utils/github-pages.sh openHPI m.e.i.n.e.l"
   },
   "contributors": [
     {
@@ -29,16 +34,19 @@
       "name": "Florian Wirtz"
     }
   ],
-  "bugs": {
-    "url": "https://github.com/openHPI/m.e.i.n.e.l/issues"
+  "dependencies": {
+    "@polymer/polymer": "^2.8.0",
+    "plotly.js": "^1.52.0",
+    "gulp-print": "^5.0.0"
   },
-  "license": "UNLICENSED",
-  "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
     "browserify": "^16.2.2",
+    "eslint": "^5.2.0",
+    "eslint-plugin-html": "^4.0.5",
     "exposify": "^0.5.0",
+    "htmlhint": "^0.9.13",
     "gulp": "^3.9.1",
     "gulp-babel": "^8.0.0",
     "gulp-clean": "^0.4.0",
@@ -54,13 +62,9 @@
     "gulp-uglify": "^3.0.0",
     "into-stream": "^3.1.0",
     "merge-stream": "^1.0.1",
-    "plotly.js": "^1.35.2",
-    "polymer-build": "^3.0.4",
-    "polymer-bundler": "^4.0.1",
+    "polymer-build": "^3.1.4",
+    "polymer-bundler": "^4.0.10",
     "run-sequence": "^2.2.1",
     "vinyl-buffer": "^1.0.1"
-  },
-  "dependencies": {
-    "gulp-print": "^5.0.0"
   }
 }

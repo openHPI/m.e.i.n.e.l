@@ -1,17 +1,17 @@
 dist: trusty
 sudo: required
 language: node_js
-node_js: 
+node_js:
   - "8"
 branches:
   only:
-  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+    - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 before_install: npm install -g bower cross-zip-cli
 install: npm install
 script:
-- npm run build
-- mv dist m.e.i.n.e.l-$TRAVIS_TAG
-- cross-zip m.e.i.n.e.l-$TRAVIS_TAG m.e.i.n.e.l-$TRAVIS_TAG.zip
+  - npm run build
+  - mv dist m.e.i.n.e.l-$TRAVIS_TAG
+  - cross-zip m.e.i.n.e.l-$TRAVIS_TAG m.e.i.n.e.l-$TRAVIS_TAG.zip
 deploy:
   provider: releases
   api_key:

@@ -7,30 +7,32 @@
 
     <title>worldmap-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../src/visualizations/worldmap-basic.html">
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
 </head>
 
 <body>
-    <div>
-        <h3>worldmap-basic demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-          <worldmap-basic type='choropleth' data='[{"locations": ["DEU", "AUT", "CHE"], "z": [3041437, 156582, 56264]}]'></worldmap-basic>
-          <worldmap-basic type='scattergeo' data='[{"lat": [52.520109, 48.857482], "lon": [13.404763, 2.355985], "z": [3041437, 156582], "text": ["Berlin", "Paris"]}]'></worldmap-basic>
+<div>
+    <h3>worldmap-basic demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <worldmap-basic type="choropleth" data="[{&quot;locations&quot;: [&quot;DEU&quot;, &quot;AUT&quot;, &quot;CHE&quot;], &quot;z&quot;: [3041437, 156582, 56264]}]"></worldmap-basic>
+            <worldmap-basic type="scattergeo" data="[{&quot;lat&quot;: [52.520109, 48.857482], &quot;lon&quot;: [13.404763, 2.355985], &quot;z&quot;: [3041437, 156582], &quot;text&quot;: [&quot;Berlin&quot;, &quot;Paris&quot;]}]"></worldmap-basic>
         </template>
-        </demo-snippet>
-    </div>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

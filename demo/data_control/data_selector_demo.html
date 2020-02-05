@@ -7,72 +7,74 @@
 
     <title>data-selector demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../src/data-control/data-selector.html">
     <link rel="import" href="../../src/visualizations/score-card.html">
 
-      <!-- Needs to be loaded separately for rendering of icons in components -->
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+    <!-- Needs to be loaded separately for rendering of icons in components -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
 </head>
 
 <body>
-    <div class="vertical-section-container centered">
-        <h3>data-selector demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-                <!-- Data
+<div class="vertical-section-container centered">
+    <h3>data-selector demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <!-- Data
+              {
+                "total_enrollments": 8567,
+                "questions": 210
+              }
+            -->
+            <data-selector key="total_enrollments" data="{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}">
+                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-graduation-cap" name="Total Enrollments"></score-card>
+            </data-selector>
+
+            <!-- Data
+              {
+                "data": [
                   {
                     "total_enrollments": 8567,
                     "questions": 210
                   }
-                -->
-                <data-selector key="total_enrollments" data='{"total_enrollments": 8567, "questions": 210}'>
-                  <score-card primarycolor="#c1c1c1" icon-classes="fas fa-graduation-cap" name="Total Enrollments"></score-card>
-                </data-selector>
+                ]
+              }
+            -->
+            <data-selector keys="[&quot;data&quot;, 0, &quot;questions&quot;]" data="{&quot;data&quot;: [{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}]}">
+                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
+            </data-selector>
 
-                <!-- Data
+            <!-- Data
+              {
+                "data": [
                   {
-                    "data": [
-                      {
-                        "total_enrollments": 8567,
-                        "questions": 210
-                      }
-                    ]
+                    "total_enrollments": 8567,
+                    "questions": 210
                   }
-                -->
-                <data-selector keys='["data", 0, "questions"]' data='{"data": [{"total_enrollments": 8567, "questions": 210}]}'>
-                  <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
-                </data-selector>
-
-                <!-- Data
-                  {
-                    "data": [
-                      {
-                        "total_enrollments": 8567,
-                        "questions": 210
-                      }
-                    ]
-                  }
-                -->
-                <data-selector key='data' data='{"data": [{"total_enrollments": 8567, "questions": 210}]}'>
-                  <data-selector key='0'>
-                    <data-selector key='questions'>
-                      <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
+                ]
+              }
+            -->
+            <data-selector key="data" data="{&quot;data&quot;: [{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}]}">
+                <data-selector key="0">
+                    <data-selector key="questions">
+                        <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
                     </data-selector>
-                  </data-selector>
                 </data-selector>
-            </template>
-        </demo-snippet>
-    </div>
+            </data-selector>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

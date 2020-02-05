@@ -7,29 +7,45 @@
 
     <title>piechart-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../src/visualizations/piechart-basic.html">
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
 </head>
 
 <body>
-    <div>
-        <h3>piechart-basic demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-                <piechart-basic data='{"labels": ["Residential", "Non-Residential", "Utility"], "values": [19, 26, 55]}' colors='["#4a148c", "#ffcc80", "#b13a01"]'></piechart-basic>
-            </template>
-        </demo-snippet>
-    </div>
+<div>
+    <h3>piechart-basic demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <!-- Data
+            {
+              "labels": [
+                "Residential",
+                "Non-Residential",
+                "Utility"
+              ],
+              "values": [
+                19,
+                26,
+                55
+              ]
+            }
+            -->
+            <piechart-basic data="{&quot;labels&quot;: [&quot;Residential&quot;, &quot;Non-Residential&quot;, &quot;Utility&quot;], &quot;values&quot;: [19, 26, 55]}" colors="[&quot;#4a148c&quot;, &quot;#ffcc80&quot;, &quot;#b13a01&quot;]"></piechart-basic>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

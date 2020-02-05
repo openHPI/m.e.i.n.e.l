@@ -7,7 +7,7 @@
 
     <title>counter-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
@@ -18,47 +18,54 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
 
     <script>
-      // As demo-snippet component is used, the counter-basic element is inserted deferred into the DOM.
-      // Therefore, custom value formatter is registered after counter-basic element has fired the ready event.
-      document.addEventListener('ready', function(e) {
-        if(e.target.id === 'counterWithFormatter')
-        {
-          e.target.valueFormatter = function(value) {
-            var hours   = Math.floor(value / 3600);
-            var minutes = Math.floor((value - (hours * 3600)) / 60);
-            var seconds = value - (hours * 3600) - (minutes * 60);
+        // As demo-snippet component is used, the counter-basic element is inserted deferred into the DOM.
+        // Therefore, custom value formatter is registered after counter-basic element has fired the ready event.
+        document.addEventListener('ready', (e) => {
+    if (e.target.id === 'counterWithFormatter') {
+        e.target.valueFormatter = function (value) {
+            let hours = Math.floor(value / 3600);
+            let minutes = Math.floor((value - (hours * 3600)) / 60);
+            let seconds = value - (hours * 3600) - (minutes * 60);
 
-            if (hours < 10) { hours   = '0' + hours; }
-            if (minutes < 10) { minutes = '0' + minutes; }
-            if (seconds < 10) { seconds = '0' + seconds; }
+            if (hours < 10) {
+                hours = '0' + hours;
+            }
+            if (minutes < 10) {
+                minutes = '0' + minutes;
+            }
+            if (seconds < 10) {
+                seconds = '0' + seconds;
+            }
 
             return hours + ':' + minutes + ':' + seconds;
-          };
-        }
-      });
+        };
+    }
+});
     </script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
-  </head>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
+</head>
 
 <body>
-    <div>
-        <h3>counter-basic demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-              <div>
+<div>
+    <h3>counter-basic demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <div>
                 <counter-basic id="regularFormatter" data="474359"></counter-basic>
-              </div>
-              <div>
+            </div>
+            <div>
                 <counter-basic id="counterWithFormatter" data="125"></counter-basic>
-              </div>
-            </template>
-        </demo-snippet>
-    </div>
+            </div>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

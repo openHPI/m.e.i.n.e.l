@@ -1,53 +1,69 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/data-transformer-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../mixins/data-transformer-mixin.html">
 
-
-<!--
-`fallback-text`
-<br />This component is used as wrapper of actual visualization components for displaying a fallback text if received data is empty.
-
-@demo demo/visualizations/fallback_text_demo.html
--->
 <dom-module id="fallback-text">
     <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <template is="dom-if" if="[[_hasEmptyData]]">
-      <span>[[emptyDataText]]</span>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <template is="dom-if" if="[[_hasEmptyData]]">
+            <span>[[emptyDataText]]</span>
+        </template>
+        <template is="dom-if" if="[[!_hasEmptyData]]">
+            <slot></slot>
+        </template>
     </template>
-    <template is="dom-if" if="[[!_hasEmptyData]]">
-      <content></content>
-    </template>
-  </template>
+
     <script>
-        window.addEventListener("WebComponentsReady", function(){
-        Polymer({
-            is: 'fallback-text',
-            behaviors: [DataTransformerBehavior],
-            properties: {
-                emptyDataText: String,
-                _hasEmptyData: {
-                    type: Boolean,
-                    computed: '_computeHasEmptyData(hasReceivedData, data)',
-                },
-            },
-            _computeHasEmptyData: function(hasReceivedData, data) {
-                if(!hasReceivedData) {
+        /**
+         * ## `fallback-text`
+         *
+         * This component is used as wrapper of actual visualization components for displaying a fallback text if received data is empty.
+         *
+         * @polymer
+         * @customElement
+         * @demo demo/visualizations/fallback_text_demo.html
+         */
+        class FallbackText extends DataTransformerMixin(Polymer.Element) {
+
+            static get is() {
+                return 'fallback-text';
+            }
+
+            static get properties() {
+                return {
+                    emptyDataText: String,
+                    _hasEmptyData: {
+                        type: Boolean,
+                        computed: '_computeHasEmptyData(hasReceivedData, data)'
+                    }
+                };
+            }
+
+            static get observers() {
+                return [];
+            }
+
+            _computeHasEmptyData(hasReceivedData, data) {
+                if (!hasReceivedData) {
                     return false;
                 }
-                if(Array.isArray(data)) {
+                if (Array.isArray(data)) {
                     return data.length === 0;
                 }
-                if(data !== null && typeof data === 'object') {
+                if (data !== null && typeof data === 'object') {
                     return Object.keys(data).length === 0;
                 }
 
                 return typeof data === 'undefined' || data === null;
-            },
-        });
-     });
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(FallbackText.is, FallbackText);
     </script>
 </dom-module>

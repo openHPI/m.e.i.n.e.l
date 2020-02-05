@@ -1,95 +1,114 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/plotly-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../mixins/plotly-mixin.html">
+<link rel="import" href="../shared-styles/plotly-styles.html">
 
-<!--
-`worldmap-basic`
-<br />This is a basic component for plotly worldmaps.
-<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/#maps" target="_blank">Plotly maps chart documentations</a>.
-
-
-@demo demo/visualizations/worldmap_basic_demo.html
--->
 <dom-module id="worldmap-basic">
     <template>
-    <style>
-      :host {
-        display: block;
-      }
+        <style include="plotly-styles">
+            :host {
+                display: block;
+            }
 
-      #diagram {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-    <div id="diagram"></div>
-  </template>
+            #diagram {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <div id="diagram"></div>
+    </template>
+
     <script>
-        window.addEventListener("WebComponentsReady", function(){
-        Polymer({
-            is: 'worldmap-basic',
-            behaviors: [PlotlyBehavior],
-            properties: {
-                /** The type of map. */
-                type: {
-                  type: String,
-                  value: 'choropleth'
-                },
-                /** Primary color of the control. */
-                primarycolor: {
-                  type: String,
-                  value: 'rgb(237, 237, 237)'
-                },
-                /** Primary color of the control. */
-                accentcolor: {
-                  type: String,
-                  value: 'rgba(164,14,24,1)',
-                },
-            },
-            /** Gets the container element of the diagram that should be rendered */
-            getDiagram: function() {
-                return this.$.diagram;
-            },
-            /** Gets the data of the plot */
-            getPlotData: function(data) {
-              var that = this;
-              return data.map(function(series) {
-                  var plotSeries = {
-                      type: series.type || that.type,
-                      z: series.z,
-                      marker: {
-                        color: that.accentcolor,
-                      },
-                  };
-                  if(series.locations) {
-                      plotSeries.locations = series.locations;
-                  } else {
-                      plotSeries.lat = series.lat;
-                      plotSeries.lon = series.lon;
-                  }
-                  if(series.text) {
-                      plotSeries.hoverinfo = 'text';
-                      plotSeries.text = series.text;
-                  }
+        /**
+         * ## `worldmap-basic`
+         *
+         * This is a basic component for plotly worldmaps.
+         *
+         * For further information and deeper understanding visit the [Plotly maps chart documentations](https://plot.ly/javascript/#maps).
+         *
+         * @polymer
+         * @customElement
+         * @demo demo/visualizations/worldmap_basic_demo.html
+         */
+        class WorldmapBasic extends PlotlyMixin(Polymer.Element) {
 
-                  return plotSeries;
-              });
-            },
-            /** Gets the layout options of the plot */
-            getLayout: function() {
+            static get is() {
+                return 'worldmap-basic';
+            }
+
+            static get properties() {
                 return {
-                    geo:{
+                    /** The type of map. */
+                    type: {
+                        type: String,
+                        value: 'choropleth'
+                    },
+                    /** Primary color of the control. */
+                    primarycolor: {
+                        type: String,
+                        value: 'rgb(237, 237, 237)'
+                    },
+                    /** Primary color of the control. */
+                    accentcolor: {
+                        type: String,
+                        value: 'rgba(164,14,24,1)'
+                    }
+                };
+            }
+
+            static get observers() {
+                return [];
+            }
+
+            /** Gets the container element of the diagram that should be rendered */
+            getDiagram() {
+                return this.$.diagram;
+            }
+
+            /** Gets the data of the plot */
+            getPlotData(data) {
+                let that = this;
+                return data.map((series) => {
+                    let plotSeries = {
+                        type: series.type || that.type,
+                        z: series.z,
+                        marker: {
+                            color: that.accentcolor
+                        }
+                    };
+                    if (series.locations) {
+                        plotSeries.locations = series.locations;
+                    } else {
+                        plotSeries.lat = series.lat;
+                        plotSeries.lon = series.lon;
+                    }
+                    if (series.text) {
+                        plotSeries.hoverinfo = 'text';
+                        plotSeries.text = series.text;
+                    }
+
+                    return plotSeries;
+        });
+            }
+
+            /** Gets the layout options of the plot */
+            getLayout() {
+                return {
+                    geo: {
                         showframe: false,
                         showland: true,
                         landcolor: this.primarycolor,
                         showcountries: true,
-                        projection:{
+                        projection: {
                             type: 'Mercator'
                         }
                     },
-                    margin: { l: 0, r: 0, t: 0, b: 0 },
+                    margin: {l: 0, r: 0, t: 0, b: 0}
                 };
-            },
-        });
-     });
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(WorldmapBasic.is, WorldmapBasic);
     </script>
 </dom-module>

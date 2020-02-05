@@ -7,7 +7,7 @@
 
     <title>vennchart-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../../d3/d3.min.js"></script>
     <script src="../../../venn.js/venn.js"></script>
 
@@ -16,76 +16,78 @@
     <link rel="import" href="../../src/visualizations/vennchart-basic.html">
 
     <script>
-      // As demo-snippet component is used, the vennchart-basic element is inserted deferred into the DOM.
-      // Therefore, custom value formatter is registered after vennchart-basic element has fired the ready event.
-      document.addEventListener('ready', function(e) {
-        e.target.labelFormatter = function(label) {
-          return 'Set ' + label;
-        };
-        e.target.valueFormatter = function(value) {
-          return value + '%';
-        };
-      });
+        // As demo-snippet component is used, the vennchart-basic element is inserted deferred into the DOM.
+        // Therefore, custom value formatter is registered after vennchart-basic element has fired the ready event.
+        document.addEventListener('ready', (e) => {
+    e.target.labelFormatter = function (label) {
+        return 'Set ' + label;
+    };
+    e.target.valueFormatter = function (value) {
+        return value + '%';
+    };
+});
     </script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
 
-        vennchart-basic {
-            height: 400px;
-        }
-    </style>
+            vennchart-basic {
+                height: 400px;
+            }
+        </style>
+    </custom-style>
 </head>
 
 <body>
-    <div>
-        <h3>vennchart-basic demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-                <!-- Data
-                [
-                  {
-                    "sets": ["A"],
-                    "size": 12,
-                    "label": "A"
-                  },
-                  {
-                    "sets": ["B"],
-                    "size": 12,
-                    "label": "B"
-                  },
-                  {
-                    "sets": ["A", "B"],
-                    "size": 2
-                  }
-                ]
-                -->
-                <vennchart-basic data='[{"sets":["A"],"size":12,"label":"A"},{"sets":["B"],"size":12,"label":"B"},{"sets":["A","B"],"size":2}]'></vennchart-basic>
+<div>
+    <h3>vennchart-basic demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <!-- Data
+            [
+              {
+                "sets": ["A"],
+                "size": 12,
+                "label": "A"
+              },
+              {
+                "sets": ["B"],
+                "size": 12,
+                "label": "B"
+              },
+              {
+                "sets": ["A", "B"],
+                "size": 2
+              }
+            ]
+            -->
+            <vennchart-basic data="[{&quot;sets&quot;:[&quot;A&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;A&quot;},{&quot;sets&quot;:[&quot;B&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;B&quot;},{&quot;sets&quot;:[&quot;A&quot;,&quot;B&quot;],&quot;size&quot;:2}]"></vennchart-basic>
 
-                <!-- Data
-                [
-                  {
-                    "sets": ["A"],
-                    "size": 12,
-                    "label": "A"
-                  },
-                  {
-                    "sets": ["B"],
-                    "size": 12,
-                    "label": "B"
-                  },
-                  {
-                    "sets": ["A", "B"],
-                    "size": 2
-                  }
-                ]
-                -->
-                <vennchart-basic data='[{"sets":["A"],"size":12,"label":"A"},{"sets":["B"],"size":12,"label":"B"},{"sets":["A","B"],"size":2}]' blacklist='["B"]'></vennchart-basic>
-            </template>
-        </demo-snippet>
-    </div>
+            <!-- Data
+            [
+              {
+                "sets": ["A"],
+                "size": 12,
+                "label": "A"
+              },
+              {
+                "sets": ["B"],
+                "size": 12,
+                "label": "B"
+              },
+              {
+                "sets": ["A", "B"],
+                "size": 2
+              }
+            ]
+            -->
+            <vennchart-basic data="[{&quot;sets&quot;:[&quot;A&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;A&quot;},{&quot;sets&quot;:[&quot;B&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;B&quot;},{&quot;sets&quot;:[&quot;A&quot;,&quot;B&quot;],&quot;size&quot;:2}]" blacklist="[&quot;B&quot;]"></vennchart-basic>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

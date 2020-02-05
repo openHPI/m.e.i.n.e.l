@@ -7,30 +7,34 @@
 
     <title>badges-list demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
 
+    <link rel="import" href="../../../polymer/polymer-element.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../src/visualizations/badges-list.html">
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
-  </head>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
+</head>
 
 <body>
-    <div>
-        <h3>badges-list demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-              <div>
-                <badges-list data='[{"title": "foo", "value": 76235}, {"title": "bar", "value": 24}, {"title": "baz", "value": 5243}]'></badges-list>
-              </div>
-            </template>
-        </demo-snippet>
-    </div>
+<div>
+    <h3>badges-list demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <div>
+                <badges-list
+                        data="[{&quot;title&quot;: &quot;foo&quot;, &quot;value&quot;: 76235}, {&quot;title&quot;: &quot;bar&quot;, &quot;value&quot;: 24}, {&quot;title&quot;: &quot;baz&quot;, &quot;value&quot;: 5243}]"></badges-list>
+            </div>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

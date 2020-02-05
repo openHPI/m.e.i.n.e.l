@@ -7,7 +7,7 @@
 
     <title>ajax-wrapper demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
@@ -15,29 +15,32 @@
     <link rel="import" href="../../src/visualizations/loading-spinner.html">
     <link rel="import" href="../../src/visualizations/score-card.html">
 
+    <!-- ToDo: Remove with Polymer 3.0 -->
     <!-- Needs to be loaded separately for rendering of icons in components -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <custom-style>
+        <style include="demo-pages-shared-styles">
+            div.vertical-section-container {
+                max-width: 1500px;
+            }
+        </style>
+    </custom-style>
 </head>
 
 <body>
-    <div class="vertical-section-container centered">
-        <h3>ajax-wrapper demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-              <ajax-wrapper data-url="https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain" refresh-interval="5000">
+<div class="vertical-section-container centered">
+    <h3>ajax-wrapper demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <ajax-wrapper data-url="https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain" initial-delay="5000" refresh-interval="5000">
                 <loading-spinner>
-                  <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
+                    <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
                 </loading-spinner>
-              </ajax-wrapper>
-            </template>
-        </demo-snippet>
-    </div>
+            </ajax-wrapper>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

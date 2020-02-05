@@ -1,63 +1,77 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/data-transformer-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../mixins/data-transformer-mixin.html">
 
-<!--
-`data-selector`
-This component performs a data projection on the passed data and passes the result to its inner children.
-
-@demo demo/data_control/data_selector_demo.html
--->
 <dom-module id="data-selector">
     <template>
-    <content id="chartingElement"></content>
-  </template>
+        <slot id="chartingElement"></slot>
+    </template>
+
     <script>
-        window.addEventListener("WebComponentsReady", function(){
-        Polymer({
-            is: 'data-selector',
-            behaviors: [DataTransformerBehavior],
-            properties: {
-                /** Key/index of the data object that should be passed on */
-                key: {
-                    type: String,
-                    observer: 'update',
-                },
-                /** Sequence of keys/indices of the data object that should be passed on */
-                keys: {
-                    type: Array,
-                }
-            },
-            observers: [
-                'update(keys.*)',
-            ],
+        /**
+         * ## `data-selector`
+         *
+         * This component performs a data projection on the passed data and passes the result to its inner children.
+         *
+         * @polymer
+         * @customElement
+         * @demo demo/data_control/data_selector_demo.html
+         */
+        class DataSelector extends DataTransformerMixin(Polymer.Element) {
+
+            static get is() {
+                return 'data-selector';
+            }
+
+            static get properties() {
+                return {
+                    /** Key/index of the data object that should be passed on */
+                    key: {
+                        type: String,
+                        observer: 'update'
+                    },
+                    /** Sequence of keys/indices of the data object that should be passed on */
+                    keys: {
+                        type: Array
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    'update(keys.*)'
+                ];
+            }
+
             /**
              * Transforms the data by performing the projection.
              * @param  {Object} data The source data.
              * @return {Object}      The transformed data.
              */
-            transformData: function(data) {
-                if(typeof data === 'undefined') return;
+            transformData(data) {
+                if (typeof data === 'undefined') return;
 
-                var keys = this.keys || (this.key ? [this.key] : []);
+                let keys = this.keys || (this.key ? [this.key] : []);
                 return this._selectData(data, keys);
-            },
+            }
+
             /** Perform projection defined by key sequence on given data object */
-            _selectData: function(data, keys) {
-                if(Array.isArray(data) && typeof data[keys[0]] === 'undefined') {
-                    var that = this;
-                    return data.map(function(item) {
-                        return that._selectData(item, keys);
-                    });
+            _selectData(data, keys) {
+                if (Array.isArray(data) && typeof data[keys[0]] === 'undefined') {
+                    let that = this;
+                    return data.map((item) => that._selectData(item, keys));
                 }
 
-                keys.forEach(function(key) {
-                    if(typeof data !== 'object')
+                keys.forEach((key) => {
+                    if (typeof data !== 'object')
                         return data;
                     data = data[key];
-                });
+        });
                 return data;
             }
-        });
-     });
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(DataSelector.is, DataSelector);
     </script>
 </dom-module>

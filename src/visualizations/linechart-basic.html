@@ -1,113 +1,128 @@
-<link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../behaviors/plotly-behavior.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../mixins/plotly-mixin.html">
+<link rel="import" href="../shared-styles/plotly-styles.html">
 
-
-<!--
-`linechart-basic`
-<br />This is a basic component for plotly linecharts.
-<br />For further information and deeper understanding visit the <a href="https://plot.ly/javascript/line-charts/" target="_blank">Plotly line chart documentation</a>.
-
-@demo demo/visualizations/linechart_basic_demo.html
--->
 <dom-module id="linechart-basic">
     <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div id="diagram"></div>
-  </template>
+        <style include="plotly-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <div id="diagram"></div>
+    </template>
+
     <script>
-        window.addEventListener("WebComponentsReady", function(){
-        Polymer({
-            is: 'linechart-basic',
-            behaviors: [PlotlyBehavior],
-            properties: {
-                /** Accent color of chart */
-                accentcolor: {
-                    type: String,
-                    value: 'rgba(0,0,0,1)',
-                    reflectToAttribute: true,
-                },
-                /** Scroll and zoom activation */
-                scrollzoom: {
-                    type: Boolean,
-                    value: false,
-                    reflectToAttribute: true,
-                },
-                /** Scroll range provided in % 0 to 100 */
-                scrollrange: {
-                    type: Number,
-                    value: 100,
-                    reflectToAttribute: true,
-                },
-                /** Mode of the line chart. Must be either `markers`, `lines` or `lines+markers`. */
-                mode: {
-                  type: String,
-                  value: 'lines'
-                },
-                /** Determines whether to show the latest value at the end of the graph */
-                highlightLatest: {
-                    type: Boolean,
-                    value: false,
-                },
-                /** Draw vertical dotted lines at specified x-axis points */
-                vLines: {
-                    type: Array,
-                    value: [],
-                },
-            },
+        /**
+         * ## `linechart-basic`
+         *
+         * This is a basic component for plotly linecharts.
+         *
+         * For further information and deeper understanding visit the [Plotly line chart documentation](https://plot.ly/javascript/line-charts/).
+         *
+         * @polymer
+         * @customElement
+         * @demo demo/visualizations/linechart_basic_demo.html
+         */
+        class LinechartBasic extends PlotlyMixin(Polymer.Element) {
+
+            static get is() {
+                return 'linechart-basic';
+            }
+
+            static get properties() {
+                return {
+                    /** Accent color of chart */
+                    accentcolor: {
+                        type: String,
+                        value: 'rgba(0,0,0,1)',
+                        reflectToAttribute: true
+                    },
+                    /** Scroll and zoom activation */
+                    scrollzoom: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
+                    },
+                    /** Scroll range provided in % 0 to 100 */
+                    scrollrange: {
+                        type: Number,
+                        value: 100,
+                        reflectToAttribute: true
+                    },
+                    /** Mode of the line chart. Must be either `markers`, `lines` or `lines+markers`. */
+                    mode: {
+                        type: String,
+                        value: 'lines'
+                    },
+                    /** Determines whether to show the latest value at the end of the graph */
+                    highlightLatest: {
+                        type: Boolean,
+                        value: false
+                    },
+                    /** Draw vertical dotted lines at specified x-axis points */
+                    vLines: {
+                        type: Array,
+                        value: []
+                    }
+                };
+            }
+
+            static get observers() {
+                return [];
+            }
+
             /** Gets the container element of the diagram that should be rendered */
-            getDiagram: function() {
+            getDiagram() {
                 return this.$.diagram;
-            },
+            }
+
             /** Gets the data of the plot */
-            getPlotData: function(data) {
-              var that = this;
-                data.forEach(function(series) {
+            getPlotData(data) {
+                let that = this;
+                data.forEach((series) => {
                     series.mode = series.mode || that.mode;
-                    if(that.highlightLatest) {
+                    if (that.highlightLatest) {
                         series.mode = series.mode + '+text';
                         series.textposition = 'middle right';
                         series.textfont = {size: 16};
-                        series.text = series.y.map(function(value, i) {
-                            return i == series.y.length - 1 ? value : '';
-                        });
+                        series.text = series.y.map((value, i) => i == series.y.length - 1 ? value : '');
                     }
-                });
+        });
 
                 return data;
-            },
+            }
+
             /** Gets the layout options of the plot */
-            getLayout: function() {
-                var layout = {
+            getLayout() {
+                let layout = {
                     xaxis: {
-                        tickmode: "auto",
+                        tickmode: 'auto',
                         tickfont: {
                             size: 14,
-                            color: this.accentcolor,
-                        },
+                            color: this.accentcolor
+                        }
                     },
                     yaxis: {
                         fixedrange: true,
                         tickfont: {
                             size: 14,
-                            color: this.accentcolor,
-                        },
+                            color: this.accentcolor
+                        }
                     },
-                    margin: { l: 40, r: 10, t: 10, b: 40 },
-                    shapes: [],
+                    margin: {l: 40, r: 10, t: 10, b: 40},
+                    shapes: []
                 };
 
                 if (this.scrollzoom) {
-                    var maxX = data[0]["x"][data[0]["x"].length - 1];
-                    var minX = data[0]["x"][Math.round(data[0]["x"].length * (1 - this.scrollrange / 100))];
+                    let maxX = data[0].x[data[0].x.length - 1];
+                    let minX = data[0].x[Math.round(data[0].x.length * (1 - this.scrollrange / 100))];
                     layout.xaxis.rangeslider = {};
                     layout.xaxis.range = [minX, maxX];
                 }
 
-                this.vLines.forEach(function(item, index) {
+                this.vLines.forEach((item, index) => {
                     layout.shapes.push(
                         {
                             type: 'line',
@@ -122,20 +137,23 @@
                                 dash: 'dot'
                             }
                         }
-                    )
-                });
+            );
+        });
 
                 return layout;
-            },
+            }
+
             /** Gets the config options of the plot */
-            getConfig: function() {
-                if(!this.scrollzoom) {
+            getConfig() {
+                if (!this.scrollzoom) {
                     return {};
                 }
 
                 return {scrollZoom: true};
-            },
-        });
-     });
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(LinechartBasic.is, LinechartBasic);
     </script>
 </dom-module>

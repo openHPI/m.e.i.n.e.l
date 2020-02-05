@@ -1,20 +1,15 @@
-<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-module.html">
+<link rel="import" href="../../../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../../count-up/count-up.html">
-<link rel="import" href="../behaviors/data-receiver-behavior.html">
+<link rel="import" href="../mixins/data-receiver-mixin.html">
 
-
-<!--
-`counter-basic`
-<br />This is a basic component for a counter displaying a single numeric value.
-<br />FontAwesome is not shipped with M.E.I.N.E.L. and needs to be loaded separately.
-
-@demo demo/visualizations/counter_basic_demo.html
--->
 <dom-module id="counter-basic">
     <template>
         <template is="dom-if" if="[[hasReceivedData]]">
             <template is="dom-if" if="[[_isNumericData]]">
-                <count-up update-to="[[_value]]" prefix="[[prefix]]" suffix="[[suffix]]" decimals="[[decimals]]" duration="[[animationDuration]]"></count-up>
+                <count-up update-to="[[_value]]" prefix="[[prefix]]" suffix="[[suffix]]" decimals="[[decimals]]"
+                          duration="[[animationDuration]]"></count-up>
             </template>
             <template is="dom-if" if="[[_isTextData]]">
                 <span>[[_value]]</span>
@@ -26,11 +21,25 @@
     </template>
 
     <script>
-        window.addEventListener("WebComponentsReady", function() {
-            Polymer({
-                is: 'counter-basic',
-                behaviors: [DataReceiverBehavior],
-                properties: {
+        /**
+         * ## `counter-basic`
+         *
+         * This is a basic component for a counter displaying a single numeric value.
+         *
+         * FontAwesome is not shipped with M.E.I.N.E.L. and needs to be loaded separately.
+         *
+         * @polymer
+         * @customElement
+         * @demo demo/visualizations/counter_basic_demo.html
+         */
+        class CounterBasic extends DataReceiverMixin(Polymer.Element) {
+
+            static get is() {
+                return 'counter-basic';
+            }
+
+            static get properties() {
+                return {
                     /** Optional text before the number. */
                     prefix: String,
                     /** Optional text after the number. */
@@ -38,62 +47,73 @@
                     /** Number of decimals to show. */
                     decimals: {
                         type: Number,
-                        value: 0,
+                        value: 0
                     },
                     /** The default value that is shown if data is `null`. */
                     defaultValue: {
-                      type: String,
-                      value: 'n/a',
+                        type: String,
+                        value: 'n/a'
                     },
                     /** Custom formatter function for displaying the value */
                     valueFormatter: {
                         type: Object,
-                        value: null,
+                        value: null
                     },
                     /** Animation duration in seconds. */
                     animationDuration: {
                         type: Number,
-                        value: 1,
+                        value: 1
                     },
                     /** Determines whether the loading spinner should be hidden. */
                     hideSpinner: {
                         type: Boolean,
-                        value: false,
+                        value: false
                     },
                     _showSpinner: {
                         type: Boolean,
-                        computed: '_computeShowSpinner(hideSpinner, hasReceivedData)',
+                        computed: '_computeShowSpinner(hideSpinner, hasReceivedData)'
                     },
                     _value: {
                         type: Object,
-                        computed: '_computeValue(hasReceivedData, data, defaultValue, valueFormatter)',
+                        computed: '_computeValue(hasReceivedData, data, defaultValue, valueFormatter)'
                     },
                     _isNumericData: {
                         type: Boolean,
-                        computed: '_computeIsNumericValue(_value)',
+                        computed: '_computeIsNumericValue(_value)'
                     },
                     _isTextData: {
                         type: Boolean,
-                        computed: '_computeIsTextValue(_value)',
-                    },
-                },
-                _computeShowSpinner: function(hideSpinner, hasReceivedData) {
-                    return !hideSpinner && !hasReceivedData;
-                },
-                _computeValue: function(hasReceivedData, data, defaultValue, formatter) {
-                    if(!hasReceivedData || data == null) {
-                      return defaultValue;
+                        computed: '_computeIsTextValue(_value)'
                     }
+                };
+            }
 
-                    return typeof formatter === 'function' ? formatter(data) : data;
-                },
-                _computeIsNumericValue: function(value) {
-                    return typeof value === 'number';
-                },
-                _computeIsTextValue: function(value) {
-                    return typeof value == 'string';
-                },
-            });
-        });
+            static get observers() {
+                return [];
+            }
+
+            _computeShowSpinner(hideSpinner, hasReceivedData) {
+                return !hideSpinner && !hasReceivedData;
+            }
+
+            _computeValue(hasReceivedData, data, defaultValue, formatter) {
+                if (!hasReceivedData || data == null) {
+                    return defaultValue;
+                }
+
+                return typeof formatter === 'function' ? formatter(data) : data;
+            }
+
+            _computeIsNumericValue(value) {
+                return typeof value === 'number';
+            }
+
+            _computeIsTextValue(value) {
+                return typeof value === 'string';
+            }
+        }
+
+        // Register custom element definition using standard platform API
+        customElements.define(CounterBasic.is, CounterBasic);
     </script>
 </dom-module>
