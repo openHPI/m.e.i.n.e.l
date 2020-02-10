@@ -3,27 +3,39 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>data-selector demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/data-control/data-selector.html">
-    <link rel="import" href="../../src/visualizations/score-card.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/data-control/data-selector.js" type="module"></script>
+    <script src="../../src/visualizations/score-card.js" type="module"></script>
 
-    <!-- Needs to be loaded separately for rendering of icons in components -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-    <custom-style>
-        <style include="demo-pages-shared-styles">
-            div.vertical-section-container {
-                max-width: 1500px;
-            }
-        </style>
-    </custom-style>
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
@@ -37,8 +49,8 @@
                 "questions": 210
               }
             -->
-            <data-selector key="total_enrollments" data="{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}">
-                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-graduation-cap" name="Total Enrollments"></score-card>
+            <data-selector data="{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}" key="total_enrollments">
+                <score-card icon-classes="fas fa-graduation-cap" name="Total Enrollments" primarycolor="#c1c1c1"></score-card>
             </data-selector>
 
             <!-- Data
@@ -51,8 +63,8 @@
                 ]
               }
             -->
-            <data-selector keys="[&quot;data&quot;, 0, &quot;questions&quot;]" data="{&quot;data&quot;: [{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}]}">
-                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
+            <data-selector data="{&quot;data&quot;: [{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}]}" keys="[&quot;data&quot;, 0, &quot;questions&quot;]">
+                <score-card icon-classes="fas fa-question" name="Total Questions" primarycolor="#c1c1c1"></score-card>
             </data-selector>
 
             <!-- Data
@@ -65,10 +77,10 @@
                 ]
               }
             -->
-            <data-selector key="data" data="{&quot;data&quot;: [{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}]}">
+            <data-selector data="{&quot;data&quot;: [{&quot;total_enrollments&quot;: 8567, &quot;questions&quot;: 210}]}" key="data">
                 <data-selector key="0">
                     <data-selector key="questions">
-                        <score-card primarycolor="#c1c1c1" icon-classes="fas fa-question" name="Total Questions"></score-card>
+                        <score-card icon-classes="fas fa-question" name="Total Questions" primarycolor="#c1c1c1"></score-card>
                     </data-selector>
                 </data-selector>
             </data-selector>

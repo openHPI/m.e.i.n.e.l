@@ -3,50 +3,51 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>linechart-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Load Plotly.js before webcomponents are initialized through Polyfills -->
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/visualizations/linechart-basic.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/visualizations/linechart-basic.js" type="module"></script>
 
-    <custom-style>
-        <style include="demo-pages-shared-styles">
-            div.vertical-section-container {
-                max-width: 1500px;
-            }
-        </style>
-    </custom-style>
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
 <div>
-    <h3>basic linechart demo (custom element)</h3>
+    <h3>linechart-basic demo (custom element)</h3>
     <demo-snippet>
         <template>
-            <linechart-basic highlight-latest accentcolor="rgba(177,6,58,1)" data="[{ &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [10, 15, 13, 17] }, { &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [16, 5, 11, 9] }, { &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [6, 4, 7, 12], &quot;mode&quot;:&quot;markers&quot;}]" v-lines="[1.5, 3.5]"></linechart-basic>
+            <linechart-basic accentcolor="rgba(177,6,58,1)" data="[{ &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [10, 15, 13, 17] }, { &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [16, 5, 11, 9] }, { &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [6, 4, 7, 12], &quot;mode&quot;:&quot;markers&quot;}]" highlight-latest="" v-lines="[1.5, 3.5]"></linechart-basic>
         </template>
     </demo-snippet>
 </div>
-<script>
-    /**
-     Var data =
-     [{
-                  "x": [1, 2, 3, 4],
-                  "y": [5, 4, 6, 2]
-              }, {
-                  "x": [3, 2, 1, 3],
-                  "y": [6, 4, 7, 2]
-              }, {
-                  "x": [1, 2, 1, 9],
-                  "y": [6, 4, 7, 3]
-              }]
-     **/
-</script>
 </body>
 
 </html>

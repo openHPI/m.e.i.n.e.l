@@ -3,28 +3,40 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>ajax-wrapper demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/data-control/ajax-wrapper.html">
-    <link rel="import" href="../../src/visualizations/fallback-text.html">
-    <link rel="import" href="../../src/visualizations/score-card.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/data-control/ajax-wrapper.js" type="module"></script>
+    <script src="../../src/visualizations/fallback-text.js" type="module"></script>
+    <script src="../../src/visualizations/score-card.js" type="module"></script>
 
-    <!-- Needs to be loaded separately for rendering of icons in components -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-    <custom-style>
-        <style include="demo-pages-shared-styles">
-            div.vertical-section-container {
-                max-width: 1500px;
-            }
-        </style>
-    </custom-style>
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
@@ -33,11 +45,11 @@
     <demo-snippet>
         <template>
             <fallback-text data="[]" empty-data-text="No data available">
-                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
+                <score-card icon-classes="fas fa-user" name="Total Users" primarycolor="#c1c1c1"></score-card>
             </fallback-text>
 
             <fallback-text data="42" empty-data-text="No data available">
-                <score-card primarycolor="#c1c1c1" icon-classes="fas fa-user" name="Total Users"></score-card>
+                <score-card icon-classes="fas fa-user" name="Total Users" primarycolor="#c1c1c1"></score-card>
             </fallback-text>
         </template>
     </demo-snippet>

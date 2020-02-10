@@ -11,8 +11,8 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 
 1. clone the repo with `git clone https://github.com/openHPI/m.e.i.n.e.l.git`
 2. change into the cloned directory with `cd m.e.i.n.e.l`
-3. [install Bower & Polymer](https://www.polymer-project.org/1.0/docs/tools/polymer-cli)
-4. perform `bower install` to install the dependencies
+3. [install Polymer](https://www.polymer-project.org/1.0/docs/tools/polymer-cli)
+4. perform `npm install` to install the dependencies
 5. do `polymer serve`
 6. head to [`localhost:8081/components/m.e.i.n.e.l/`](http://localhost:8081/components/m.e.i.n.e.l/) in your browser & you are done! :blush:
 

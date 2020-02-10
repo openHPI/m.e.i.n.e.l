@@ -3,53 +3,66 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>counter-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Load Plotly.js before webcomponents are initialized through Polyfills -->
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/visualizations/counter-basic.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/visualizations/counter-basic.js" type="module"></script>
 
-    <!-- Needs to be loaded separately for rendering of icons in components -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 
     <script>
         // As demo-snippet component is used, the counter-basic element is inserted deferred into the DOM.
         // Therefore, custom value formatter is registered after counter-basic element has fired the ready event.
         document.addEventListener('ready', (e) => {
-    if (e.target.id === 'counterWithFormatter') {
-        e.target.valueFormatter = function (value) {
-            let hours = Math.floor(value / 3600);
-            let minutes = Math.floor((value - (hours * 3600)) / 60);
-            let seconds = value - (hours * 3600) - (minutes * 60);
+            if (e.target.id === 'counterWithFormatter') {
+                e.target.valueFormatter = function (value) {
+                    let hours = Math.floor(value / 3600);
+                    let minutes = Math.floor((value - (hours * 3600)) / 60);
+                    let seconds = value - (hours * 3600) - (minutes * 60);
 
-            if (hours < 10) {
-                hours = '0' + hours;
-            }
-            if (minutes < 10) {
-                minutes = '0' + minutes;
-            }
-            if (seconds < 10) {
-                seconds = '0' + seconds;
-            }
+                    if (hours < 10) {
+                        hours = '0' + hours;
+                    }
+                    if (minutes < 10) {
+                        minutes = '0' + minutes;
+                    }
+                    if (seconds < 10) {
+                        seconds = '0' + seconds;
+                    }
 
-            return hours + ':' + minutes + ':' + seconds;
-        };
-    }
-});
+                    return hours + ':' + minutes + ':' + seconds;
+                };
+            }
+        });
     </script>
-
-    <custom-style>
-        <style include="demo-pages-shared-styles">
-            div.vertical-section-container {
-                max-width: 1500px;
-            }
-        </style>
-    </custom-style>
 </head>
 
 <body>
@@ -58,10 +71,19 @@
     <demo-snippet>
         <template>
             <div>
-                <counter-basic id="regularFormatter" data="474359"></counter-basic>
+                <counter-basic animation-duration="5" data="474359.12345" decimals="2" id="regularFormatter" prefix="$" suffix="k"></counter-basic>
             </div>
             <div>
-                <counter-basic id="counterWithFormatter" data="125"></counter-basic>
+                <counter-basic data="125" id="counterWithFormatter"></counter-basic>
+            </div>
+            <div>
+                <counter-basic data="null" id="nullFormatter"></counter-basic>
+            </div>
+            <div>
+                <counter-basic data="Text" id="texFormatter"></counter-basic>
+            </div>
+            <div>
+                <counter-basic id="noFormatter"></counter-basic>
             </div>
         </template>
     </demo-snippet>

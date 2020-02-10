@@ -3,42 +3,51 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>vennchart-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../../d3/d3.min.js"></script>
-    <script src="../../../venn.js/venn.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/visualizations/vennchart-basic.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/visualizations/vennchart-basic.js" type="module"></script>
+
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 
     <script>
         // As demo-snippet component is used, the vennchart-basic element is inserted deferred into the DOM.
         // Therefore, custom value formatter is registered after vennchart-basic element has fired the ready event.
         document.addEventListener('ready', (e) => {
-    e.target.labelFormatter = function (label) {
-        return 'Set ' + label;
-    };
-    e.target.valueFormatter = function (value) {
-        return value + '%';
-    };
-});
+            e.target.labelFormatter = function (label) {
+                return 'Set ' + label;
+            };
+            e.target.valueFormatter = function (value) {
+                return value + '%';
+            };
+        });
     </script>
-
-    <custom-style>
-        <style include="demo-pages-shared-styles">
-            div.vertical-section-container {
-                max-width: 1500px;
-            }
-
-            vennchart-basic {
-                height: 400px;
-            }
-        </style>
-    </custom-style>
 </head>
 
 <body>
@@ -84,7 +93,7 @@
               }
             ]
             -->
-            <vennchart-basic data="[{&quot;sets&quot;:[&quot;A&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;A&quot;},{&quot;sets&quot;:[&quot;B&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;B&quot;},{&quot;sets&quot;:[&quot;A&quot;,&quot;B&quot;],&quot;size&quot;:2}]" blacklist="[&quot;B&quot;]"></vennchart-basic>
+            <vennchart-basic blacklist="[&quot;B&quot;]" data="[{&quot;sets&quot;:[&quot;A&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;A&quot;},{&quot;sets&quot;:[&quot;B&quot;],&quot;size&quot;:12,&quot;label&quot;:&quot;B&quot;},{&quot;sets&quot;:[&quot;A&quot;,&quot;B&quot;],&quot;size&quot;:2}]"></vennchart-basic>
         </template>
     </demo-snippet>
 </div>

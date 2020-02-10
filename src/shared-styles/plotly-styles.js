@@ -1,10 +1,16 @@
-<!--
-  `plotly-styles`
-  These styles are required due to styling bugs, such as reported here:
-  https://community.plot.ly/t/layout-breaks-in-polymer/6376
+import '@polymer/polymer/lib/elements/dom-module.js';
+import { html } from '@polymer/polymer';
 
-  Taken from https://github.com/jdfergason/plotly-polymer-fix
--->
+/**
+ * `plotly-styles`
+ * These styles are required due to styling bugs, such as reported here:
+ * https://community.plot.ly/t/layout-breaks-in-polymer/6376
+ *
+ * Taken from https://github.com/jdfergason/plotly-polymer-fix
+ *
+ *  @polymer
+ */
+const template = html`
 <dom-module id="plotly-styles">
     <template>
         <style>
@@ -249,11 +255,11 @@
 
             .js-plotly-plot .plotly .select-outline-2 {
                 stroke: black;
-                stroke-dasharray: 2px 2px;
+                stroke-dasharray: 2px, 2px;
             }
 
             .plotly-notifier {
-                font-family: 'Open Sans';
+                font-family: 'Open Sans', sans-serif;
                 position: fixed;
                 top: 50px;
                 right: 20px;
@@ -297,4 +303,7 @@
             }
         </style>
     </template>
-</dom-module>
+</dom-module>`;
+
+template.setAttribute('style', 'display: none;');
+document.head.appendChild(template.content);

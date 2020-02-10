@@ -1,0 +1,100 @@
+import '../shared-styles/plotly-styles.js';
+import { PlotlyMixin } from '../mixins/plotly-mixin.js';
+import { PolymerElement, html } from '@polymer/polymer';
+
+/**
+ * ## `bubblechart-basic`
+ *
+ * This is a basic component for plotly bubblecharts.
+ *
+ * For further information and deeper understanding visit the [Plotly bubble chart documentation](https://plot.ly/javascript/bubble-charts/).
+ *
+ * @polymer
+ * @customElement
+ * @demo demo/visualizations/bubblechart_basic_demo.html
+ */
+class BubblechartBasic extends PlotlyMixin(PolymerElement) {
+    static get template() {
+        return html`
+        <style include="plotly-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <div id="diagram"></div>
+`;
+    }
+
+    static get is() {
+        return 'bubblechart-basic';
+    }
+
+    static get properties() {
+        return {
+            /** Primary color of chart */
+            primarycolor: {
+                type: String,
+                value: 'rgba(0,0,0,1)',
+                reflectToAttribute: true
+            },
+            /** Accent color of chart */
+            accentcolor: {
+                type: String,
+                value: 'rgba(0,0,0,1)',
+                reflectToAttribute: true
+            }
+        };
+    }
+
+    static get observers() {
+        return [];
+    }
+
+    /**
+     * Gets the container element of the diagram that should be rendered
+     * @override
+     * @return {Object} The container element of the diagram.
+     */
+    getDiagram() {
+        return this.$.diagram;
+    }
+
+    /**
+     * Prepares the data for the plot
+     * @override
+     * @param  {Object} data The data to transform.
+     * @return {Object}      The desired data.
+     */
+    getPlotData(data) {
+        data[0].mode = 'markers';
+        data[0].marker.color = this.primarycolor;
+
+        return data;
+    }
+
+    /**
+     * Gets the layout options of the plot
+     * @override
+     * @return {Object} The layout options.
+     */
+    getLayout() {
+        return {
+            xaxis: {
+                tickfont: {
+                    size: 14,
+                    color: this.accentcolor
+                }
+            },
+            yaxis: {
+                tickfont: {
+                    size: 14,
+                    color: this.accentcolor
+                }
+            },
+            margin: { l: 40, r: 10, t: 10, b: 20 }
+        };
+    }
+}
+
+// Register custom element definition using standard platform API
+customElements.define(BubblechartBasic.is, BubblechartBasic);

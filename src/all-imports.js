@@ -1,0 +1,20 @@
+/* Import all components: all-imports.js */
+import './data-control/ajax-wrapper.js';
+import './data-control/data-filter.js';
+import './data-control/data-selector.js';
+import './data-control/schema-transformer.js';
+import './visualizations/barchart-basic.js';
+import './visualizations/piechart-basic.js';
+import './visualizations/linechart-basic.js';
+import './visualizations/circular-progress.js';
+import './visualizations/circular-stacked.js';
+import './visualizations/bubblechart-basic.js';
+import './visualizations/activitychart-basic.js';
+import './visualizations/counter-basic.js';
+import './visualizations/score-card.js';
+import './visualizations/loading-spinner.js';
+import './visualizations/worldmap-basic.js';
+import './visualizations/vennchart-basic.js';
+import './visualizations/boxplot-basic.js';
+import './visualizations/fallback-text.js';
+import './visualizations/badges-list.js';

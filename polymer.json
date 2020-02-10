@@ -1,36 +1,19 @@
 {
-  "entrypoint": "src/all-imports.html",
+  "entrypoint": "src/all-imports.js",
   "sources": [
-    "src/**/*",
-    "bower.json"
+    "src/**/*"
+  ],
+  "extraDependencies": [
+    "node_modules/@webcomponents/webcomponentsjs/*.js"
   ],
   "lint": {
     "rules": [
-      "polymer-2"
+      "polymer-3"
     ],
     "ignoreWarnings": [
-      "unknown-superclass",
-      "set-unknown-attribute",
-      "databinding-calls-must-be-functions",
-      "databind-with-unknown-property"
+      "databinding-calls-must-be-functions"
     ]
   },
-  "builds": [
-    {
-      "name": "es6",
-      "bundle": true,
-      "js": {"minify": true},
-      "css": {"minify": true},
-      "html": {"minify": true}
-    },
-    {
-      "name": "es5",
-      "bundle": true,
-      "js": {"minify": true, "compile": true},
-      "css": {"minify": true},
-      "html": {"minify": true}
-    }
-  ],
-  "moduleResolution": "none",
-  "npm": false
+  "moduleResolution": "node",
+  "npm": true
 }
