@@ -15,9 +15,9 @@
         // eslint-disable-next-line no-var
         var script = document.createElement('script');
         if (location.href.indexOf('es5') > -1) {
-            script.src = '../build/es5/meinel-bundle.js';
+            script.src = '../build/es5/m.e.i.n.e.l.js';
         } else {
-            script.src = '../build/es6/meinel-bundle.js';
+            script.src = '../build/es6/m.e.i.n.e.l.js';
         }
         // Never import the script as an ES6 module. The integration of Plotly.js into the
         // same bundle file prevents that as a top-level `this` is undefined inside a module
@@ -419,7 +419,7 @@
 
     <h3>score-card demo (custom element)</h3>
     <score-card data="474359" icon-classes="fas fa-user" name="Total Users" primarycolor="#c1c1c1"></score-card>
-    <score-card data="Google" icon-classes="fab fa-google" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" primarycolor="#c1c1c1"></score-card>
+    <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" primarycolor="#c1c1c1"></score-card>
 
 
     <h3>vennchart-basic demo (custom element)</h3>

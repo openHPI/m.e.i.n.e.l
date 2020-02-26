@@ -28,7 +28,7 @@ class CounterBasic extends FontAwesomeMixin(DataReceiverMixin(PolymerElement)) {
         </template>
         <template is="dom-if" if="[[_showSpinner]]">
             <span> <!-- Another parent element than 'template' is required for FontAwesome -->
-                <i id="spinner" class="fa fas fa-spinner fa-spin"></i>
+                <i id="spinner" class="fas fa-spinner fa-spin"></i>
             </span>
         </template>
 `;

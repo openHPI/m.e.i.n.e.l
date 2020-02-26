@@ -80,7 +80,7 @@ class ScoreCard extends FontAwesomeMixin(DataReceiverMixin(PolymerElement)) {
                 <div id="link-container">
                     <template is="dom-if" if="[[link]]">
                         <a href="[[link]]">
-                            <i id="link-icon" class="fa fas fa-arrow-circle-right"></i>[[linkText]]
+                            <i id="link-icon" class="fas fa-arrow-circle-right"></i>[[linkText]]
                         </a>
                     </template>
                 </div>
@@ -107,7 +107,10 @@ class ScoreCard extends FontAwesomeMixin(DataReceiverMixin(PolymerElement)) {
             /** Primary color of the control. */
             primarycolor: String,
             /** Classes of the icon that should be displayed. */
-            iconClasses: String,
+            iconClasses: {
+                type: String,
+                observer: 'iconChanged'
+            },
             /** Name of the metric that is displayed. */
             name: String,
             /** Optional text before the number. */
@@ -145,6 +148,20 @@ class ScoreCard extends FontAwesomeMixin(DataReceiverMixin(PolymerElement)) {
 
     static get observers() {
         return [];
+    }
+
+    /**
+     *  Observe changes to the `iconClasses` and add FontAwesome family prefix "fa-" for proper icon replacement
+     *  @return  {void}
+     */
+    iconChanged() {
+        if (!this.iconClasses.includes('xikolo'))
+            return;
+
+        let requestedClasses = this.iconClasses.split(' ');
+        requestedClasses = requestedClasses.map(iconClass =>
+            iconClass.startsWith('icon-') ? `${this.FontAwesomeConfig().familyPrefix}-${iconClass}` : iconClass);
+        this.iconClasses = requestedClasses.join(' ');
     }
 }
 

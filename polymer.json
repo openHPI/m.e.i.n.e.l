@@ -1,7 +1,7 @@
 {
   "entrypoint": "src/all-imports.js",
   "sources": [
-    "src/**/*"
+    "src/**/*.js"
   ],
   "extraDependencies": [
     "node_modules/@webcomponents/webcomponentsjs/*.js"

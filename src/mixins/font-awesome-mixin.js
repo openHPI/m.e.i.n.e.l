@@ -1,7 +1,8 @@
-import { dom, library } from '@fortawesome/fontawesome-svg-core';
+import { dom, library, config } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import * as xikoloIcons from '../fonts/xikolo-icomoon.js';
 
 /**
  * Mixin that acts as base class for Font Awesome-based components.
@@ -22,6 +23,8 @@ export const FontAwesomeMixin = (BaseClass) => class extends BaseClass {
      */
     constructor() {
         super();
+
+        library.add(xikoloIcons);
         library.add(fas, far, fab);
         this.styleInserted = false;
     }
@@ -45,5 +48,13 @@ export const FontAwesomeMixin = (BaseClass) => class extends BaseClass {
             this.shadowRoot.appendChild(faStyles);
             this.styleInserted = true;
         }
+    }
+
+    /**
+     * Return the FontAwesome config used for this fragment
+     * @return {Config} FontAwesome config.
+     */
+    FontAwesomeConfig() {
+        return config;
     }
 };

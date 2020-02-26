@@ -92,5 +92,16 @@
   },
   "parserOptions": {
     "sourceType": "module"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/fonts/**/*"],
+      "rules": {
+        "quotes": "off",
+        "object-curly-spacing": "off",
+        "comma-spacing": "off",
+        "camelcase": "off"
+      }
+    }
+  ]
 }

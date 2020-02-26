@@ -33,7 +33,7 @@ class LoadingSpinner extends FontAwesomeMixin(DataTransformerMixin(PolymerElemen
         </style>
         <template is="dom-if" if="[[!hasReceivedData]]">
             <div id="spinnerContainer">
-                <i id="spinner" class="fa fas fa-spinner fa-spin"></i>
+                <i id="spinner" class="fas fa-spinner fa-spin"></i>
             </div>
         </template>
         <template is="dom-if" if="[[hasReceivedData]]">
