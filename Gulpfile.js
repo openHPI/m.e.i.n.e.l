@@ -65,20 +65,38 @@ const bundle = (options) => {
             file.contents = minifiedHtml ? intoStream(minifiedHtml.code) : file.contents;
         }))
         .pipe(buffer())
-        .pipe(gulpif(options.compile, babel({
-            presets: [
-                [
-                    babelPreset,
-                    {
-                        targets: {
-                            'ie': '11'
-                        },
-                        useBuiltIns: 'usage',
-                        corejs: 2
-                    }
+        .pipe(gulpif(options.compile,
+            // Compile = true; Compiling back to ES5. Targeting Internet Explorer 11
+            babel({
+                presets: [
+                    [
+                        babelPreset,
+                        {
+                            targets: {
+                                'ie': '11'
+                            },
+                            useBuiltIns: 'usage',
+                            corejs: 2
+                        }
+                    ]
                 ]
-            ]
-        })))
+            // Compile = false; Keeping ES6 syntax, but changing module syntax.
+            // This step is usually not included but required for Xikolo asset precompilation
+            }), babel({
+                presets: [
+                    [
+                        babelPreset,
+                        {
+                            targets: {
+                                'node': '8'
+                            },
+                            useBuiltIns: 'usage',
+                            corejs: 2
+                        }
+                    ]
+                ]
+            })
+        ))
         .pipe(rollup({
             allowRealFiles: true,
             input: project.config.entrypoint,
@@ -143,7 +161,7 @@ const polyfills = (options) => {
      */
     let polyfillsStream = gulp.src(WEB_COMPONENTS_POLYFILL);
 
-    if(options.compile) {
+    if (options.compile) {
         polyfillsStream = merge(
             polyfillsStream,
             gulp.src(WEB_COMPONENTS_ES5_ADAPTER),
