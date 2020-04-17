@@ -180,7 +180,7 @@ class CircularProgress extends DataReceiverMixin(PolymerElement) {
             if (percent === null) return;
 
             //Percent to fill, fill-color, unique ID, textx, texty, %x, %y, font-size(text), font-size(%)
-            if (percent === 100) {
+            if (parseInt(percent) === 100) {
                 px = px - 2;
             } // Move % to right if 100% to prevent overlap
 
