@@ -42,8 +42,29 @@
     <h3>score-card demo (custom element)</h3>
     <demo-snippet>
         <template>
-            <score-card data="474359" icon-classes="fas fa-user" name="Total Users" primarycolor="#c1c1c1"></score-card>
-            <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" primarycolor="#c1c1c1"></score-card>
+            <style>
+                score-card {
+                    --score-card-icon-font-size: 5em;
+                    --score-card-icon-background-border-radius: 4px;
+                    --score-card-icon-background-color: #dddddd;
+                    --score-card-height: 150px;
+                    --score-card-link-color: #de6212;
+                    --score-card-link-color-hover: #b8510f;
+                    --score-card-link-text-decoration: none;
+                }
+            </style>
+
+            <score-card data="474359" icon-classes="fas fa-user" name="Total Users"></score-card>
+            <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine"></score-card>
+
+            <!-- Attribute tag takes preference over style tag -->
+            <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" height="125" icon-size="62.5" primarycolor="#c1c1c1"></score-card>
+            <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" height="100" icon-size="50" primarycolor="#c1c1c1"></score-card>
+            <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" height="75" icon-size="37.5" primarycolor="#c1c1c1"></score-card>
+
+            <!-- Custom text-based icons are supported -->
+            <score-card data="42.00" icon-classes="text-icon icon-average" name="Average Icon" height="75" icon-size="37.5" primarycolor="#c1c1c1"></score-card>
+            <score-card data="1.00" icon-classes="text-icon icon-one" name="'1' Icon" height="75" icon-size="37.5" primarycolor="#c1c1c1"></score-card>
         </template>
     </demo-snippet>
 </div>
