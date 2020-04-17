@@ -32,10 +32,12 @@ export const DataControlMixin = (BaseClass) => class extends BaseClass {
      */
     passData(data) {
         let that = this;
-        let children = this.children;
-        for (let i = 0; i < children.length; i++) {
-            that._passDataTo(children[i], data);
-        }
+        animationFrame.run(() => {
+            let children = that.children;
+            for (let i = 0; i < children.length; i++) {
+                that._passDataTo(children[i], data);
+            }
+        });
     }
 
     _passDataTo(element, data) {
