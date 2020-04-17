@@ -5009,53 +5009,77 @@
       "tagname": "counter-basic"
     },
     {
-      "description": "## `score-card`\n\nThis is a basic component for a score card displaying a single numeric value.",
+      "description": "## `score-card`\n\nThis is a basic component for a score card displaying a single numeric value.\n\n### Styling\n\n`<score-card>` provides the following custom properties and mixins for styling:\n\nCustom property | Description | Default\n----------------|-------------|----------\n`--score-card-icon-font-size` | Font size of the icon | `50px`\n`--score-card-height` | Height of the control | `100px`\n`--score-card-icon-background-border-radius` | Border radius of the control | `2px 0px 0px 2px`\n`--score-card-icon-background-color` | Background color of the control | `transparent`\n`--score-card-icon-link-color` | Text color of the link | `blue`\n`--score-card-icon-link-color-hover` | Hover text color of the link | `transparent`\n`--score-card-link-text-decoration` | Text decoration of the link | `underline`",
       "summary": "",
       "path": "src/visualizations/score-card.js",
       "properties": [
         {
+          "name": "_outerStyle",
+          "type": "string | null | undefined",
+          "description": "Internal: Applied style string if height is set",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 148,
+              "column": 12
+            },
+            "end": {
+              "line": 151,
+              "column": 13
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "attributeType": "String"
+            }
+          },
+          "defaultValue": "\"\""
+        },
+        {
           "name": "height",
-          "type": "number | null | undefined",
+          "type": "string | null | undefined",
           "description": "Height of the control",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 97,
+              "line": 153,
               "column": 12
             },
             "end": {
-              "line": 100,
+              "line": 157,
               "column": 13
             }
           },
           "metadata": {
             "polymer": {
-              "attributeType": "Number"
+              "observer": "\"heightChanged\"",
+              "attributeType": "String"
             }
           },
-          "defaultValue": "100"
+          "defaultValue": "\"inherit\""
         },
         {
           "name": "iconSize",
-          "type": "number | null | undefined",
+          "type": "string | null | undefined",
           "description": "Font size of the icon (px).",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 102,
+              "line": 159,
               "column": 12
             },
             "end": {
-              "line": 105,
+              "line": 163,
               "column": 13
             }
           },
           "metadata": {
             "polymer": {
-              "attributeType": "Number"
+              "observer": "\"iconSizeChanged\"",
+              "attributeType": "String"
             }
           },
-          "defaultValue": "50"
+          "defaultValue": "\"inherit\""
         },
         {
           "name": "primarycolor",
@@ -5064,19 +5088,20 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 107,
+              "line": 165,
               "column": 12
             },
             "end": {
-              "line": 107,
-              "column": 32
+              "line": 168,
+              "column": 13
             }
           },
           "metadata": {
             "polymer": {
               "attributeType": "String"
             }
-          }
+          },
+          "defaultValue": "\"transparent\""
         },
         {
           "name": "iconClasses",
@@ -5085,16 +5110,17 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 109,
+              "line": 170,
               "column": 12
             },
             "end": {
-              "line": 109,
-              "column": 31
+              "line": 173,
+              "column": 13
             }
           },
           "metadata": {
             "polymer": {
+              "observer": "\"iconChanged\"",
               "attributeType": "String"
             }
           }
@@ -5106,11 +5132,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 111,
+              "line": 175,
               "column": 12
             },
             "end": {
-              "line": 111,
+              "line": 175,
               "column": 24
             }
           },
@@ -5127,11 +5153,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 113,
+              "line": 177,
               "column": 12
             },
             "end": {
-              "line": 113,
+              "line": 177,
               "column": 26
             }
           },
@@ -5148,11 +5174,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 115,
+              "line": 179,
               "column": 12
             },
             "end": {
-              "line": 115,
+              "line": 179,
               "column": 26
             }
           },
@@ -5169,11 +5195,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 117,
+              "line": 181,
               "column": 12
             },
             "end": {
-              "line": 120,
+              "line": 184,
               "column": 13
             }
           },
@@ -5191,11 +5217,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 122,
+              "line": 186,
               "column": 12
             },
             "end": {
-              "line": 125,
+              "line": 189,
               "column": 13
             }
           },
@@ -5213,11 +5239,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 127,
+              "line": 191,
               "column": 12
             },
             "end": {
-              "line": 130,
+              "line": 194,
               "column": 13
             }
           },
@@ -5235,11 +5261,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 132,
+              "line": 196,
               "column": 12
             },
             "end": {
-              "line": 135,
+              "line": 199,
               "column": 13
             }
           },
@@ -5257,11 +5283,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 137,
+              "line": 201,
               "column": 12
             },
             "end": {
-              "line": 137,
+              "line": 201,
               "column": 24
             }
           },
@@ -5278,11 +5304,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 139,
+              "line": 203,
               "column": 12
             },
             "end": {
-              "line": 139,
+              "line": 203,
               "column": 28
             }
           },
@@ -5299,11 +5325,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 141,
+              "line": 205,
               "column": 12
             },
             "end": {
-              "line": 141,
+              "line": 205,
               "column": 34
             }
           },
@@ -5314,7 +5340,68 @@
           }
         }
       ],
-      "methods": [],
+      "methods": [
+        {
+          "name": "iconChanged",
+          "description": "Observe changes to the `iconClasses` and add FontAwesome family prefix \"fa-\" for proper icon replacement",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 217,
+              "column": 4
+            },
+            "end": {
+              "line": 225,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          }
+        },
+        {
+          "name": "heightChanged",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 227,
+              "column": 4
+            },
+            "end": {
+              "line": 233,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          }
+        },
+        {
+          "name": "iconSizeChanged",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 235,
+              "column": 4
+            },
+            "end": {
+              "line": 241,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          }
+        }
+      ],
       "staticMethods": [],
       "demos": [
         {
@@ -5325,11 +5412,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 16,
+          "line": 30,
           "column": 0
         },
         "end": {
-          "line": 148,
+          "line": 242,
           "column": 1
         }
       },
@@ -5342,44 +5429,44 @@
           "description": "Height of the control",
           "sourceRange": {
             "start": {
-              "line": 97,
+              "line": 153,
               "column": 12
             },
             "end": {
-              "line": 100,
+              "line": 157,
               "column": 13
             }
           },
           "metadata": {},
-          "type": "number | null | undefined"
+          "type": "string | null | undefined"
         },
         {
           "name": "icon-size",
           "description": "Font size of the icon (px).",
           "sourceRange": {
             "start": {
-              "line": 102,
+              "line": 159,
               "column": 12
             },
             "end": {
-              "line": 105,
+              "line": 163,
               "column": 13
             }
           },
           "metadata": {},
-          "type": "number | null | undefined"
+          "type": "string | null | undefined"
         },
         {
           "name": "primarycolor",
           "description": "Primary color of the control.",
           "sourceRange": {
             "start": {
-              "line": 107,
+              "line": 165,
               "column": 12
             },
             "end": {
-              "line": 107,
-              "column": 32
+              "line": 168,
+              "column": 13
             }
           },
           "metadata": {},
@@ -5390,12 +5477,12 @@
           "description": "Classes of the icon that should be displayed.",
           "sourceRange": {
             "start": {
-              "line": 109,
+              "line": 170,
               "column": 12
             },
             "end": {
-              "line": 109,
-              "column": 31
+              "line": 173,
+              "column": 13
             }
           },
           "metadata": {},
@@ -5406,11 +5493,11 @@
           "description": "Name of the metric that is displayed.",
           "sourceRange": {
             "start": {
-              "line": 111,
+              "line": 175,
               "column": 12
             },
             "end": {
-              "line": 111,
+              "line": 175,
               "column": 24
             }
           },
@@ -5422,11 +5509,11 @@
           "description": "Optional text before the number.",
           "sourceRange": {
             "start": {
-              "line": 113,
+              "line": 177,
               "column": 12
             },
             "end": {
-              "line": 113,
+              "line": 177,
               "column": 26
             }
           },
@@ -5438,11 +5525,11 @@
           "description": "Optional text after the number.",
           "sourceRange": {
             "start": {
-              "line": 115,
+              "line": 179,
               "column": 12
             },
             "end": {
-              "line": 115,
+              "line": 179,
               "column": 26
             }
           },
@@ -5454,11 +5541,11 @@
           "description": "Number of decimals to show.",
           "sourceRange": {
             "start": {
-              "line": 117,
+              "line": 181,
               "column": 12
             },
             "end": {
-              "line": 120,
+              "line": 184,
               "column": 13
             }
           },
@@ -5470,11 +5557,11 @@
           "description": "The default value that is shown if data is `null`.",
           "sourceRange": {
             "start": {
-              "line": 122,
+              "line": 186,
               "column": 12
             },
             "end": {
-              "line": 125,
+              "line": 189,
               "column": 13
             }
           },
@@ -5486,11 +5573,11 @@
           "description": "Animation duration in seconds.",
           "sourceRange": {
             "start": {
-              "line": 127,
+              "line": 191,
               "column": 12
             },
             "end": {
-              "line": 130,
+              "line": 194,
               "column": 13
             }
           },
@@ -5502,11 +5589,11 @@
           "description": "Determines whether the loading spinner should be hidden.",
           "sourceRange": {
             "start": {
-              "line": 132,
+              "line": 196,
               "column": 12
             },
             "end": {
-              "line": 135,
+              "line": 199,
               "column": 13
             }
           },
@@ -5518,11 +5605,11 @@
           "description": "A link to a page showing related information (optional).",
           "sourceRange": {
             "start": {
-              "line": 137,
+              "line": 201,
               "column": 12
             },
             "end": {
-              "line": 137,
+              "line": 201,
               "column": 24
             }
           },
@@ -5534,11 +5621,11 @@
           "description": "The text of the link (optional).",
           "sourceRange": {
             "start": {
-              "line": 139,
+              "line": 203,
               "column": 12
             },
             "end": {
-              "line": 139,
+              "line": 203,
               "column": 28
             }
           },
@@ -5550,11 +5637,11 @@
           "description": "Custom formatter function for displaying the value",
           "sourceRange": {
             "start": {
-              "line": 141,
+              "line": 205,
               "column": 12
             },
             "end": {
-              "line": 141,
+              "line": 205,
               "column": 34
             }
           },
@@ -7074,7 +7161,7 @@
               "column": 4
             },
             "end": {
-              "line": 38,
+              "line": 40,
               "column": 5
             }
           },
@@ -7096,11 +7183,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 40,
+              "line": 42,
               "column": 4
             },
             "end": {
-              "line": 58,
+              "line": 60,
               "column": 5
             }
           },
@@ -7127,7 +7214,7 @@
           "column": 7
         },
         "end": {
-          "line": 59,
+          "line": 61,
           "column": 2
         }
       },
@@ -7918,11 +8005,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 33,
+              "line": 36,
               "column": 4
             },
             "end": {
-              "line": 47,
+              "line": 50,
               "column": 5
             }
           },
@@ -7931,6 +8018,27 @@
           "return": {
             "type": "void"
           }
+        },
+        {
+          "name": "FontAwesomeConfig",
+          "description": "Return the FontAwesome config used for this fragment",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 56,
+              "column": 4
+            },
+            "end": {
+              "line": 58,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "Config",
+            "desc": "FontAwesome config."
+          }
         }
       ],
       "staticMethods": [],
@@ -7938,11 +8046,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 15,
+          "line": 16,
           "column": 7
         },
         "end": {
-          "line": 48,
+          "line": 59,
           "column": 2
         }
       },
