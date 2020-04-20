@@ -11,6 +11,8 @@
     <script src="../build/es5/custom-elements-es5-adapter.js"></script>
     <script src="../build/es5/webcomponents-bundle.js"></script>
 
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
     <script>
         // eslint-disable-next-line no-var
         var script = document.createElement('script');
@@ -43,6 +45,9 @@
     <div>
         This page uses the JavaScript file located in the <pre>build</pre> folder. You might need to create these with <pre>npm run bundle</pre> first. <span id="current_es_version"></span>
     </div>
+    <h2>FontAwesome 4.x demo (incompatible with FontAwesome 5.x)</h2>
+    <span class="dropdown-icon fa fa-file-text"></span> The icon in front of this text should not be replaced with a flashing !? symbol after loading this page and scrolling to the bottom (to finish lazy loading).
+
     <h2>data-control demo</h2>
     <h3>ajax-wrapper demo (custom element)</h3>
     <ajax-wrapper data-url="https://www.random.org/integers/?num=1&amp;min=1&amp;max=100&amp;col=1&amp;base=10&amp;format=plain" refresh-interval="5000">
@@ -418,8 +423,31 @@
 
 
     <h3>score-card demo (custom element)</h3>
-    <score-card data="474359" icon-classes="fas fa-user" name="Total Users" primarycolor="#c1c1c1"></score-card>
-    <score-card data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" primarycolor="#c1c1c1"></score-card>
+    <custom-style> <!-- custom-style tag is required as Polyfill for otherwise unsupported browsers, such as IE 11 -->
+        <style>
+            .score-card-local-styles {
+                --score-card-icon-font-size: 5em;
+                --score-card-icon-background-border-radius: 4px;
+                --score-card-icon-background-color: #dddddd;
+                --score-card-height: 150px;
+                --score-card-link-color: #de6212;
+                --score-card-link-color-hover: #b8510f;
+                --score-card-link-text-decoration: none;
+            }
+        </style>
+    </custom-style>
+
+    <score-card class="score-card-local-styles" data="474359" icon-classes="fas fa-user" name="Total Users"></score-card>
+    <score-card class="score-card-local-styles" data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine"></score-card>
+
+    <!-- Attribute tag takes preference over style tag -->
+    <score-card class="score-card-local-styles" data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" height="125" icon-size="62.5" primarycolor="#c1c1c1"></score-card>
+    <score-card class="score-card-local-styles" data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" height="100" icon-size="50" primarycolor="#c1c1c1"></score-card>
+    <score-card class="score-card-local-styles" data="Google" icon-classes="xikolo-icon icon-stats" link="http://www.google.com" link-text="More info" name="Most Popular Search Engine" height="75" icon-size="37.5" primarycolor="#c1c1c1"></score-card>
+
+    <!-- Custom text-based icons are supported -->
+    <score-card class="score-card-local-styles" data="42.00" icon-classes="text-icon icon-average" name="Average Icon" height="75" icon-size="37.5" primarycolor="#c1c1c1"></score-card>
+    <score-card class="score-card-local-styles" data="1.00" icon-classes="text-icon icon-one" name="'1' Icon" height="75" icon-size="37.5" primarycolor="#c1c1c1"></score-card>
 
 
     <h3>vennchart-basic demo (custom element)</h3>

@@ -39,7 +39,7 @@ export const FontAwesomeMixin = (BaseClass) => class extends BaseClass {
 
         dom.watch({
             autoReplaceSvgRoot: this.shadowRoot,
-            observeMutationsRoot: document.body
+            observeMutationsRoot: this.root
         });
 
         if (!this.styleInserted) {
