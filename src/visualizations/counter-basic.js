@@ -1,6 +1,5 @@
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@lrnwebcomponents/count-up/count-up.js';
-import 'intersection-observer/intersection-observer.js'; // Polyfill for IE 11
 import { DataReceiverMixin } from '../mixins/data-receiver-mixin.js';
 import { FontAwesomeMixin } from '../mixins/font-awesome-mixin.js';
 import { PolymerElement, html } from '@polymer/polymer';

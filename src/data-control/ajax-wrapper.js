@@ -1,6 +1,5 @@
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/iron-ajax/iron-ajax.js';
-import 'intersection-observer/intersection-observer.js'; // Polyfill for IE 11
 import { DataSourceMixin } from '../mixins/data-source-mixin.js';
 import { PolymerElement, html } from '@polymer/polymer';
 

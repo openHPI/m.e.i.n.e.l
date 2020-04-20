@@ -23,7 +23,14 @@ const babelPreset = require('@babel/preset-env');
 const WEB_COMPONENTS_POLYFILL = require.resolve('@webcomponents/webcomponentsjs/webcomponents-bundle.js');
 
 const WEB_COMPONENTS_ES5_ADAPTER = require.resolve('@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js');
-const IE_POLYFILLS = require.resolve('@babel/polyfill/dist/polyfill.min.js');
+
+const IE_POLYFILLS = [
+    require.resolve('@babel/polyfill/dist/polyfill.min.js'),
+    require.resolve('intersection-observer/intersection-observer.js'),
+    // Custom-style is also required for IE, but currently already included through
+    // Polymer-Legacy in Paper-Material-Styles in Paper-Buttons in Data-Filter.
+    // Adding it here explicitly won't work as the webcomponents-bundle must be loaded first.
+];
 
 const PLOTLY_PARTIALS_PATH = [
     require.resolve('plotly.js/lib/index-cartesian'),
