@@ -26,7 +26,7 @@ const WEB_COMPONENTS_ES5_ADAPTER = require.resolve('@webcomponents/webcomponents
 
 const IE_POLYFILLS = [
     require.resolve('@babel/polyfill/dist/polyfill.min.js'),
-    require.resolve('intersection-observer/intersection-observer.js'),
+    require.resolve('intersection-observer/intersection-observer.js')
     // Custom-style is also required for IE, but currently already included through
     // Polymer-Legacy in Paper-Material-Styles in Paper-Buttons in Data-Filter.
     // Adding it here explicitly won't work as the webcomponents-bundle must be loaded first.
@@ -87,8 +87,8 @@ const bundle = (options) => {
                         }
                     ]
                 ]
-            // Compile = false; Keeping ES6 syntax, but changing module syntax.
-            // This step is usually not included but required for Xikolo asset precompilation
+                // Compile = false; Keeping ES6 syntax, but changing module syntax.
+                // This step is usually not included but required for Xikolo asset precompilation
             }), babel({
                 presets: [
                     [
@@ -109,7 +109,7 @@ const bundle = (options) => {
             input: project.config.entrypoint,
             output: {
                 format: 'iife',
-                name: `${projectName.replace(/\./g, '')}`
+                name: `${projectName.replace(/(\.|-)/g, '')}`
 
             },
             onwarn: warning => {
