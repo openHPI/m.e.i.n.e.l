@@ -11,6 +11,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin PlotlyMixin
  * @demo demo/visualizations/barchart_basic_demo.html
  */
 class BarchartBasic extends PlotlyMixin(PolymerElement) {

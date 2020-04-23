@@ -10,6 +10,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataTransformerMixin
  * @demo demo/data_control/data_filter_demo.html
  */
 class DataFilter extends DataTransformerMixin(PolymerElement) {

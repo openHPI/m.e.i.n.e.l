@@ -8,6 +8,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataTransformerMixin
  * @demo demo/data_control/data_selector_demo.html
  */
 class DataSelector extends DataTransformerMixin(PolymerElement) {

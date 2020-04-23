@@ -11,6 +11,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/boxplot_basic_demo.html
  */
 class BoxplotBasic extends PlotlyMixin(PolymerElement) {

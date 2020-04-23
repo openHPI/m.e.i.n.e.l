@@ -10,6 +10,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/circular_progress_demo.html
  */
 class CircularProgress extends DataReceiverMixin(PolymerElement) {
@@ -45,17 +46,17 @@ class CircularProgress extends DataReceiverMixin(PolymerElement) {
                 type: String,
                 value: '#f2503f'
             },
-            /** Text color*/
+            /** Text color */
             primarytextcolor: {
                 type: String,
                 value: '#000000'
             },
-            /** Fill color of optional secondary value*/
+            /** Fill color of optional secondary value */
             secondarycolor: {
                 type: String,
                 value: '#ffa64c'
             },
-            /** Text color of optional secondary value*/
+            /** Text color of optional secondary value */
             secondarytextcolor: {
                 type: String,
                 value: '#ffa64c'
@@ -104,7 +105,7 @@ class CircularProgress extends DataReceiverMixin(PolymerElement) {
 
         let diagram = d3.select(this.$.diagram);
 
-        /** Reset plot area in case we're redrawing*/
+        /** Reset plot area in case we're redrawing */
         let gd3 = diagram.selectAll('*').remove();
 
         let WIDTH_IN_PERCENT_OF_PARENT = 100,

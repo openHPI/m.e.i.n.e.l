@@ -12,6 +12,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/vennchart_basic_demo.html
  */
 class VennchartBasic extends DataReceiverMixin(PolymerElement) {

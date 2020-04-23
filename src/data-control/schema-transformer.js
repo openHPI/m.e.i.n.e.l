@@ -29,6 +29,7 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataTransformerMixin
  * @demo demo/data_control/schema_transformer_demo.html
  */
 class SchemaTransformer extends DataTransformerMixin(PolymerElement) {

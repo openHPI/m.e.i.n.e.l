@@ -12,6 +12,8 @@ import { animationFrame } from '@polymer/polymer/lib/utils/async.js';
  *
  * @polymer
  * @customElement
+ * @appliesMixin FontAwesomeMixin
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/counter_basic_demo.html
  */
 class CounterBasic extends FontAwesomeMixin(DataReceiverMixin(PolymerElement)) {

@@ -26,6 +26,8 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin FontAwesomeMixin
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/score_card_demo.html
  */
 class ScoreCard extends FontAwesomeMixin(DataReceiverMixin(PolymerElement)) {

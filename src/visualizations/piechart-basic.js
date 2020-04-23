@@ -11,6 +11,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin PlotlyMixin
  * @demo demo/visualizations/piechart_basic_demo.html
  */
 class PiechartBasic extends PlotlyMixin(PolymerElement) {
@@ -31,7 +32,7 @@ class PiechartBasic extends PlotlyMixin(PolymerElement) {
 
     static get properties() {
         return {
-            /** Colors for the dataset (must be same size as dataset)*/
+            /** Colors for the dataset (must be same size as dataset) */
             colors: Array,
             /** Determines whether the legend should be hidden */
             hideLegend: Boolean

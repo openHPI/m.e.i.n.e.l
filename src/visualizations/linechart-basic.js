@@ -11,6 +11,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin PlotlyMixin
  * @demo demo/visualizations/linechart_basic_demo.html
  */
 class LinechartBasic extends PlotlyMixin(PolymerElement) {

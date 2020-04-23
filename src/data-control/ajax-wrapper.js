@@ -10,6 +10,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataSourceMixin
  * @demo demo/data_control/ajax_wrapper_demo.html
  */
 class AjaxWrapper extends DataSourceMixin(PolymerElement) {

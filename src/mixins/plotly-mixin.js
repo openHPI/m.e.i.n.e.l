@@ -5,7 +5,7 @@ import { DataReceiverMixin } from './data-receiver-mixin.js';
  *
  * @polymer
  * @mixinFunction
- * @extends DataReceiverMixin
+ * @appliesMixin DataReceiverMixin
  * @param  {PolymerElement | Function} BaseClass The base class to extend.
  * @return {Function}                            The extended base class.
  */

@@ -11,6 +11,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin PlotlyMixin
  * @demo demo/visualizations/worldmap_basic_demo.html
  */
 class WorldmapBasic extends PlotlyMixin(PolymerElement) {

@@ -6,7 +6,7 @@ import { DataControlMixin } from './data-control-mixin.js';
  *
  * @polymer
  * @mixinFunction
- * @extends DataControlMixin
+ * @appliesMixin DataControlMixin
  * @param  {PolymerElement | Function} BaseClass The base class to extend.
  * @return {Function}                            The extended base class.
  */

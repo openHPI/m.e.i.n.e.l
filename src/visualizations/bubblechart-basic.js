@@ -11,6 +11,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin PlotlyMixin
  * @demo demo/visualizations/bubblechart_basic_demo.html
  */
 class BubblechartBasic extends PlotlyMixin(PolymerElement) {

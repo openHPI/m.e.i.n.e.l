@@ -9,6 +9,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  * **Data format:** array of integer values (percentage)
  * @polymer
  * @customElement
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/circular_stacked_demo.html
  */
 class CircularStacked extends DataReceiverMixin(PolymerElement) {
@@ -39,7 +40,7 @@ class CircularStacked extends DataReceiverMixin(PolymerElement) {
                 type: Number,
                 value: 200
             },
-            /** Fill and text color*/
+            /** Fill and text color */
             primarycolor: {
                 type: String,
                 value: '#f2503f'

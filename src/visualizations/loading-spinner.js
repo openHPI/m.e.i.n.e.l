@@ -10,6 +10,8 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin FontAwesomeMixin
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/loading_spinner_demo.html
  */
 class LoadingSpinner extends FontAwesomeMixin(DataTransformerMixin(PolymerElement)) {

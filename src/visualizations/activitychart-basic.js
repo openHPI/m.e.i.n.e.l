@@ -13,6 +13,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataReceiverMixin
  * @demo demo/visualizations/activitychart_basic_demo.html
  */
 class ActivitychartBasic extends DataReceiverMixin(PolymerElement) {

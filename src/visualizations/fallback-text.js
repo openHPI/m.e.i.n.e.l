@@ -9,6 +9,7 @@ import { PolymerElement, html } from '@polymer/polymer';
  *
  * @polymer
  * @customElement
+ * @appliesMixin DataTransformerMixin
  * @demo demo/visualizations/fallback_text_demo.html
  */
 class FallbackText extends DataTransformerMixin(PolymerElement) {
