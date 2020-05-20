@@ -1,4 +1,9 @@
-*bower_components/*
-*node_modules/*
 .DS_Store
 *dist/
+
+# IntelliJ files
+.idea/
+*.iml
+
+node_modules/
+build/

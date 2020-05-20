@@ -3,33 +3,51 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>bubblechart-basic demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- Load Plotly.js before webcomponents are initialized through Polyfills -->
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/visualizations/bubblechart-basic.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/visualizations/bubblechart-basic.js" type="module"></script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
-    <div>
-        <h3>basic bubblechart demo (custom element)</h3>
-        <demo-snippet>
-          <template>
-            <bubblechart-basic width="400" height="400" primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)" data='[{ "x": [1, 2, 3, 4], "y": [10, 15, 13, 17], "marker": {"size":[30, 80, 30, 40]}}]'></bubblechart-basic>
-          </template>
-        </demo-snippet>
-    </div>
+<div>
+    <h3>bubblechart-basic demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <bubblechart-basic accentcolor="rgba(177,6,58,1)" data="[{ &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [10, 15, 13, 17], &quot;marker&quot;: {&quot;size&quot;:[30, 80, 30, 40]}}]" height="400" primarycolor="rgba(221,97,8,1)" width="400"></bubblechart-basic>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

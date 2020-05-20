@@ -3,35 +3,56 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>circular-progress demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- Load Plotly.js before webcomponents are initialized through Polyfills -->
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/visualizations/circular-progress.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/visualizations/circular-progress.js" type="module"></script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
-    <div>
-        <h3>circular-progress demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data="42" width="400" height="250"></circular-progress>
-              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data="[70, 40]" width="400" height="250"></circular-progress>
-              <circular-progress primarycolor="#f2503f" accentcolor="#404F70" data="42" width="100" height="100"></circular-progress>
-            </template>
-        </demo-snippet>
-    </div>
+<div>
+    <h3>circular-progress demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <circular-progress accentcolor="#404F70" data="42" height="250" primarycolor="#f2503f" width="400"></circular-progress>
+            <circular-progress accentcolor="#404F70" data="[70, 40]" height="250" primarycolor="#f2503f" width="400"></circular-progress>
+            <circular-progress accentcolor="#404F70" data="42" height="100" primarycolor="#f2503f" width="100"></circular-progress>
+            <circular-progress accentcolor="#ededed" data="0" height="100" primarycolor="#8ab54e" width="100"></circular-progress>
+            <circular-progress accentcolor="#ededed" data="50" height="100" primarycolor="#8ab54e" width="100"></circular-progress>
+            <circular-progress accentcolor="#ededed" data="100" height="100" primarycolor="#8ab54e" width="100"></circular-progress>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>

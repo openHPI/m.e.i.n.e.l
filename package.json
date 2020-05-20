@@ -1,19 +1,23 @@
 {
-  "name": "m.e.i.n.e.l",
-  "version": "2.5.0",
   "description": "The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **L**ibrary (or short: m.e.i.n.e.l.) is a visualization library for various forms of data. It focuses on abstracting the interfaces in a way that one only needs to supply the data and few (optional) parameters to embed visually appealing charts into existing environments. These interfaces are implemented by utilizing Polymer components.",
-  "main": "index.html",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "postinstall": "bower install",
-    "build": "gulp bundle",
-    "postversion": "git push && git push --tags && bash ./utils/github-pages.sh openHPI m.e.i.n.e.l"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/openHPI/m.e.i.n.e.l.git"
+  },
+  "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
+  "name": "m.e.i.n.e.l",
+  "version": "2.5.0",
+  "main": "src/all-imports.js",
+  "bugs": {
+    "url": "https://github.com/openHPI/m.e.i.n.e.l/issues"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "lint": "eslint src --fix && htmlhint --config .htmlhintrc demo/**/*.html index.html && polymer lint",
+    "serve": "polymer serve",
+    "bundle": "gulp bundle",
+    "analyze": "polymer analyze > analysis.json",
+    "postversion": "git push && git push --tags"
   },
   "contributors": [
     {
@@ -29,38 +33,51 @@
       "name": "Florian Wirtz"
     }
   ],
-  "bugs": {
-    "url": "https://github.com/openHPI/m.e.i.n.e.l/issues"
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-brands-svg-icons": "^5.13.0",
+    "@fortawesome/free-regular-svg-icons": "^5.13.0",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@lrnwebcomponents/count-up": "^2.6.3",
+    "@polymer/paper-button": "^3.0.1",
+    "@polymer/polymer": "^3.3.1",
+    "d3-scale": "^3.2.1",
+    "d3-selection": "^1.4.1",
+    "lit-element": "^2.3.1",
+    "plotly.js": "^1.53.0",
+    "venn.js": "github:benfred/venn.js"
   },
-  "license": "UNLICENSED",
-  "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
-    "browserify": "^16.2.2",
-    "exposify": "^0.5.0",
-    "gulp": "^3.9.1",
+    "@babel/core": "^7.9.0",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.9.5",
+    "@polymer/iron-component-page": "^4.0.1",
+    "@polymer/iron-demo-helpers": "^3.1.0",
+    "@webcomponents/webcomponentsjs": "^2.4.3",
+    "browserify": "^16.5.1",
+    "core-js": "^2.6.11",
+    "eslint": "^6.8.0",
+    "eslint-plugin-html": "^6.0.2",
+    "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-clean": "^0.4.0",
+    "gulp-cli": "^2.2.0",
     "gulp-concat": "^2.6.1",
-    "gulp-file": "^0.4.0",
-    "gulp-htmlmin": "^4.0.0",
-    "gulp-if": "^2.0.2",
+    "gulp-if": "^3.0.0",
     "gulp-insert": "^0.5.0",
-    "gulp-merge": "^0.1.1",
-    "gulp-rename": "^1.2.3",
-    "gulp-sequence": "^1.0.0",
-    "gulp-tap": "^1.0.1",
-    "gulp-uglify": "^3.0.0",
-    "into-stream": "^3.1.0",
-    "merge-stream": "^1.0.1",
-    "plotly.js": "^1.35.2",
-    "polymer-build": "^3.0.4",
-    "polymer-bundler": "^4.0.1",
-    "run-sequence": "^2.2.1",
+    "gulp-order": "^1.2.0",
+    "gulp-rollup": "^2.17.0",
+    "gulp-tap": "^2.0.0",
+    "gulp-terser-js": "^5.1.2",
+    "htmlhint": "^0.11.0",
+    "intersection-observer": "^0.9.0",
+    "into-stream": "^5.1.1",
+    "merge-stream": "^2.0.0",
+    "minify-html-literals": "^1.3.0",
+    "polymer-build": "^3.1.4",
+    "polymer-cli": "^1.9.11",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-node-resolve": "^4.2.4",
     "vinyl-buffer": "^1.0.1"
-  },
-  "dependencies": {
-    "gulp-print": "^5.0.0"
   }
 }

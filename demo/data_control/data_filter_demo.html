@@ -3,77 +3,96 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>data-filter demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- Load Plotly.js before webcomponents are initialized through Polyfills -->
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/data-control/data-filter.html">
-    <link rel="import" href="../../src/visualizations/linechart-basic.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/data-control/data-filter.js" type="module"></script>
+    <script src="../../src/visualizations/linechart-basic.js" type="module"></script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
-    </style>
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
-    <div>
-        <h3>basic linechart demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-              <!-- Data
-                [
-                  {
-                    "name": "foo",
-                    "x": [1, 2, 3, 4],
-                    "y": [5, 4, 6, 2]
-                  },
-                  {
-                    "name": "bar",
-                    "x": [3, 2, 1, 3],
-                    "y": [6, 4, 7, 2]
-                  },
-                  {
-                    "name": "foobar",
-                    "x": [1, 2, 1, 9],
-                    "y": [6, 4, 7, 3]
-                  }
-                ]
-              -->
-              <data-filter active-series='["foo"]' data='[{ "name": "foo", "x": [1, 2, 3, 4], "y": [10, 15, 13, 17] }, { "name": "bar", "x": [1, 2, 3, 4], "y": [16, 5, 11, 9] }, { "name": "foobar", "x": [1, 2, 3, 4], "y": [6, 4, 7, 12]}]'>
-                <linechart-basic primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)"></linechart-basic>
-              </data-filter>
+<div>
+    <h3>data-filter demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <!-- Data
+              [
+                {
+                  "name": "foo",
+                  "x": [1, 2, 3, 4],
+                  "y": [5, 4, 6, 2]
+                },
+                {
+                  "name": "bar",
+                  "x": [3, 2, 1, 3],
+                  "y": [6, 4, 7, 2]
+                },
+                {
+                  "name": "foobar",
+                  "x": [1, 2, 1, 9],
+                  "y": [6, 4, 7, 3]
+                }
+              ]
+            -->
+            <data-filter active-series="[&quot;foo&quot;]" data="[{ &quot;name&quot;: &quot;foo&quot;, &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [10, 15, 13, 17] }, { &quot;name&quot;: &quot;bar&quot;, &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [16, 5, 11, 9] }, { &quot;name&quot;: &quot;foobar&quot;, &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [6, 4, 7, 12]}]">
+                <linechart-basic accentcolor="rgba(177,6,58,1)" primarycolor="rgba(221,97,8,1)"></linechart-basic>
+            </data-filter>
 
-              <!-- Data
-                [
-                  {
-                    "name": "foo",
-                    "x": [1, 2, 3, 4],
-                    "y": [5, 4, 6, 2]
-                  },
-                  {
-                    "name": "bar",
-                    "x": [3, 2, 1, 3],
-                    "y": [6, 4, 7, 2]
-                  },
-                  {
-                    "name": "foobar",
-                    "x": [1, 2, 1, 9],
-                    "y": [6, 4, 7, 3]
-                  }
-                ]
-              -->
-              <data-filter exclusive data='[{ "name": "foo", "x": [1, 2, 3, 4], "y": [10, 15, 13, 17] }, { "name": "bar", "x": [1, 2, 3, 4], "y": [16, 5, 11, 9] }, { "name": "foobar", "x": [1, 2, 3, 4], "y": [6, 4, 7, 12]}]'>
-                <linechart-basic primarycolor="rgba(221,97,8,1)" accentcolor="rgba(177,6,58,1)"></linechart-basic>
-              </data-filter>
-            </template>
-        </demo-snippet>
-    </div>
+            <!-- Data
+              [
+                {
+                  "name": "foo",
+                  "x": [1, 2, 3, 4],
+                  "y": [5, 4, 6, 2]
+                },
+                {
+                  "name": "bar",
+                  "x": [3, 2, 1, 3],
+                  "y": [6, 4, 7, 2]
+                },
+                {
+                  "name": "foobar",
+                  "x": [1, 2, 1, 9],
+                  "y": [6, 4, 7, 3]
+                }
+              ]
+            -->
+            <data-filter data="[{ &quot;name&quot;: &quot;foo&quot;, &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [10, 15, 13, 17] }, { &quot;name&quot;: &quot;bar&quot;, &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [16, 5, 11, 9] }, { &quot;name&quot;: &quot;foobar&quot;, &quot;x&quot;: [1, 2, 3, 4], &quot;y&quot;: [6, 4, 7, 12]}]" exclusive="">
+                <linechart-basic accentcolor="rgba(177,6,58,1)" primarycolor="rgba(221,97,8,1)"></linechart-basic>
+            </data-filter>
+        </template>
+    </demo-snippet>
+</div>
 </body>
+
 </html>

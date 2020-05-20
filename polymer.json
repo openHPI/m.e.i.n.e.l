@@ -1,7 +1,19 @@
 {
-    "entrypoint": "src/all-imports.html",
-    "sources": [
-        "src/**/*",
-        "bower.json"
+  "entrypoint": "src/all-imports.js",
+  "sources": [
+    "src/**/*.js"
+  ],
+  "extraDependencies": [
+    "node_modules/@webcomponents/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-3"
+    ],
+    "ignoreWarnings": [
+      "databinding-calls-must-be-functions"
     ]
+  },
+  "moduleResolution": "node",
+  "npm": true
 }

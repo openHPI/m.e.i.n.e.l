@@ -3,210 +3,223 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" name="viewport">
 
     <title>schema-transformer demo</title>
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- Load Plotly.js before webcomponents are initialized through Polyfills -->
     <script src="../../../plotly.js/dist/plotly.min.js"></script>
-    <script src="../../../d3/d3.min.js"></script>
     <script src="../../../venn.js/venn.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../src/data-control/schema-transformer.html">
-    <link rel="import" href="../../src/visualizations/linechart-basic.html">
-    <link rel="import" href="../../src/visualizations/worldmap-basic.html">
-    <link rel="import" href="../../src/visualizations/vennchart-basic.html">
+    <script src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js" type="module"></script>
+    <script src="../../../@polymer/iron-demo-helpers/demo-snippet.js" type="module"></script>
+    <script src="../../src/data-control/schema-transformer.js" type="module"></script>
+    <script src="../../src/visualizations/linechart-basic.js" type="module"></script>
+    <script src="../../src/visualizations/worldmap-basic.js" type="module"></script>
+    <script src="../../src/visualizations/vennchart-basic.js" type="module"></script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-        div.vertical-section-container {
-            max-width: 1500px;
-        }
+    <!-- Bug fix by polymer-modulizer:
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+    -->
+    <script type="module">
+        import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-        vennchart-basic {
-          height: 400px;
-        }
-    </style>
+        const template = html`
+            <custom-style>
+                <style include="demo-pages-shared-styles">
+                    div.vertical-section-container {
+                        max-width: 1500px;
+                    }
+                </style>
+            </custom-style>
+        `;
+        document.body.appendChild(template.content);
+    </script>
 </head>
 
 <body>
-    <div class="vertical-section-container centered">
-        <h3>schema-transformer demo (custom element)</h3>
-        <demo-snippet>
-            <template>
-                <!--
-                Data:
+<div class="vertical-section-container centered">
+    <h3>schema-transformer demo (custom element)</h3>
+    <demo-snippet>
+        <template>
+            <!--
+            Data:
+            {
+                "1": 10,
+                "2": 42,
+                "3": 37
+            }
+
+            Mappings:
+            [
                 {
-                    "1": 10,
-                    "2": 42,
-                    "3": 37
+                    "x": {
+                        "type": "keys"
+                    },
+                    "y": {
+                        "type": "values"
+                    },
+                    "name": {
+                        "type": "constant",
+                        "value": "foo"
+                    }
                 }
+            ]
+            -->
+            <schema-transformer data="{&quot;1&quot;: 10, &quot;2&quot;: 42, &quot;3&quot;: 37}" mappings="[{&quot;x&quot;: {&quot;type&quot;: &quot;keys&quot;}, &quot;y&quot;: {&quot;type&quot;: &quot;values&quot;}, &quot;name&quot;: {&quot;type&quot;: &quot;constant&quot;, &quot;value&quot;: &quot;foo&quot;}}]">
+                <linechart-basic width="600"></linechart-basic>
+            </schema-transformer>
+        </template>
+    </demo-snippet>
+    <demo-snippet>
+        <template>
+            <!--
+            Data:
+            [
+                {
+                    "timestamp": "2017-03-31T22:00:51.421Z",
+                    "total_enrollments": 8567,
+                    "current_enrollments": 8420
+                },
+                {
+                    "timestamp": "2017-04-01T22:00:49.204Z",
+                    "total_enrollments": 8642,
+                    "current_enrollments": 8489
+                }
+            ]
 
-                Mappings:
-                [
-                    {
-                        "x": {
-                            "type": "keys"
-                        },
-                        "y": {
-                            "type": "values"
-                        },
-                        "name": {
-                            "type": "constant",
-                            "value": "foo"
-                        }
-                    }
-                ]
-                -->
-                <schema-transformer mappings='[{"x": {"type": "keys"}, "y": {"type": "values"}, "name": {"type": "constant", "value": "foo"}}]' data='{"1": 10, "2": 42, "3": 37}'>
-                    <linechart-basic width="600"></linechart-basic>
-                </schema-transformer>
-            </template>
-        </demo-snippet>
-        <demo-snippet>
-            <template>
-                <!--
-                Data:
-                [
-                    {
-                        "timestamp": "2017-03-31T22:00:51.421Z",
-                        "total_enrollments": 8567,
-                        "current_enrollments": 8420
+            Mappings:
+            [
+                {
+                    "x": {
+                        "type": "collect",
+                        "sourceKey": "timestamp"
                     },
-                    {
-                        "timestamp": "2017-04-01T22:00:49.204Z",
-                        "total_enrollments": 8642,
-                        "current_enrollments": 8489
+                    "y": {
+                        "type": "collect",
+                        "sourceKey": "total_enrollments"
+                    },
+                    "name": {
+                        "type": "constant",
+                        "value": "total_enrollments"
                     }
-                ]
+                },
+                {
+                    "x": {
+                        "type": "collect",
+                        "sourceKey": "timestamp"
+                    },
+                    "y": {
+                        "type": "collect",
+                        "sourceKey": "current_enrollments"
+                    },
+                    "name": {
+                        "type": "constant",
+                        "value": "current_enrollments"
+                    }
+                }
+            ]
+            -->
+            <schema-transformer data="[{&quot;timestamp&quot;: &quot;2017-03-31T22:00:51.421Z&quot;, &quot;total_enrollments&quot;: 8567, &quot;current_enrollments&quot;: 8420}, {&quot;timestamp&quot;: &quot;2017-04-01T22:00:49.204Z&quot;, &quot;total_enrollments&quot;: 8642, &quot;current_enrollments&quot;: 8489}]" mappings="[{&quot;x&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;timestamp&quot;}, &quot;y&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;total_enrollments&quot;}, &quot;name&quot;: {&quot;type&quot;: &quot;constant&quot;, &quot;value&quot;: &quot;total_enrollments&quot;}}, {&quot;x&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;timestamp&quot;}, &quot;y&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;current_enrollments&quot;}, &quot;name&quot;: {&quot;type&quot;: &quot;constant&quot;, &quot;value&quot;: &quot;current_enrollments&quot;}}]">
+                <linechart-basic width="600"></linechart-basic>
+            </schema-transformer>
+        </template>
+    </demo-snippet>
+    <demo-snippet>
+        <template>
+            <!--
+            Data:
+            [
+                {
+                    "lat": 52.520109,
+                    "lon": 13.404763,
+                    "users": 42,
+                    "activity": 37
+                },
+                {
+                    "lat": 48.857482,
+                    "lon": 2.355985,
+                    "users": 8,
+                    "activity": 27
+                }
+            ]
 
-                Mappings:
-                [
-                    {
-                        "x": {
-                            "type": "collect",
-                            "sourceKey": "timestamp"
-                        },
-                        "y": {
-                            "type": "collect",
-                            "sourceKey": "total_enrollments"
-                        },
-                        "name": {
-                            "type": "constant",
-                            "value": "total_enrollments"
-                        }
+            Mappings:
+            [
+                {
+                    "lat": {
+                        "type": "collect",
+                        "sourceKey": "lat"
                     },
-                    {
-                        "x": {
-                            "type": "collect",
-                            "sourceKey": "timestamp"
-                        },
-                        "y": {
-                            "type": "collect",
-                            "sourceKey": "current_enrollments"
-                        },
-                        "name": {
-                            "type": "constant",
-                            "value": "current_enrollments"
-                        }
-                    }
-                ]
-                -->
-                <schema-transformer mappings='[{"x": {"type": "collect", "sourceKey": "timestamp"}, "y": {"type": "collect", "sourceKey": "total_enrollments"}, "name": {"type": "constant", "value": "total_enrollments"}}, {"x": {"type": "collect", "sourceKey": "timestamp"}, "y": {"type": "collect", "sourceKey": "current_enrollments"}, "name": {"type": "constant", "value": "current_enrollments"}}]' data='[{"timestamp": "2017-03-31T22:00:51.421Z", "total_enrollments": 8567, "current_enrollments": 8420}, {"timestamp": "2017-04-01T22:00:49.204Z", "total_enrollments": 8642, "current_enrollments": 8489}]'>
-                    <linechart-basic width="600"></linechart-basic>
-                </schema-transformer>
-            </template>
-        </demo-snippet>
-        <demo-snippet>
-            <template>
-                <!--
-                Data:
-                [
-                    {
-                        "lat": 52.520109,
-                        "lon": 13.404763,
-                        "users": 42,
-                        "activity": 37
+                    "lon": {
+                        "type": "collect",
+                        "sourceKey": "lon"
                     },
-                    {
-                        "lat": 48.857482,
-                        "lon": 2.355985,
-                        "users": 8,
-                        "activity": 27
+                    "z": {
+                        "type": "collect",
+                        "sourceKey": "users"
+                    },
+                    "text": {
+                        "type": "collect",
+                        "sourceKey": "city"
                     }
-                ]
+                }
+            ]
+            -->
+            <schema-transformer data="[{&quot;city&quot;: &quot;Berlin&quot;, &quot;lat&quot;: 52.52010, &quot;lon&quot;: 13.404763, &quot;users&quot;: 42, &quot;activity&quot;: 37}, {&quot;city&quot;: &quot;Paris&quot;, &quot;lat&quot;: 48.857482, &quot;lon&quot;: 2.355985, &quot;users&quot;: 8, &quot;activity&quot;: 27}]" mappings="[{&quot;lat&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;lat&quot;}, &quot;lon&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;lon&quot;}, &quot;z&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;users&quot;}, &quot;text&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;city&quot;}}]" text-key="city">
+                <worldmap-basic type="scattergeo"></worldmap-basic>
+            </schema-transformer>
+        </template>
+    </demo-snippet>
+    <demo-snippet>
+        <template>
+            <!--
+            Data:
+            [
+                {
+                    "devices": ["web"],
+                    "total_users": 80
+                },
+                {
+                    "devices": ["mobile"],
+                    "total_users": 40
+                },
+                {
+                    "devices": ["web", "mobile"],
+                    "total_users": 20
+                }
+            ]
 
-                Mappings:
-                [
-                    {
-                        "lat": {
-                            "type": "collect",
-                            "sourceKey": "lat"
-                        },
-                        "lon": {
-                            "type": "collect",
-                            "sourceKey": "lon"
-                        },
-                        "z": {
-                            "type": "collect",
-                            "sourceKey": "users"
-                        },
-                        "text": {
-                            "type": "collect",
-                            "sourceKey": "city"
-                        }
-                    }
-                ]
-                -->
-                <schema-transformer mappings='[{"lat": {"type": "collect", "sourceKey": "lat"}, "lon": {"type": "collect", "sourceKey": "lon"}, "z": {"type": "collect", "sourceKey": "users"}, "text": {"type": "collect", "sourceKey": "city"}}]' text-key='city' data='[{"city": "Berlin", "lat": 52.52010, "lon": 13.404763, "users": 42, "activity": 37}, {"city": "Paris", "lat": 48.857482, "lon": 2.355985, "users": 8, "activity": 27}]'>
-                    <worldmap-basic type="scattergeo"></worldmap-basic>
-                </schema-transformer>
-            </template>
-        </demo-snippet>
-        <demo-snippet>
-            <template>
-                <!--
-                Data:
-                [
-                    {
-                        "devices": ["web"],
-                        "total_users": 80
+            Mappings:
+            [
+                {
+                    "sets": {
+                        "type": "collect",
+                        "sourceKey": "devices"
                     },
-                    {
-                        "devices": ["mobile"],
-                        "total_users": 40
+                    "size": {
+                        "type": "collect",
+                        "sourceKey": "total_users"
                     },
-                    {
-                        "devices": ["web", "mobile"],
-                        "total_users": 20
+                    "label": {
+                        "type": "collect",
+                        "sourceKey": "devices"
                     }
-                ]
-
-                Mappings:
-                [
-                    {
-                        "sets": {
-                            "type": "collect",
-                            "sourceKey": "devices"
-                        },
-                        "size": {
-                            "type": "collect",
-                            "sourceKey": "total_users"
-                        },
-                        "label": {
-                            "type": "collect",
-                            "sourceKey": "devices"
-                        }
-                    }
-                ]
-              -->
-              <schema-transformer no-merge mappings='[{"sets": {"type": "collect", "sourceKey": "devices"}, "size": {"type": "collect", "sourceKey": "total_users"}, "label": {"type": "collect", "sourceKey": "devices"}}]' data='[{"devices": ["web"],"total_users":80},{"devices": ["mobile"],"total_users":40},{"devices": ["web","mobile"],"total_users":20}]'>
-                  <vennchart-basic hide-intersection-labels></vennchart-basic>
-              </schema-transformer>
-            </template>
-        </demo-snippet>
-    </div>
+                }
+            ]
+          -->
+            <schema-transformer data="[{&quot;devices&quot;: [&quot;web&quot;],&quot;total_users&quot;:80},{&quot;devices&quot;: [&quot;mobile&quot;],&quot;total_users&quot;:40},{&quot;devices&quot;: [&quot;web&quot;,&quot;mobile&quot;],&quot;total_users&quot;:20}]" mappings="[{&quot;sets&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;devices&quot;}, &quot;size&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;total_users&quot;}, &quot;label&quot;: {&quot;type&quot;: &quot;collect&quot;, &quot;sourceKey&quot;: &quot;devices&quot;}}]" no-merge="">
+                <vennchart-basic hide-intersection-labels=""></vennchart-basic>
+            </schema-transformer>
+        </template>
+    </demo-snippet>
+</div>
 </body>
 
 </html>
