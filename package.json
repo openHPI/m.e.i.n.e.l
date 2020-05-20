@@ -6,7 +6,7 @@
   },
   "homepage": "https://github.com/openHPI/m.e.i.n.e.l#readme",
   "name": "m.e.i.n.e.l",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "main": "src/all-imports.js",
   "bugs": {
     "url": "https://github.com/openHPI/m.e.i.n.e.l/issues"
@@ -16,8 +16,7 @@
     "lint": "eslint src --fix && htmlhint --config .htmlhintrc demo/**/*.html index.html && polymer lint",
     "serve": "polymer serve",
     "bundle": "gulp bundle",
-    "analyze": "polymer analyze > analysis.json",
-    "postversion": "git push && git push --tags"
+    "analyze": "polymer analyze > analysis.json"
   },
   "contributors": [
     {
