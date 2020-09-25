@@ -54,28 +54,38 @@ The **M**odern, **E**xtensible and **I**nteractive **N**umber **E**xploration **
 
 ## Deploy release
 
-Releases are built and deployed automatically by [travis-ci](https://travis-ci.com/openHPI/m.e.i.n.e.l/builds). To trigger a build, simply run `npm version x.x.x`. Travis deployment is currently broken, please upload the release zip manually to the GitHub release.
+1. Create the documentation:
+   ```
+   npm run analyze
+   ```
+
+2. Bump version and build artefacts
+
+   ```
+   npm version 3.1.2
+   npm run bundle
+   ```
+
+3. Push everything incl. the new tag
+
+4. Zip the content from the build directory and name it `m.e.i.n.e.l-v3.1.2.zip`
+
+5. Create a new GitHub release named `Version 3.1.2` for the tag pushed a few moments ago and shortly describe your changes.
 
 ## Use in production
 
 It is recommended to use the bundled version of m.e.i.n.e.l in production. It is created and attached to each release on GitHub, but can also be manually created by executing `npm run build`. The bundle consists of the following files:
-- `core.html`: Core components of m.e.i.n.e.l (without external libraries).
-- `dependencies.js` All dependencies bundled as a single file.
-- `bundle.html`: Both core components but also dependencies.
-- `webcomponents-loader.js`: Polyfill loader for browsers that do not support WebComponents natively.
+- `custom-elements-es5-adapter.js`: [ES5 only] Required to load the ES5 code to modern ES6-enabled browsers.
+- `polyfills-ie.js`: [ES5 only] Load *before any other files of this bundle* to support Internet Explorer 11.
+- `m.e.i.n.e.l.js`: Bundled version incl. required dependencies.
+- `webcomponents-bundle.js`: Polyfill loader for browsers that do not support WebComponents natively.
 
-In addition, all files are also provided as minified version as well.
-
-To use m.e.i.n.e.l in your web application, you need to import either `bundle.html`, or `core.html` and `dependencies.js`.
+To use m.e.i.n.e.l in your web application without differing between ES5 and ES6, use the following imports:
 ```html
-<!-- WebComponents polyfill needs to be loaded before m.e.i.n.e.l -->
-<script src="m.e.i.n.e.l/webcomponents-loader.min.js"></script>
-
-<!-- Either load the complete bundle ... -->
-<link rel="import" href="m.e.i.n.e.l/bundle.html">
-
-<!-- ... or load core components and dependencies separately -->
-<link rel="import" href="m.e.i.n.e.l/core.html">
-<script src="m.e.i.n.e.l/dependencies.js"></script>
+<script src="build/es5/polyfills-ie.js"></script>
+<script src="build/es5/custom-elements-es5-adapter.js"></script>
+<script src="build/es5/webcomponents-bundle.js"></script>
+<script src="build/es5/m.e.i.n.e.l.js"></script>
 ```
-In most cases, you should should be fine with using the complete bundle. However, there might be rare cases where it is necessary to load dependencies separately (e.g. when using Require.JS). Give it a try if you encounter problems with the first option.  
+
+In modern browsers, the ES6 version should be used preferably.  
